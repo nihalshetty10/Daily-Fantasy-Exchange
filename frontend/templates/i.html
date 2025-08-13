@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PropTrader - Live Sports Trading</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .trading-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .status-live {
+            background: #dc3545;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+        .status-final {
+            background: #6c757d;
+            color: white;
+        }
+        .status-upcoming {
+            background: #28a745;
+            color: white;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        .live-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #dc3545;
+        }
+        .game-info {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .player-stats {
+            background: #e9ecef;
+            border-radius: 8px;
+            padding: 8px;
+            margin: 5px 0;
+        }
+        .btn-trade {
+            border-radius: 25px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .btn-trade:hover {
+            transform: scale(1.05);
+        }
+        .filters {
+            background: rgba(255,255,255,0.9);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .portfolio-item {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #007bff;
+        }
+        .trade-history {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        /* Contract availability styling */
+        .contract-count {
+            font-weight: bold;
+        }
+        .contract-count.low {
+            color: #dc3545;
+            animation: pulse 1s infinite;
+        }
+        .contract-count.few {
+            color: #ffc107;
+        }
+        .contract-count.normal {
+            color: #6c757d;
+        }
+        
+        /* Disabled button styling */
+        .btn-secondary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        /* Contract availability indicators */
+        .contract-indicator {
+            display: inline-block;
+            margin-left: 5px;
+        }
+        .contract-indicator.low::after {
+            content: " ⚠️";
+            color: #dc3545;
+        }
+        .contract-indicator.few::after {
+            content: " ⚡";
+            color: #ffc107;
+        }
+        
+        .pending-order-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .trade-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-left: 3px solid #28a745;
+        }
+        .trade-sell {
+            border-left-color: #dc3545;
+        }
+        .demo-banner {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-chart-line"></i> PropTrader
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text" id="user-info">
+                    <i class="fas fa-user"></i> <span id="username">Demo User</span>
+                    <button class="btn btn-outline-light btn-sm ms-2" onclick="logout()">Logout</button>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Demo Banner -->
+        <div class="demo-banner">
+            <i class="fas fa-info-circle"></i> <strong>Demo Mode:</strong> This is a local development version. No real money or authentication required.
+        </div>
+
+        <!-- Login/Register Forms -->
+        <div id="auth-forms" class="row justify-content-center" style="display: none;">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <ul class="nav nav-tabs" id="authTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button">Login</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="register-tab" data-bs-toggle="tab" data-bs-target="#register" type="button">Register</button>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="authTabContent">
+                            <div class="tab-pane fade show active" id="login">
+                                <form id="login-form" class="mt-3">
+                                    <div class="mb-3">
+                                        <label for="login-username" class="form-label">Username</label>
+                                        <input type="text" class="form-control" id="login-username" value="demo" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="login-password" class="form-label">Password</label>
+                                        <input type="password" class="form-control" id="login-password" value="demo" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100">Login (Demo)</button>
+                                </form>
+                            </div>
+                            <div class="tab-pane fade" id="register">
+                                <form id="register-form" class="mt-3">
+                                    <div class="mb-3">
+                                        <label for="register-username" class="form-label">Username</label>
+                                        <input type="text" class="form-control" id="register-username" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="register-email" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="register-email" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="register-password" class="form-label">Password</label>
+                                        <input type="password" class="form-control" id="register-password" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-success w-100">Register (Demo)</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard -->
+        <div id="dashboard">
+            <div class="row">
+                <div class="col-md-8">
+                    <!-- Market Section -->
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5><i class="fas fa-chart-bar"></i> Live Market</h5>
+                            <button class="btn btn-sm btn-outline-primary" onclick="refreshMLBProps()">
+                                <i class="fas fa-sync-alt"></i> Refresh Props
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <!-- Filters -->
+                            <div class="filters">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <label class="form-label">Sport</label>
+                                        <select class="form-select" id="sport-filter">
+                                            <option value="">All Sports</option>
+                                            <option value="NBA">NBA</option>
+                                            <option value="MLB">MLB</option>
+                                            <option value="NFL">NFL</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Difficulty</label>
+                                        <select class="form-select" id="difficulty-filter">
+                                            <option value="">All Difficulties</option>
+                                            <option value="EASY">Easy</option>
+                                            <option value="MEDIUM">Medium</option>
+                                            <option value="HARD">Hard</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Status</label>
+                                        <select class="form-select" id="status-filter">
+                                            <option value="">All Status</option>
+                                            <option value="UPCOMING">Upcoming</option>
+                                            <option value="LIVE">Live</option>
+                                            <option value="FINAL">Final</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <!-- Refresh button removed -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Props List -->
+                            <div id="props-container">
+                                <!-- Props will be loaded here -->
+                            </div>
+                            
+                            <!-- Props Status Indicator -->
+                            <div class="mt-3 text-center">
+                                <small class="text-muted" id="props-status">
+                                    <i class="fas fa-info-circle"></i> Loading props...
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <!-- Portfolio Section -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h5><i class="fas fa-briefcase"></i> Portfolio</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-3">
+                                <span>Balance:</span>
+                                <span class="fw-bold" id="user-balance">$10,000.00</span>
+                            </div>
+                            <div id="portfolio-items">
+                                <!-- Portfolio items will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pending Transactions -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h5><i class="fas fa-clock"></i> Pending Orders</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="pending-orders" class="pending-orders">
+                                <!-- Pending orders will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trade History -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-history"></i> Trade History</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="trade-history" class="trade-history">
+                                <!-- Trade history will be loaded here -->
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trading Modal -->
+    <div class="modal fade" id="tradingModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tradingModalTitle">Trade Contract</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="trading-details">
+                        <!-- Trading details will be loaded here -->
+                    </div>
+                    
+                    <!-- Market Price Display -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Current Market Price</label>
+                            <div class="live-price" id="current-market-price">$0.00</div>
+                            <small class="text-muted">Dynamically calculated from order book</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Available Contracts</label>
+                            <div id="available-contracts">0</div>
+                            <small class="text-muted">Currently available for trading</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Trading Options -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="mb-0"><i class="fas fa-shopping-cart text-success"></i> Buy Options</h6>
+                                </div>
+                                <div class="card-body" id="buy-options">
+                                    <div class="mb-3">
+                                        <label class="form-label">Buy Now (Market Price)</label>
+                                        <button type="button" class="btn btn-success w-100" onclick="executeTrade('buy', 'market')">
+                                            Buy at Market Price
+                                        </button>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Limit Buy Order</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">$</span>
+                                            <input type="number" class="form-control" id="buy-limit-price" placeholder="0.00" step="0.01" min="0.01" max="99.99">
+                                        </div>
+                                        <button type="button" class="btn btn-outline-success w-100 mt-2" onclick="executeTrade('buy', 'limit')">
+                                            Place Buy Order
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="mb-0"><i class="fas fa-tags text-danger"></i> Sell Options</h6>
+                                </div>
+                                <div class="card-body" id="sell-options">
+                                    <div class="mb-3">
+                                        <label class="form-label">Sell Now (Market Price)</label>
+                                        <button type="button" class="btn btn-danger w-100" onclick="executeTrade('sell', 'market')">
+                                            Sell at Market Price
+                                        </button>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Limit Sell Order</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">$</span>
+                                            <input type="number" class="form-control" id="sell-limit-price" placeholder="0.00" step="0.01" min="0.01" max="99.99">
+                                        </div>
+                                        <button type="button" class="btn btn-outline-danger w-100 mt-2" onclick="executeTrade('sell', 'limit')">
+                                            Place Sell Order
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Cash Out Option (for final games) -->
+                    <div id="cash-out-section" class="mt-3" style="display: none;">
+                        <div class="card">
+                            <div class="card-header bg-warning text-dark">
+                                <h6 class="mb-0"><i class="fas fa-trophy text-warning"></i> Cash Out Contract</h6>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-muted mb-3">Game is finished! Cash out your contract to collect your winnings.</p>
+                                <button type="button" class="btn btn-warning w-100" onclick="cashOutContract()">
+                                    <i class="fas fa-trophy"></i> Cash Out Contract
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Portfolio Constraints -->
+                    <div class="alert alert-info mt-3">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Portfolio Limits:</strong> Maximum 10 contracts total, 1 contract per player
+                    </div>
+                    
+                    <!-- Game Status Info -->
+                    <div id="game-status-info" class="alert mt-3" style="display: none;">
+                        <i class="fas fa-info-circle"></i>
+                        <span id="game-status-message"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Local development - no real API needed
+        const API_BASE = 'http://localhost:5000/api';
+        let currentUser = { username: 'Demo User', balance: 10000 };
+        let liveUpdateInterval = null;
+        let userPortfolio = [];
+        let tradeHistory = [];
+        let pendingOrders = [];
+        let orderBook = {}; // Store order book data for each prop
+
+        // Real MLB props loaded from scraper
+        let realProps = [];
+        
+        // Load real MLB props from scraper
+        async function loadRealMLBProps() {
+            try {
+                console.log('🔄 Loading real MLB props...');
+                const response = await fetch('/mlb_props.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log('📊 Raw MLB props data:', data);
+                
+                if (!data.props) {
+                    console.warn('⚠️ No props found in data, using demo props');
+                    return getDemoProps();
+                }
+                
+                const realProps = [];
+                let propId = 1;
+                
+                for (const [playerId, playerData] of Object.entries(data.props)) {
+                    const player = playerData.player_info;
+                    const playerProps = playerData.props || [];
+                    
+                    console.log(`👤 Processing player: ${player.name} with ${playerProps.length} props`);
+                    
+                    for (const prop of playerProps) {
+                        // Convert scraper prop format to trading platform format
+                        const tradingProp = {
+                            id: propId++,
+                            player_name: player.name,
+                            player_team: player.team_name,
+                            player_position: player.position,
+                            sport: 'MLB',
+                            prop_type: prop.stat.toLowerCase().replace(/\s+/g, '_'),
+                            difficulty: prop.type.toUpperCase(),
+                            line_value: prop.line,
+                            live_contract_price: prop.price,
+                            available_contracts: 10,
+                            total_contracts: 10,
+                            status_badge: 'UPCOMING',
+                            is_tradeable: true,
+                            formatted_game_time: '7:05 PM EST',
+                            direction: prop.direction,
+                            implied_probability: prop.implied_prob,
+                            game_id: player.game_id,
+                            opponent: prop.opponent || null
+                        };
+                        
+                        console.log(`📈 Created prop: ${tradingProp.prop_type} ${tradingProp.difficulty} - Contracts: ${tradingProp.available_contracts}/${tradingProp.total_contracts}`);
+                        
+                        realProps.push(tradingProp);
+                    }
+                }
+                
+                console.log(`✅ Successfully loaded ${realProps.length} real MLB props with 10 contracts each`);
+                return realProps;
+                
+            } catch (error) {
+                console.error('❌ Error loading real MLB props:', error);
+                console.log('🔄 Falling back to demo props...');
+                // Fallback to demo props if loading fails
+                return getDemoProps();
+            }
+        }
+        
+        // Demo props as fallback
+        function getDemoProps() {
+            return [
+                {
+                    id: 1,
+                    player_name: 'Aaron Judge',
+                    player_team: 'Yankees',
+                    player_position: 'RF',
+                    sport: 'MLB',
+                    prop_type: 'hits',
+                    difficulty: 'EASY',
+                    line_value: 1.5,
+                    live_contract_price: 78.50,
+                    available_contracts: 8,
+                    total_contracts: 10,
+                    status_badge: 'UPCOMING',
+                    is_tradeable: true,
+                    formatted_game_time: '7:05 PM EST'
+                },
+                {
+                    id: 2,
+                    player_name: 'Gerrit Cole',
+                    player_team: 'Yankees',
+                    player_position: 'P',
+                    sport: 'MLB',
+                    prop_type: 'strikeouts',
+                    difficulty: 'MEDIUM',
+                    line_value: 6.5,
+                    live_contract_price: 48.25,
+                    available_contracts: 0,
+                    total_contracts: 10,
+                    status_badge: 'LIVE',
+                    is_tradeable: false,
+                    formatted_game_time: '7:05 PM EST'
+                },
+                {
+                    id: 3,
+                    player_name: 'Mike Trout',
+                    player_team: 'Angels',
+                    player_position: 'CF',
+                    sport: 'MLB',
+                    prop_type: 'runs',
+                    difficulty: 'HARD',
+                    line_value: 2.5,
+                    live_contract_price: 25.00,
+                    available_contracts: 0,
+                    total_contracts: 10,
+                    status_badge: 'FINAL',
+                    is_tradeable: false,
+                    formatted_game_time: '7:05 PM EST'
+                }
+            ];
+        }
+        
+        // Use real props by default, fallback to demo
+        let mockProps = realProps;
+
+        // Authentication (Demo Mode)
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            showDashboard();
+        });
+
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('register-username').value;
+            currentUser.username = username || 'Demo User';
+            showDashboard();
+        });
+
+        async function showDashboard() {
+            document.getElementById('auth-forms').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('username').textContent = currentUser.username;
+            
+            // Load real MLB props first
+            try {
+                await loadRealMLBProps();
+                mockProps = realProps; // Update the props reference
+                console.log('Real MLB props loaded successfully');
+            } catch (error) {
+                console.error('Failed to load real props, using demo:', error);
+                mockProps = getDemoProps();
+            }
+            
+            loadMarketData();
+            loadPortfolio();
+            loadPendingOrders();
+            loadTradeHistory();
+            startLiveUpdates();
+        }
+
+        function logout() {
+            currentUser = { username: 'Demo User', balance: 10000 };
+            userPortfolio = [];
+            tradeHistory = [];
+            document.getElementById('auth-forms').style.display = 'block';
+            document.getElementById('dashboard').style.display = 'none';
+            if (liveUpdateInterval) {
+                clearInterval(liveUpdateInterval);
+            }
+        }
+
+        // Market Data
+        async function loadMarketData() {
+            const sportFilter = document.getElementById('sport-filter').value;
+            const difficultyFilter = document.getElementById('difficulty-filter').value;
+            const statusFilter = document.getElementById('status-filter').value;
+
+            // Update props status indicator
+            const statusElement = document.getElementById('props-status');
+            if (mockProps === realProps && realProps.length > 0) {
+                statusElement.innerHTML = `<i class="fas fa-check-circle text-success"></i> ${realProps.length} real MLB props loaded from scraper`;
+                statusElement.className = 'mt-3 text-center text-success';
+            } else if (mockProps.length > 0) {
+                statusElement.innerHTML = `<i class="fas fa-exclamation-triangle text-warning"></i> ${mockProps.length} demo props loaded (real props failed to load)`;
+                statusElement.className = 'mt-3 text-center text-warning';
+            } else {
+                statusElement.innerHTML = `<i class="fas fa-info-circle text-muted"></i> No props available`;
+                statusElement.className = 'mt-3 text-center text-muted';
+            }
+
+            let filteredProps = mockProps;
+            
+            if (sportFilter) {
+                filteredProps = filteredProps.filter(prop => prop.sport === sportFilter);
+            }
+            if (difficultyFilter) {
+                filteredProps = filteredProps.filter(prop => prop.difficulty === difficultyFilter);
+            }
+
+            displayProps(filteredProps, statusFilter);
+        }
+
+        // Display props in the market
+        function displayProps(props, statusFilter) {
+            console.log('🎯 Displaying props:', props.length);
+            console.log('📊 Sample prop contract counts:', props.slice(0, 3).map(p => `${p.player_name}: ${p.available_contracts}/${p.total_contracts}`));
+            
+            const container = document.getElementById('props-container');
+            if (!container) return;
+            
+            container.innerHTML = '';
+
+            if (props.length === 0) {
+                container.innerHTML = '<div class="text-center text-muted mt-4"><i class="fas fa-info-circle"></i> No props match your filters.</div>';
+                return;
+            }
+
+            props.forEach(prop => {
+                // Apply status filter
+                if (statusFilter && prop.status_badge !== statusFilter) {
+                    return;
+                }
+
+                const card = document.createElement('div');
+                card.className = 'trading-card';
+                
+                const statusClass = prop.status_badge === 'LIVE' ? 'status-live' : 
+                                  prop.status_badge === 'FINAL' ? 'status-final' : 'status-upcoming';
+
+                const formatPropType = (propType) => {
+                    return propType.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                };
+
+                card.innerHTML = `
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h6 class="mb-0">${prop.player_name} (${prop.player_team})</h6>
+                                    <small class="text-muted">
+                                        ${prop.player_position || ''} • ${prop.formatted_game_time || ''}
+                                    </small>
+                                    ${prop.opponent ? `<br><small class="text-info"><i class="fas fa-gamepad"></i> ${prop.opponent}</small>` : ''}
+                                </div>
+                                <span class="status-badge ${statusClass}">${prop.status_badge}</span>
+                            </div>
+                            <p class="text-muted mb-2">${prop.sport} • ${formatPropType(prop.prop_type)} • ${prop.difficulty}</p>
+                            
+                            ${prop.game_status === 'LIVE' ? `
+                                <div class="game-info">
+                                    <small><strong>Game Time:</strong> ${prop.current_game_time || 'N/A'}</small><br>
+                                    <small><strong>Score:</strong> ${prop.live_score || 'N/A'}</small><br>
+                                    <small><strong>Player Value:</strong> ${prop.player_current_value || 0}</small>
+                                </div>
+                            ` : ''}
+                            
+                            <div class="player-stats">
+                                <strong>Line:</strong> ${prop.line_value} | 
+                                <strong>Current Price:</strong> <span class="live-price">${prop.live_contract_price.toFixed(2)}</span>
+                                <br><small class="${prop.available_contracts <= 5 ? 'text-danger' : prop.available_contracts <= 15 ? 'text-warning' : 'text-muted'}">
+                                    Contracts: ${prop.available_contracts}/${prop.total_contracts} available
+                                    ${prop.available_contracts <= 5 ? ' ⚠️ LOW' : prop.available_contracts <= 15 ? ' ⚡ FEW LEFT' : ''}
+                                </small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            ${(() => {
+                                if (!prop.is_tradeable) {
+                                    return '<div class="text-muted">Trading Closed</div>';
+                                }
+                                
+                                let tradingOptions = '';
+                                const isAvailable = prop.available_contracts > 0;
+                                const disabledAttr = isAvailable ? '' : 'disabled';
+                                
+                                // Use the actual prop direction from scraper data
+                                const propDirection = prop.direction || 'over';
+                                const buttonText = propDirection.toUpperCase() + ' ' + prop.line_value;
+                                
+                                if (prop.difficulty === 'EASY' || prop.difficulty === 'HARD') {
+                                    // Single direction for easy/hard props
+                                    const buttonColor = isAvailable ? 'btn-success' : 'btn-secondary';
+                                    tradingOptions = `
+                                        <button class="btn ${buttonColor} btn-trade w-100 mb-2" onclick="openTradingModal(${prop.id}, '${propDirection}')" ${disabledAttr}>
+                                            ${isAvailable ? buttonText : 'NO CONTRACTS'}
+                                        </button>
+                                    `;
+                                } else if (prop.difficulty === 'MEDIUM') {
+                                    // Both directions for medium props
+                                    const overColor = isAvailable ? 'btn-success' : 'btn-secondary';
+                                    const underColor = isAvailable ? 'btn-danger' : 'btn-secondary';
+                                    
+                                    tradingOptions = `
+                                        <button class="btn ${overColor} btn-trade w-100 mb-2" onclick="openTradingModal(${prop.id}, 'over')" ${disabledAttr}>
+                                            ${isAvailable ? `OVER ${prop.line_value}` : 'NO CONTRACTS'}
+                                        </button>
+                                        <button class="btn ${underColor} btn-trade w-100 mb-2" onclick="openTradingModal(${prop.id}, 'under')" ${disabledAttr}>
+                                            ${isAvailable ? `UNDER ${prop.line_value}` : 'NO CONTRACTS'}
+                                        </button>
+                                    `;
+                                }
+                                return tradingOptions;
+                            })()}
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        // Trading
+        function openTradingModal(propId, type) {
+            console.log('Opening trading modal for prop:', propId, 'type:', type);
+            
+            const prop = mockProps.find(p => p.id === propId);
+            if (!prop) {
+                console.error('Prop not found:', propId);
+                return;
+            }
+
+            // Check if contracts are available
+            if (prop.available_contracts <= 0) {
+                alert('No contracts available for this player!');
+                return;
+            }
+
+            // Check if modal element exists
+            const modalElement = document.getElementById('tradingModal');
+            if (!modalElement) {
+                console.error('Trading modal element not found!');
+                alert('Trading modal not found. Please refresh the page.');
+                return;
+            }
+
+            try {
+                document.getElementById('tradingModalTitle').textContent = `Trade ${prop.player_name} Contract`;
+                
+                // Update trading details
+                document.getElementById('trading-details').innerHTML = `
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Player:</strong> ${prop.player_name} (${prop.player_team})</p>
+                            <p><strong>Prop:</strong> ${prop.prop_type.replace(/_/g, ' ').toUpperCase()} ${type.toUpperCase()} ${prop.line_value}</p>
+                            <p><strong>Sport:</strong> ${prop.sport} • <strong>Difficulty:</strong> ${prop.difficulty}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Available Contracts:</strong> ${prop.available_contracts}/${prop.total_contracts}</p>
+                            <p><strong>Current Portfolio:</strong> ${userPortfolio.length}/10 contracts</p>
+                            <p><strong>Available Balance:</strong> $${currentUser.balance.toFixed(2)}</p>
+                            <p><strong>Game Status:</strong> <span class="badge bg-${getStatusColor(prop.status_badge)}">${prop.status_badge}</span></p>
+                        </div>
+                    </div>
+                `;
+                
+                // Update market price and available contracts
+                const marketPrice = getMarketPrice(propId);
+                document.getElementById('current-market-price').textContent = `$${marketPrice.toFixed(2)}`;
+                document.getElementById('available-contracts').textContent = prop.available_contracts;
+                
+                // Update trading options based on game status
+                updateTradingOptions(prop);
+                
+                // Clear previous input values
+                document.getElementById('buy-limit-price').value = '';
+                document.getElementById('sell-limit-price').value = '';
+                
+                window.currentTradingProp = { id: propId, type: type, prop: prop };
+                
+                console.log('Showing modal...');
+                const modal = new bootstrap.Modal(modalElement);
+                modal.show();
+                console.log('Modal should be visible now');
+                
+            } catch (error) {
+                console.error('Error opening trading modal:', error);
+                alert('Error opening trading modal: ' + error.message);
+            }
+        }
+
+        function updateTradingOptions(prop) {
+            const buyOptions = document.getElementById('buy-options');
+            const sellOptions = document.getElementById('sell-options');
+
+            // Clear existing options
+            buyOptions.innerHTML = '';
+            sellOptions.innerHTML = '';
+
+            // Determine if trading is available
+            const isTradingAvailable = prop.is_tradeable && prop.available_contracts > 0;
+            const buyButtonText = isTradingAvailable ? `Buy at Market Price` : `NO CONTRACTS`;
+            const buyButtonColor = isTradingAvailable ? 'btn-success' : 'btn-secondary';
+
+            const sellButtonText = isTradingAvailable ? `Sell at Market Price` : `NO CONTRACTS`;
+            const sellButtonColor = isTradingAvailable ? 'btn-danger' : 'btn-secondary';
+
+            // Add Buy Options
+            buyOptions.innerHTML = `
+                <div class="mb-3">
+                    <label class="form-label">Buy Now (Market Price)</label>
+                    <button type="button" class="btn ${buyButtonColor} w-100" onclick="executeTrade('buy', 'market')">
+                        ${buyButtonText}
+                    </button>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Limit Buy Order</label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        <input type="number" class="form-control" id="buy-limit-price" placeholder="0.00" step="0.01" min="0.01" max="99.99">
+                    </div>
+                    <button type="button" class="btn btn-outline-success w-100 mt-2" onclick="executeTrade('buy', 'limit')">
+                        Place Buy Order
+                    </button>
+                </div>
+            `;
+
+            // Add Sell Options
+            sellOptions.innerHTML = `
+                <div class="mb-3">
+                    <label class="form-label">Sell Now (Market Price)</label>
+                    <button type="button" class="btn ${sellButtonColor} w-100" onclick="executeTrade('sell', 'market')">
+                        ${sellButtonText}
+                    </button>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Limit Sell Order</label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        <input type="number" class="form-control" id="sell-limit-price" placeholder="0.00" step="0.01" min="0.01" max="99.99">
+                    </div>
+                    <button type="button" class="btn btn-outline-danger w-100 mt-2" onclick="executeTrade('sell', 'limit')">
+                        Place Sell Order
+                    </button>
+                </div>
+            `;
+
+            // Show/hide cash out section
+            const cashOutSection = document.getElementById('cash-out-section');
+            if (prop.status_badge === 'FINAL') {
+                cashOutSection.style.display = 'block';
+            } else {
+                cashOutSection.style.display = 'none';
+            }
+        }
+
+        function getStatusColor(status) {
+            switch (status) {
+                case 'LIVE':
+                    return 'danger';
+                case 'FINAL':
+                    return 'secondary';
+                case 'UPCOMING':
+                default:
+                    return 'success';
+            }
+        }
+        
+        // Handle live game transitions
+        function handleGameStatusChange(prop) {
+            if (prop.status_badge === 'LIVE') {
+                // When game goes live, any unsold contracts vanish from market
+                if (prop.available_contracts > 0) {
+                    console.log(`Game ${prop.id} is now LIVE - ${prop.available_contracts} unsold contracts vanished from market`);
+                    prop.available_contracts = 0;
+                }
+            }
+            
+            // Update trading options if modal is open
+            if (window.currentTradingProp && window.currentTradingProp.prop.id === prop.id) {
+                updateTradingOptions(prop);
+            }
+        }
+
+        // New executeTrade function for order book system
+        async function executeTrade(action, orderType = 'market') {
+            const quantity = 1; // Fixed to 1 contract per player
+            const tradingProp = window.currentTradingProp;
+            
+            if (!tradingProp) return;
+
+            const prop = tradingProp.prop;
+            
+            if (action === 'buy') {
+                // Check portfolio limit (max 10 contracts)
+                if (userPortfolio.length >= 10) {
+                    alert('Portfolio limit reached! Maximum 10 contracts allowed.');
+                    return;
+                }
+                
+                // Check if user already owns this contract
+                const existingPosition = userPortfolio.find(p => 
+                    p.prop_id === prop.id && p.trade_type === tradingProp.type
+                );
+                
+                if (existingPosition) {
+                    alert('You already own 1 contract for this player. Maximum 1 contract per player allowed.');
+                    return;
+                }
+                
+                if (orderType === 'market') {
+                    // Market buy - execute immediately
+                    const marketPrice = getMarketPrice(prop.id);
+                    const totalCost = marketPrice;
+                    
+                    if (currentUser.balance < totalCost) {
+                        alert('Insufficient balance!');
+                        return;
+                    }
+                    
+                    // Check if contracts are available
+                    if (prop.available_contracts <= 0) {
+                        alert('No contracts available for this player!');
+                        return;
+                    }
+                    
+                    currentUser.balance -= totalCost;
+                    prop.available_contracts -= 1;
+                    
+                    // Add to portfolio
+                    userPortfolio.push({
+                        prop_id: prop.id,
+                        player_name: prop.player_name,
+                        prop_type: prop.prop_type,
+                        trade_type: tradingProp.type,
+                        quantity: 1,
+                        avg_price: marketPrice,
+                        live_price: marketPrice,
+                        game_status: prop.status_badge
+                    });
+                    
+                    // Record trade
+                    recordTrade('BUY', prop, marketPrice, 'market');
+                    
+                } else if (orderType === 'limit') {
+                    // Limit buy order
+                    const limitPrice = parseFloat(document.getElementById('buy-limit-price').value);
+                    
+                    if (!limitPrice || limitPrice <= 0 || limitPrice > 99.99) {
+                        alert('Please enter a valid price between $0.01 and $99.99');
+                        return;
+                    }
+                    
+                    const marketPrice = getMarketPrice(prop.id);
+                    
+                    // If buy price is above market price, execute immediately at market price
+                    if (limitPrice >= marketPrice) {
+                        if (currentUser.balance < marketPrice) {
+                            alert('Insufficient balance!');
+                            return;
+                        }
+                        
+                        if (prop.available_contracts <= 0) {
+                            alert('No contracts available for this player!');
+                            return;
+                        }
+                        
+                        // Execute immediately at market price
+                        currentUser.balance -= marketPrice;
+                        prop.available_contracts -= 1;
+                        
+                        // Add to portfolio
+                        userPortfolio.push({
+                            prop_id: prop.id,
+                            player_name: prop.player_name,
+                            prop_type: prop.prop_type,
+                            trade_type: tradingProp.type,
+                            quantity: 1,
+                            avg_price: marketPrice,
+                            live_price: marketPrice,
+                            game_status: prop.status_badge
+                        });
+                        
+                        // Record trade
+                        recordTrade('BUY', prop, marketPrice, 'limit_auto_execute');
+                        
+                        alert(`Buy order executed immediately at market price $${marketPrice.toFixed(2)} (your limit $${limitPrice.toFixed(2)} was above market)`);
+                    } else {
+                        // Place pending buy order below market
+                        if (currentUser.balance < limitPrice) {
+                            alert('Insufficient balance for limit order!');
+                            return;
+                        }
+                        
+                        // Create pending buy order
+                        const order = {
+                            id: Date.now(),
+                            prop_id: prop.id,
+                            player_name: prop.player_name,
+                            prop_type: prop.prop_type,
+                            trade_type: tradingProp.type,
+                            side: 'buy',
+                            price: limitPrice,
+                            quantity: 1,
+                            timestamp: new Date().toLocaleString(),
+                            status: 'pending'
+                        };
+                        
+                        pendingOrders.push(order);
+                        currentUser.balance -= limitPrice; // Reserve the funds
+                        
+                        alert(`Buy order placed at $${limitPrice.toFixed(2)}. Funds reserved.`);
+                    }
+                }
+                
+            } else if (action === 'sell') {
+                if (orderType === 'market') {
+                    // Market sell - execute immediately
+                    const position = userPortfolio.find(p => 
+                        p.prop_id === prop.id && p.trade_type === tradingProp.type
+                    );
+                    
+                    if (!position) {
+                        alert('You don\'t own this contract!');
+                        return;
+                    }
+                    
+                    const marketPrice = getMarketPrice(prop.id);
+                    currentUser.balance += marketPrice;
+                    prop.available_contracts += 1;
+                    
+                    // Remove from portfolio
+                    userPortfolio = userPortfolio.filter(p => p !== position);
+                    
+                    // Record trade
+                    recordTrade('SELL', prop, marketPrice, 'market');
+                    
+                } else if (orderType === 'limit') {
+                    // Limit sell order
+                    const limitPrice = parseFloat(document.getElementById('sell-limit-price').value);
+                    
+                    if (!limitPrice || limitPrice <= 0 || limitPrice > 99.99) {
+                        alert('Please enter a valid price between $0.01 and $99.99');
+                        return;
+                    }
+                    
+                    const position = userPortfolio.find(p => 
+                        p.prop_id === prop.id && p.trade_type === tradingProp.type
+                    );
+                    
+                    if (!position) {
+                        alert('You don\'t own this contract!');
+                        return;
+                    }
+                    
+                    const marketPrice = getMarketPrice(prop.id);
+                    
+                    // If sell price is below market price, execute immediately at market price
+                    if (limitPrice <= marketPrice) {
+                        // Execute immediately at market price
+                        currentUser.balance += marketPrice;
+                        prop.available_contracts += 1;
+                        
+                        // Remove from portfolio
+                        userPortfolio = userPortfolio.filter(p => p !== position);
+                        
+                        // Record trade
+                        recordTrade('SELL', prop, marketPrice, 'limit_auto_execute');
+                        
+                        alert(`Sell order executed immediately at market price $${marketPrice.toFixed(2)} (your limit $${limitPrice.toFixed(2)} was below market)`);
+                    } else {
+                        // Place pending sell order above market
+                        const order = {
+                            id: Date.now(),
+                            prop_id: prop.id,
+                            player_name: prop.player_name,
+                            prop_type: prop.prop_type,
+                            trade_type: tradingProp.type,
+                            side: 'sell',
+                            price: limitPrice,
+                            quantity: 1,
+                            timestamp: new Date().toLocaleString(),
+                            status: 'pending'
+                        };
+                        
+                        pendingOrders.push(order);
+                        
+                        alert(`Sell order placed at $${limitPrice.toFixed(2)}.`);
+                    }
+                }
+            }
+            
+            // Refresh displays
+            loadMarketData();
+            loadPortfolio();
+            loadPendingOrders();
+            loadTradeHistory();
+            
+            if (orderType === 'market') {
+                bootstrap.Modal.getInstance(document.getElementById('tradingModal')).hide();
+            }
+        }
+
+        // Helper functions for new trading system
+        function getMarketPrice(propId) {
+            const prop = mockProps.find(p => p.id === propId);
+            if (!prop) return prop.live_contract_price;
+            
+            // Get all pending orders for this prop
+            const buyOrders = pendingOrders.filter(o => o.prop_id === propId && o.side === 'buy' && o.status === 'pending');
+            const sellOrders = pendingOrders.filter(o => o.prop_id === propId && o.side === 'sell' && o.status === 'pending');
+            
+            if (buyOrders.length > 0 && sellOrders.length > 0) {
+                // Calculate average of buy and sell prices
+                const avgBuyPrice = buyOrders.reduce((sum, order) => sum + order.price, 0) / buyOrders.length;
+                const avgSellPrice = sellOrders.reduce((sum, order) => sum + order.price, 0) / sellOrders.length;
+                return Math.round((avgBuyPrice + avgSellPrice) / 2 * 100) / 100;
+            }
+            
+            // Fallback to implied prop price
+            return prop.live_contract_price;
+        }
+
+        function recordTrade(action, prop, price, orderType) {
+            tradeHistory.unshift({
+                player_name: prop.player_name,
+                prop_type: prop.prop_type,
+                trade_type: prop.trade_type || 'over',
+                action: action,
+                quantity: 1,
+                price: price,
+                orderType: orderType,
+                timestamp: new Date().toLocaleString()
+            });
+            
+            // Keep only last 50 trades
+            if (tradeHistory.length > 50) {
+                tradeHistory = tradeHistory.slice(0, 50);
+            }
+        }
+
+        function loadPendingOrders() {
+            displayPendingOrders(pendingOrders);
+        }
+
+        function displayPendingOrders(orders) {
+            const container = document.getElementById('pending-orders');
+            container.innerHTML = '';
+
+            if (orders.length === 0) {
+                container.innerHTML = '<p class="text-muted">No pending orders</p>';
+                return;
+            }
+
+            orders.forEach(order => {
+                const div = document.createElement('div');
+                div.className = 'pending-order-item';
+                div.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>${order.player_name}</strong><br>
+                            <small>${order.prop_type.toUpperCase()} ${order.side.toUpperCase()} @ $${order.price.toFixed(2)}</small>
+                        </div>
+                        <div class="text-end">
+                            <small class="text-muted">${order.timestamp}</small><br>
+                            <button class="btn btn-sm btn-outline-danger" onclick="cancelOrder(${order.id})">
+                                <i class="fas fa-times"></i> Cancel
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function cancelOrder(orderId) {
+            const order = pendingOrders.find(o => o.id === orderId);
+            if (!order) return;
+            
+            if (order.side === 'buy') {
+                // Refund the reserved funds
+                currentUser.balance += order.price;
+            }
+            
+            // Remove from pending orders
+            pendingOrders = pendingOrders.filter(o => o.id !== orderId);
+            
+            alert(`Order cancelled. ${order.side === 'buy' ? 'Funds refunded.' : ''}`);
+            
+            loadPendingOrders();
+            loadPortfolio();
+        }
+
+        // Portfolio
+        async function loadPortfolio() {
+            document.getElementById('user-balance').textContent = `${currentUser.balance.toFixed(2)}`;
+            displayPortfolio(userPortfolio);
+        }
+
+        function displayPortfolio(portfolio) {
+            const container = document.getElementById('portfolio-items');
+            container.innerHTML = '';
+
+            if (portfolio.length === 0) {
+                container.innerHTML = '<p class="text-muted">No active positions</p>';
+                return;
+            }
+
+            portfolio.forEach(item => {
+                const profitLoss = (item.live_price - item.avg_price) * item.quantity;
+                const profitLossClass = profitLoss >= 0 ? 'text-success' : 'text-danger';
+                const profitLossIcon = profitLoss >= 0 ? 'fa-arrow-up' : 'fa-arrow-down';
+
+                const div = document.createElement('div');
+                div.className = 'portfolio-item';
+                div.innerHTML = `
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <strong>${item.player_name}</strong><br>
+                            <small>${item.prop_type.toUpperCase()} ${item.trade_type.toUpperCase()}</small>
+                        </div>
+                        <div class="text-end">
+                            <div>Qty: 1</div>
+                            <div class="live-price">${item.live_price.toFixed(2)}</div>
+                            <div class="${profitLossClass}">
+                                <i class="fas ${profitLossIcon}"></i> ${Math.abs(profitLoss).toFixed(2)}
+                            </div>
+                        </div>
+                    </div>
+                    ${item.game_status === 'LIVE' ? `
+                        <small class="text-danger">LIVE</small>
+                    ` : ''}
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Trade History
+        async function loadTradeHistory() {
+            displayTradeHistory(tradeHistory);
+        }
+
+        function displayTradeHistory(trades) {
+            const container = document.getElementById('trade-history');
+            container.innerHTML = '';
+
+            if (trades.length === 0) {
+                container.innerHTML = '<p class="text-muted">No trades yet</p>';
+                return;
+            }
+
+            trades.forEach(trade => {
+                const div = document.createElement('div');
+                div.className = `trade-item ${trade.action === 'SELL' ? 'trade-sell' : ''}`;
+                div.innerHTML = `
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <strong>${trade.player_name}</strong><br>
+                            <small>${trade.prop_type.toUpperCase()} ${trade.trade_type.toUpperCase()}</small>
+                        </div>
+                        <div class="text-end">
+                            <div class="${trade.action === 'BUY' ? 'text-success' : 'text-danger'}">
+                                ${trade.action} 1
+                            </div>
+                            <small>${trade.price.toFixed(2)}</small>
+                        </div>
+                    </div>
+                    <small class="text-muted">${trade.timestamp}</small>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Live Updates (Demo)
+        function startLiveUpdates() {
+            if (liveUpdateInterval) {
+                clearInterval(liveUpdateInterval);
+            }
+            
+            liveUpdateInterval = setInterval(() => {
+                // Simulate price changes
+                mockProps.forEach(prop => {
+                    const change = (Math.random() - 0.5) * 2; // -1 to +1
+                    prop.live_contract_price = Math.max(1, Math.min(99, prop.live_contract_price + change));
+                });
+                
+                // Update portfolio live prices
+                userPortfolio.forEach(position => {
+                    const prop = mockProps.find(p => p.id === position.prop_id);
+                    if (prop) {
+                        position.live_price = prop.live_contract_price;
+                    }
+                });
+                
+                loadMarketData();
+                loadPortfolio();
+            }, 10000); // Update every 10 seconds
+        }
+
+        // Cash Out Contract
+        function cashOutContract() {
+            const tradingProp = window.currentTradingProp;
+            if (!tradingProp) return;
+
+            const prop = tradingProp.prop;
+            const position = userPortfolio.find(p => 
+                p.prop_id === prop.id && p.trade_type === tradingProp.type
+            );
+
+            if (!position) {
+                alert('You don\'t own this contract!');
+                return;
+            }
+
+            const marketPrice = getMarketPrice(prop.id);
+            const profitLoss = (marketPrice - position.avg_price) * position.quantity;
+            const profitLossClass = profitLoss >= 0 ? 'text-success' : 'text-danger';
+            const profitLossIcon = profitLoss >= 0 ? 'fa-arrow-up' : 'fa-arrow-down';
+
+            const cashOutAmount = marketPrice * position.quantity;
+            currentUser.balance += cashOutAmount;
+
+            // Remove from portfolio
+            userPortfolio = userPortfolio.filter(p => p !== position);
+
+            // Record trade
+            recordTrade('CASH_OUT', prop, marketPrice, 'cash_out');
+
+            alert(`Cash out successful! You received $${cashOutAmount.toFixed(2)}. Your profit/loss was $${profitLoss.toFixed(2)}.`);
+            loadPortfolio();
+            loadMarketData();
+            loadPendingOrders();
+            loadTradeHistory();
+        }
+
+
+        // Filter event listeners
+        document.getElementById('sport-filter').addEventListener('change', loadMarketData);
+        document.getElementById('difficulty-filter').addEventListener('change', loadMarketData);
+        document.getElementById('status-filter').addEventListener('change', loadMarketData);
+
+        // Initialize
+        window.addEventListener('load', () => {
+            // Auto-start in demo mode
+            showDashboard();
+        });
+    </script>
+</body>
+</html>

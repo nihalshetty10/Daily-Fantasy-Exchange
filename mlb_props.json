@@ -1,0 +1,7576 @@
+{
+  "generated_at": "2025-08-13T00:27:55.741769",
+  "games": [
+    {
+      "game_id": 776759,
+      "game_date": "2025-08-13T18:10:00Z",
+      "status": "Preview",
+      "home_team": {
+        "id": 118,
+        "name": "Kansas City Royals",
+        "abbreviation": "KC"
+      },
+      "away_team": {
+        "id": 120,
+        "name": "Washington Nationals",
+        "abbreviation": "WSH"
+      }
+    },
+    {
+      "game_id": 776754,
+      "game_date": "2025-08-13T18:10:00Z",
+      "status": "Preview",
+      "home_team": {
+        "id": 145,
+        "name": "Chicago White Sox",
+        "abbreviation": "CWS"
+      },
+      "away_team": {
+        "id": 116,
+        "name": "Detroit Tigers",
+        "abbreviation": "DET"
+      }
+    },
+    {
+      "game_id": 776755,
+      "game_date": "2025-08-13T18:10:00Z",
+      "status": "Preview",
+      "home_team": {
+        "id": 158,
+        "name": "Milwaukee Brewers",
+        "abbreviation": "MIL"
+      },
+      "away_team": {
+        "id": 134,
+        "name": "Pittsburgh Pirates",
+        "abbreviation": "PIT"
+      }
+    },
+    {
+      "game_id": 776758,
+      "game_date": "2025-08-13T18:15:00Z",
+      "status": "Preview",
+      "home_team": {
+        "id": 138,
+        "name": "St. Louis Cardinals",
+        "abbreviation": "STL"
+      },
+      "away_team": {
+        "id": 115,
+        "name": "Colorado Rockies",
+        "abbreviation": "COL"
+      }
+    },
+    {
+      "game_id": 776746,
+      "game_date": "2025-08-13T18:35:00Z",
+      "status": "Preview",
+      "home_team": {
+        "id": 140,
+        "name": "Texas Rangers",
+        "abbreviation": "TEX"
+      },
+      "away_team": {
+        "id": 109,
+        "name": "Arizona Diamondbacks",
+        "abbreviation": "AZ"
+      }
+    },
+    {
+      "game_id": 776749,
+      "game_date": "2025-08-13T19:45:00Z",
+      "status": "Preview",
+      "home_team": {
+        "id": 137,
+        "name": "San Francisco Giants",
+        "abbreviation": "SF"
+      },
+      "away_team": {
+        "id": 135,
+        "name": "San Diego Padres",
+        "abbreviation": "SD"
+      }
+    },
+    {
+      "game_id": 776765,
+      "game_date": "2025-08-13T21:10:00Z",
+      "status": "Preview",
+      "home_team": {
+        "id": 113,
+        "name": "Cincinnati Reds",
+        "abbreviation": "CIN"
+      },
+      "away_team": {
+        "id": 143,
+        "name": "Philadelphia Phillies",
+        "abbreviation": "PHI"
+      }
+    },
+    {
+      "game_id": 776761,
+      "game_date": "2025-08-13T22:35:00Z",
+      "status": "Preview",
+      "home_team": {
+        "id": 110,
+        "name": "Baltimore Orioles",
+        "abbreviation": "BAL"
+      },
+      "away_team": {
+        "id": 136,
+        "name": "Seattle Mariners",
+        "abbreviation": "SEA"
+      }
+    },
+    {
+      "game_id": 776766,
+      "game_date": "2025-08-13T22:40:00Z",
+      "status": "Preview",
+      "home_team": {
+        "id": 114,
+        "name": "Cleveland Guardians",
+        "abbreviation": "CLE"
+      },
+      "away_team": {
+        "id": 146,
+        "name": "Miami Marlins",
+        "abbreviation": "MIA"
+      }
+    },
+    {
+      "game_id": 776760,
+      "game_date": "2025-08-13T23:05:00Z",
+      "status": "Preview",
+      "home_team": {
+        "id": 147,
+        "name": "New York Yankees",
+        "abbreviation": "NYY"
+      },
+      "away_team": {
+        "id": 142,
+        "name": "Minnesota Twins",
+        "abbreviation": "MIN"
+      }
+    },
+    {
+      "game_id": 776757,
+      "game_date": "2025-08-13T23:07:00Z",
+      "status": "Preview",
+      "home_team": {
+        "id": 141,
+        "name": "Toronto Blue Jays",
+        "abbreviation": "TOR"
+      },
+      "away_team": {
+        "id": 112,
+        "name": "Chicago Cubs",
+        "abbreviation": "CHC"
+      }
+    },
+    {
+      "game_id": 776753,
+      "game_date": "2025-08-13T23:10:00Z",
+      "status": "Preview",
+      "home_team": {
+        "id": 117,
+        "name": "Houston Astros",
+        "abbreviation": "HOU"
+      },
+      "away_team": {
+        "id": 111,
+        "name": "Boston Red Sox",
+        "abbreviation": "BOS"
+      }
+    },
+    {
+      "game_id": 776756,
+      "game_date": "2025-08-13T23:10:00Z",
+      "status": "Preview",
+      "home_team": {
+        "id": 121,
+        "name": "New York Mets",
+        "abbreviation": "NYM"
+      },
+      "away_team": {
+        "id": 144,
+        "name": "Atlanta Braves",
+        "abbreviation": "ATL"
+      }
+    },
+    {
+      "game_id": 776752,
+      "game_date": "2025-08-14T01:38:00Z",
+      "status": "Preview",
+      "home_team": {
+        "id": 108,
+        "name": "Los Angeles Angels",
+        "abbreviation": "LAA"
+      },
+      "away_team": {
+        "id": 119,
+        "name": "Los Angeles Dodgers",
+        "abbreviation": "LAD"
+      }
+    },
+    {
+      "game_id": 776751,
+      "game_date": "2025-08-14T02:05:00Z",
+      "status": "Preview",
+      "home_team": {
+        "id": 133,
+        "name": "Athletics",
+        "abbreviation": "ATH"
+      },
+      "away_team": {
+        "id": 139,
+        "name": "Tampa Bay Rays",
+        "abbreviation": "TB"
+      }
+    }
+  ],
+  "props": {
+    "624428": {
+      "player_info": {
+        "player_id": 624428,
+        "name": "Adam Frazier",
+        "team_id": 118,
+        "team_name": "Kansas City Royals",
+        "position": "2B",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 0.88,
+        "rbis": 0.39999999999999997,
+        "runs": 0.52,
+        "total_bases": 1.12,
+        "strikeouts": 0.64,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "easy",
+          "stat": "Runs",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "Runs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "RBIs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Washington Nationals"
+        }
+      ]
+    },
+    "672582": {
+      "player_info": {
+        "player_id": 672582,
+        "name": "Angel Zerpa",
+        "team_id": 118,
+        "team_name": "Kansas City Royals",
+        "position": "P",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 1.0,
+        "rbis": 0.0,
+        "runs": 0.44,
+        "total_bases": 1.6400000000000001,
+        "strikeouts": 0.96,
+        "pitches": 0.0,
+        "era": 26.64
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "easy",
+          "stat": "ERA",
+          "line": 4.5,
+          "direction": "under",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "Strikeouts",
+          "line": 8.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Washington Nationals"
+        }
+      ]
+    },
+    "663559": {
+      "player_info": {
+        "player_id": 663559,
+        "name": "Bailey Falter",
+        "team_id": 118,
+        "team_name": "Kansas City Royals",
+        "position": "P",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 4.800000000000001,
+        "rbis": 0.0,
+        "runs": 2.8,
+        "total_bases": 9.399999999999999,
+        "strikeouts": 2.76,
+        "pitches": 0.0,
+        "era": 5.9856147382029725
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "easy",
+          "stat": "ERA",
+          "line": 4.5,
+          "direction": "under",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "Pitches",
+          "line": 105.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Washington Nationals"
+        }
+      ]
+    },
+    "677951": {
+      "player_info": {
+        "player_id": 677951,
+        "name": "Bobby Witt Jr.",
+        "team_id": 118,
+        "team_name": "Kansas City Royals",
+        "position": "SS",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 0.92,
+        "rbis": 0.7999999999999999,
+        "runs": 0.76,
+        "total_bases": 2.08,
+        "strikeouts": 0.8400000000000001,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.55,
+          "price": 55,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "easy",
+          "stat": "Hits",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.8,
+          "price": 80,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "RBIs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "Hits",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "vs Washington Nationals"
+        }
+      ]
+    },
+    "608032": {
+      "player_info": {
+        "player_id": 608032,
+        "name": "Carlos Est\u00e9vez",
+        "team_id": 118,
+        "team_name": "Kansas City Royals",
+        "position": "P",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 0.84,
+        "rbis": 0.0,
+        "runs": 0.16,
+        "total_bases": 1.1199999999999999,
+        "strikeouts": 0.6000000000000001,
+        "pitches": 0.0,
+        "era": 3.96
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "easy",
+          "stat": "ERA",
+          "line": 4.5,
+          "direction": "under",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "Strikeouts",
+          "line": 8.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Washington Nationals"
+        }
+      ]
+    },
+    "663738": {
+      "player_info": {
+        "player_id": 663738,
+        "name": "Daniel Lynch IV",
+        "team_id": 118,
+        "team_name": "Kansas City Royals",
+        "position": "P",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 1.88,
+        "rbis": 0.0,
+        "runs": 0.6799999999999999,
+        "total_bases": 3.1999999999999997,
+        "strikeouts": 1.04,
+        "pitches": 0.0,
+        "era": 4.72909090909091
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "easy",
+          "stat": "ERA",
+          "line": 4.5,
+          "direction": "under",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "ERA",
+          "line": 2.25,
+          "direction": "under",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Washington Nationals"
+        }
+      ]
+    },
+    "670231": {
+      "player_info": {
+        "player_id": 670231,
+        "name": "John Rave",
+        "team_id": 118,
+        "team_name": "Kansas City Royals",
+        "position": "RF",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 0.27999999999999997,
+        "rbis": 0.0,
+        "runs": 0.08,
+        "total_bases": 0.32,
+        "strikeouts": 0.48000000000000004,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "easy",
+          "stat": "Hits",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "Total Bases",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "Hits",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Washington Nationals"
+        }
+      ]
+    },
+    "670167": {
+      "player_info": {
+        "player_id": 670167,
+        "name": "John Schreiber",
+        "team_id": 118,
+        "team_name": "Kansas City Royals",
+        "position": "P",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 0.76,
+        "rbis": 0.0,
+        "runs": 0.48,
+        "total_bases": 1.52,
+        "strikeouts": 0.8,
+        "pitches": 0.0,
+        "era": 14.4
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "easy",
+          "stat": "Pitches",
+          "line": 85.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "Strikeouts",
+          "line": 8.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Washington Nationals"
+        }
+      ]
+    },
+    "663697": {
+      "player_info": {
+        "player_id": 663697,
+        "name": "Jonathan India",
+        "team_id": 118,
+        "team_name": "Kansas City Royals",
+        "position": "2B",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 0.64,
+        "rbis": 0.24,
+        "runs": 0.52,
+        "total_bases": 1.1199999999999999,
+        "strikeouts": 0.8800000000000001,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "easy",
+          "stat": "Runs",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "Total Bases",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "Hits",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.1773198703977964,
+          "price": 17,
+          "opponent": "vs Washington Nationals"
+        }
+      ]
+    },
+    "664728": {
+      "player_info": {
+        "player_id": 664728,
+        "name": "Kyle Isbel",
+        "team_id": 118,
+        "team_name": "Kansas City Royals",
+        "position": "CF",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 1.6,
+        "rbis": 0.64,
+        "runs": 0.76,
+        "total_bases": 2.3200000000000003,
+        "strikeouts": 0.48,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.52497918747894,
+          "price": 52,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.55,
+          "price": 55,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "easy",
+          "stat": "Total Bases",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "Runs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "Hits",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "vs Washington Nationals"
+        }
+      ]
+    },
+    "668674": {
+      "player_info": {
+        "player_id": 668674,
+        "name": "Lucas Erceg",
+        "team_id": 118,
+        "team_name": "Kansas City Royals",
+        "position": "P",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 0.7999999999999999,
+        "rbis": 0.0,
+        "runs": 0.2,
+        "total_bases": 0.88,
+        "strikeouts": 0.56,
+        "pitches": 0.0,
+        "era": 1.7999999999999998
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.55,
+          "price": 55,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "easy",
+          "stat": "Strikeouts",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "Pitches",
+          "line": 105.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Washington Nationals"
+        }
+      ]
+    },
+    "571912": {
+      "player_info": {
+        "player_id": 571912,
+        "name": "Luke Maile",
+        "team_id": 118,
+        "team_name": "Kansas City Royals",
+        "position": "C",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 0.68,
+        "rbis": 0.27999999999999997,
+        "runs": 0.48,
+        "total_bases": 1.44,
+        "strikeouts": 0.36000000000000004,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.4850044983805899,
+          "price": 48,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "easy",
+          "stat": "Total Bases",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "Runs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "Hits",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.19086288276988025,
+          "price": 19,
+          "opponent": "vs Washington Nationals"
+        }
+      ]
+    },
+    "672580": {
+      "player_info": {
+        "player_id": 672580,
+        "name": "Maikel Garcia",
+        "team_id": 118,
+        "team_name": "Kansas City Royals",
+        "position": "3B",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 0.8400000000000001,
+        "rbis": 0.52,
+        "runs": 0.48000000000000004,
+        "total_bases": 1.5200000000000002,
+        "strikeouts": 0.44,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.5049998333399999,
+          "price": 50,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "easy",
+          "stat": "Runs",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "Runs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "Hits",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "vs Washington Nationals"
+        }
+      ]
+    },
+    "608379": {
+      "player_info": {
+        "player_id": 608379,
+        "name": "Michael Wacha",
+        "team_id": 118,
+        "team_name": "Kansas City Royals",
+        "position": "P",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 4.960000000000001,
+        "rbis": 0.0,
+        "runs": 2.4800000000000004,
+        "total_bases": 6.720000000000001,
+        "strikeouts": 4.720000000000001,
+        "pitches": 0.0,
+        "era": 4.358049773755657
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "easy",
+          "stat": "ERA",
+          "line": 4.5,
+          "direction": "under",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "ERA",
+          "line": 2.25,
+          "direction": "under",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Washington Nationals"
+        }
+      ]
+    },
+    "573262": {
+      "player_info": {
+        "player_id": 573262,
+        "name": "Mike Yastrzemski",
+        "team_id": 118,
+        "team_name": "Kansas City Royals",
+        "position": "RF",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 0.6,
+        "rbis": 0.7200000000000001,
+        "runs": 0.48,
+        "total_bases": 1.72,
+        "strikeouts": 0.8400000000000002,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.55,
+          "price": 55,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "easy",
+          "stat": "Hits",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "RBIs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "Runs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Washington Nationals"
+        }
+      ]
+    },
+    "679845": {
+      "player_info": {
+        "player_id": 679845,
+        "name": "Nick Loftin",
+        "team_id": 118,
+        "team_name": "Kansas City Royals",
+        "position": "LF",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 0.36,
+        "rbis": 0.12,
+        "runs": 0.04,
+        "total_bases": 0.44,
+        "strikeouts": 0.36,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "easy",
+          "stat": "Hits",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "Runs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "RBIs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Washington Nationals"
+        }
+      ]
+    },
+    "702070": {
+      "player_info": {
+        "player_id": 702070,
+        "name": "Noah Cameron",
+        "team_id": 118,
+        "team_name": "Kansas City Royals",
+        "position": "P",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 4.32,
+        "rbis": 0.0,
+        "runs": 1.6800000000000002,
+        "total_bases": 7.0,
+        "strikeouts": 4.920000000000001,
+        "pitches": 0.0,
+        "era": 3.187662212425954
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.5155794020908391,
+          "price": 51,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "easy",
+          "stat": "ERA",
+          "line": 4.5,
+          "direction": "under",
+          "implied_prob": 0.7879040893899758,
+          "price": 78,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "Pitches",
+          "line": 105.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Washington Nationals"
+        }
+      ]
+    },
+    "545341": {
+      "player_info": {
+        "player_id": 545341,
+        "name": "Randal Grichuk",
+        "team_id": 118,
+        "team_name": "Kansas City Royals",
+        "position": "RF",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 0.32,
+        "rbis": 0.08,
+        "runs": 0.36,
+        "total_bases": 0.4,
+        "strikeouts": 0.8,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "easy",
+          "stat": "Runs",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "Hits",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "Total Bases",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Washington Nationals"
+        }
+      ]
+    },
+    "686701": {
+      "player_info": {
+        "player_id": 686701,
+        "name": "Ryan Bergert",
+        "team_id": 118,
+        "team_name": "Kansas City Royals",
+        "position": "P",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 2.6000000000000005,
+        "rbis": 0.0,
+        "runs": 1.1600000000000001,
+        "total_bases": 4.48,
+        "strikeouts": 3.2399999999999998,
+        "pitches": 0.0,
+        "era": 2.2663516483516486
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.55,
+          "price": 55,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "easy",
+          "stat": "Pitches",
+          "line": 85.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "ERA",
+          "line": 2.25,
+          "direction": "under",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "vs Washington Nationals"
+        }
+      ]
+    },
+    "521692": {
+      "player_info": {
+        "player_id": 521692,
+        "name": "Salvador Perez",
+        "team_id": 118,
+        "team_name": "Kansas City Royals",
+        "position": "C",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 0.9999999999999999,
+        "rbis": 0.32,
+        "runs": 0.56,
+        "total_bases": 2.0,
+        "strikeouts": 0.92,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.55,
+          "price": 55,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "easy",
+          "stat": "Runs",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "Total Bases",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "Runs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15231569061424194,
+          "price": 15,
+          "opponent": "vs Washington Nationals"
+        }
+      ]
+    },
+    "669674": {
+      "player_info": {
+        "player_id": 669674,
+        "name": "Sam Long",
+        "team_id": 118,
+        "team_name": "Kansas City Royals",
+        "position": "P",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 0.76,
+        "rbis": 0.0,
+        "runs": 0.6399999999999999,
+        "total_bases": 1.68,
+        "strikeouts": 1.08,
+        "pitches": 0.0,
+        "era": 5.667272727272727
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "easy",
+          "stat": "Pitches",
+          "line": 85.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "ERA",
+          "line": 2.25,
+          "direction": "under",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Washington Nationals"
+        }
+      ]
+    },
+    "607625": {
+      "player_info": {
+        "player_id": 607625,
+        "name": "Seth Lugo",
+        "team_id": 118,
+        "team_name": "Kansas City Royals",
+        "position": "P",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 4.08,
+        "rbis": 0.0,
+        "runs": 1.4800000000000002,
+        "total_bases": 6.76,
+        "strikeouts": 6.880000000000001,
+        "pitches": 0.0,
+        "era": 2.501252026661863
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.55,
+          "price": 55,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.55,
+          "price": 55,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "easy",
+          "stat": "ERA",
+          "line": 4.5,
+          "direction": "under",
+          "implied_prob": 0.8,
+          "price": 80,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "ERA",
+          "line": 2.25,
+          "direction": "under",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "vs Washington Nationals"
+        }
+      ]
+    },
+    "664199": {
+      "player_info": {
+        "player_id": 664199,
+        "name": "Taylor Clarke",
+        "team_id": 118,
+        "team_name": "Kansas City Royals",
+        "position": "P",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 0.16,
+        "rbis": 0.0,
+        "runs": 0.04,
+        "total_bases": 0.16,
+        "strikeouts": 1.6,
+        "pitches": 0.0,
+        "era": 0.36
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.55,
+          "price": 55,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "easy",
+          "stat": "Pitches",
+          "line": 85.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "Pitches",
+          "line": 105.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Washington Nationals"
+        }
+      ]
+    },
+    "686475": {
+      "player_info": {
+        "player_id": 686475,
+        "name": "Tyler Tolbert",
+        "team_id": 118,
+        "team_name": "Kansas City Royals",
+        "position": "2B",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 0.43999999999999995,
+        "rbis": 0.5599999999999999,
+        "runs": 0.39999999999999997,
+        "total_bases": 1.1600000000000001,
+        "strikeouts": 0.48000000000000004,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "easy",
+          "stat": "Hits",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "Runs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "Total Bases",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "vs Washington Nationals"
+        }
+      ]
+    },
+    "686469": {
+      "player_info": {
+        "player_id": 686469,
+        "name": "Vinnie Pasquantino",
+        "team_id": 118,
+        "team_name": "Kansas City Royals",
+        "position": "1B",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 0.6,
+        "rbis": 0.76,
+        "runs": 0.43999999999999995,
+        "total_bases": 1.36,
+        "strikeouts": 0.36,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.4650570548417856,
+          "price": 46,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "easy",
+          "stat": "Runs",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "Total Bases",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "vs Washington Nationals"
+        },
+        {
+          "type": "hard",
+          "stat": "Runs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Washington Nationals"
+        }
+      ]
+    },
+    "695418": {
+      "player_info": {
+        "player_id": 695418,
+        "name": "Brad Lord",
+        "team_id": 120,
+        "team_name": "Washington Nationals",
+        "position": "P",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 1.72,
+        "rbis": 0.0,
+        "runs": 0.88,
+        "total_bases": 2.4,
+        "strikeouts": 1.6400000000000001,
+        "pitches": 0.0,
+        "era": 5.697731092436974
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "easy",
+          "stat": "Pitches",
+          "line": 85.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "ERA",
+          "line": 2.25,
+          "direction": "under",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Kansas City Royals"
+        }
+      ]
+    },
+    "691781": {
+      "player_info": {
+        "player_id": 691781,
+        "name": "Brady House",
+        "team_id": 120,
+        "team_name": "Washington Nationals",
+        "position": "3B",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 0.8,
+        "rbis": 0.64,
+        "runs": 0.4,
+        "total_bases": 0.8400000000000001,
+        "strikeouts": 0.92,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "easy",
+          "stat": "Runs",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "RBIs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.1773198703977964,
+          "price": 17,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "Runs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Kansas City Royals"
+        }
+      ]
+    },
+    "682928": {
+      "player_info": {
+        "player_id": 682928,
+        "name": "CJ Abrams",
+        "team_id": 120,
+        "team_name": "Washington Nationals",
+        "position": "SS",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 0.48000000000000004,
+        "rbis": 0.24000000000000002,
+        "runs": 0.27999999999999997,
+        "total_bases": 0.68,
+        "strikeouts": 0.6,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "easy",
+          "stat": "Runs",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "RBIs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "Hits",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Kansas City Royals"
+        }
+      ]
+    },
+    "676917": {
+      "player_info": {
+        "player_id": 676917,
+        "name": "Cade Cavalli",
+        "team_id": 120,
+        "team_name": "Washington Nationals",
+        "position": "P",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 4.818181818181818,
+        "rbis": 0.0,
+        "runs": 1.8181818181818181,
+        "total_bases": 6.181818181818182,
+        "strikeouts": 4.636363636363636,
+        "pitches": 0.0,
+        "era": 3.2727272727272725
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.4943184263741699,
+          "price": 49,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "easy",
+          "stat": "Strikeouts",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.7570113728228819,
+          "price": 75,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "Strikeouts",
+          "line": 8.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Kansas City Royals"
+        }
+      ]
+    },
+    "690925": {
+      "player_info": {
+        "player_id": 690925,
+        "name": "Clayton Beeter",
+        "team_id": 120,
+        "team_name": "Washington Nationals",
+        "position": "P",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 1.666666666666667,
+        "rbis": 0.0,
+        "runs": 1.761904761904762,
+        "total_bases": 4.095238095238097,
+        "strikeouts": 1.0000000000000002,
+        "pitches": 0.0,
+        "era": 11.357142857142858
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "easy",
+          "stat": "Pitches",
+          "line": 85.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "ERA",
+          "line": 2.25,
+          "direction": "under",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Kansas City Royals"
+        }
+      ]
+    },
+    "669371": {
+      "player_info": {
+        "player_id": 669371,
+        "name": "Cole Henry",
+        "team_id": 120,
+        "team_name": "Washington Nationals",
+        "position": "P",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 1.0,
+        "rbis": 0.0,
+        "runs": 0.16,
+        "total_bases": 1.24,
+        "strikeouts": 0.8400000000000001,
+        "pitches": 0.0,
+        "era": 9.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "easy",
+          "stat": "Strikeouts",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "ERA",
+          "line": 2.25,
+          "direction": "under",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Kansas City Royals"
+        }
+      ]
+    },
+    "695734": {
+      "player_info": {
+        "player_id": 695734,
+        "name": "Daylen Lile",
+        "team_id": 120,
+        "team_name": "Washington Nationals",
+        "position": "RF",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 1.32,
+        "rbis": 0.52,
+        "runs": 0.72,
+        "total_bases": 2.12,
+        "strikeouts": 1.08,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45512110762641994,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.55,
+          "price": 55,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "easy",
+          "stat": "Total Bases",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "Hits",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "Total Bases",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "@ Kansas City Royals"
+        }
+      ]
+    },
+    "686452": {
+      "player_info": {
+        "player_id": 686452,
+        "name": "Drew Millas",
+        "team_id": 120,
+        "team_name": "Washington Nationals",
+        "position": "C",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 0.84,
+        "rbis": 0.4,
+        "runs": 0.24,
+        "total_bases": 0.92,
+        "strikeouts": 0.24000000000000002,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "easy",
+          "stat": "Runs",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "Total Bases",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "Hits",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "@ Kansas City Royals"
+        }
+      ]
+    },
+    "671131": {
+      "player_info": {
+        "player_id": 671131,
+        "name": "Jackson Rutledge",
+        "team_id": 120,
+        "team_name": "Washington Nationals",
+        "position": "P",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 1.6400000000000001,
+        "rbis": 0.0,
+        "runs": 0.6,
+        "total_bases": 2.52,
+        "strikeouts": 1.12,
+        "pitches": 0.0,
+        "era": 16.919999999999998
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "easy",
+          "stat": "Strikeouts",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "Pitches",
+          "line": 105.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Kansas City Royals"
+        }
+      ]
+    },
+    "696285": {
+      "player_info": {
+        "player_id": 696285,
+        "name": "Jacob Young",
+        "team_id": 120,
+        "team_name": "Washington Nationals",
+        "position": "CF",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 0.36,
+        "rbis": 0.16,
+        "runs": 0.2,
+        "total_bases": 0.36,
+        "strikeouts": 0.48,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "easy",
+          "stat": "Runs",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "Total Bases",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "Runs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Kansas City Royals"
+        }
+      ]
+    },
+    "663623": {
+      "player_info": {
+        "player_id": 663623,
+        "name": "Jake Irvin",
+        "team_id": 120,
+        "team_name": "Washington Nationals",
+        "position": "P",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 5.920000000000001,
+        "rbis": 0.0,
+        "runs": 4.0,
+        "total_bases": 12.32,
+        "strikeouts": 4.64,
+        "pitches": 0.0,
+        "era": 6.942760299241649
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "easy",
+          "stat": "Pitches",
+          "line": 85.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "ERA",
+          "line": 2.25,
+          "direction": "under",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Kansas City Royals"
+        }
+      ]
+    },
+    "695578": {
+      "player_info": {
+        "player_id": 695578,
+        "name": "James Wood",
+        "team_id": 120,
+        "team_name": "Washington Nationals",
+        "position": "LF",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 0.48000000000000004,
+        "rbis": 0.27999999999999997,
+        "runs": 0.36,
+        "total_bases": 0.8,
+        "strikeouts": 1.32,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "easy",
+          "stat": "Runs",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "RBIs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "Hits",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Kansas City Royals"
+        }
+      ]
+    },
+    "678606": {
+      "player_info": {
+        "player_id": 678606,
+        "name": "Jose A. Ferrer",
+        "team_id": 120,
+        "team_name": "Washington Nationals",
+        "position": "P",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 1.2,
+        "rbis": 0.0,
+        "runs": 0.24,
+        "total_bases": 1.4000000000000001,
+        "strikeouts": 0.56,
+        "pitches": 0.0,
+        "era": 15.120000000000001
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "easy",
+          "stat": "Strikeouts",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "ERA",
+          "line": 2.25,
+          "direction": "under",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Kansas City Royals"
+        }
+      ]
+    },
+    "677588": {
+      "player_info": {
+        "player_id": 677588,
+        "name": "Jos\u00e9 Tena",
+        "team_id": 120,
+        "team_name": "Washington Nationals",
+        "position": "3B",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 0.56,
+        "rbis": 0.0,
+        "runs": 0.27999999999999997,
+        "total_bases": 0.8,
+        "strikeouts": 0.8,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "easy",
+          "stat": "Hits",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "Hits",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15231569061424194,
+          "price": 15,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "RBIs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Kansas City Royals"
+        }
+      ]
+    },
+    "605137": {
+      "player_info": {
+        "player_id": 605137,
+        "name": "Josh Bell",
+        "team_id": 120,
+        "team_name": "Washington Nationals",
+        "position": "1B",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 0.88,
+        "rbis": 0.12,
+        "runs": 0.31999999999999995,
+        "total_bases": 1.2,
+        "strikeouts": 0.56,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "easy",
+          "stat": "Total Bases",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "RBIs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "Hits",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "@ Kansas City Royals"
+        }
+      ]
+    },
+    "663455": {
+      "player_info": {
+        "player_id": 663455,
+        "name": "Konnor Pilkington",
+        "team_id": 120,
+        "team_name": "Washington Nationals",
+        "position": "P",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 0.4,
+        "rbis": 0.0,
+        "runs": 0.2,
+        "total_bases": 0.6799999999999999,
+        "strikeouts": 1.2,
+        "pitches": 0.0,
+        "era": 7.527272727272727
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "easy",
+          "stat": "Pitches",
+          "line": 85.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "Strikeouts",
+          "line": 8.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Kansas City Royals"
+        }
+      ]
+    },
+    "671277": {
+      "player_info": {
+        "player_id": 671277,
+        "name": "Luis Garc\u00eda Jr.",
+        "team_id": 120,
+        "team_name": "Washington Nationals",
+        "position": "2B",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 0.8400000000000001,
+        "rbis": 0.64,
+        "runs": 0.4,
+        "total_bases": 1.52,
+        "strikeouts": 0.9199999999999999,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.5049998333399998,
+          "price": 50,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "easy",
+          "stat": "Hits",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.8,
+          "price": 80,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "RBIs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.1773198703977964,
+          "price": 17,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "Total Bases",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "@ Kansas City Royals"
+        }
+      ]
+    },
+    "669022": {
+      "player_info": {
+        "player_id": 669022,
+        "name": "MacKenzie Gore",
+        "team_id": 120,
+        "team_name": "Washington Nationals",
+        "position": "P",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 6.160000000000001,
+        "rbis": 0.0,
+        "runs": 3.0799999999999996,
+        "total_bases": 9.36,
+        "strikeouts": 4.5600000000000005,
+        "pitches": 0.0,
+        "era": 6.061256625727214
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "easy",
+          "stat": "Strikeouts",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "Pitches",
+          "line": 105.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Kansas City Royals"
+        }
+      ]
+    },
+    "680730": {
+      "player_info": {
+        "player_id": 680730,
+        "name": "Mitchell Parker",
+        "team_id": 120,
+        "team_name": "Washington Nationals",
+        "position": "P",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 6.760000000000002,
+        "rbis": 0.0,
+        "runs": 3.8000000000000007,
+        "total_bases": 12.12,
+        "strikeouts": 3.8000000000000003,
+        "pitches": 0.0,
+        "era": 5.663402714932126
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "easy",
+          "stat": "Strikeouts",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "Pitches",
+          "line": 105.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Kansas City Royals"
+        }
+      ]
+    },
+    "663993": {
+      "player_info": {
+        "player_id": 663993,
+        "name": "Nathaniel Lowe",
+        "team_id": 120,
+        "team_name": "Washington Nationals",
+        "position": "1B",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 0.08,
+        "rbis": 0.16,
+        "runs": 0.0,
+        "total_bases": 0.12,
+        "strikeouts": 0.7200000000000001,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "easy",
+          "stat": "Runs",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "Runs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "Hits",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Kansas City Royals"
+        }
+      ]
+    },
+    "687377": {
+      "player_info": {
+        "player_id": 687377,
+        "name": "Orlando Ribalta",
+        "team_id": 120,
+        "team_name": "Washington Nationals",
+        "position": "P",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 1.08,
+        "rbis": 0.0,
+        "runs": 1.2400000000000002,
+        "total_bases": 2.3600000000000003,
+        "strikeouts": 1.3599999999999999,
+        "pitches": 0.0,
+        "era": 9.36
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "easy",
+          "stat": "Strikeouts",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "ERA",
+          "line": 2.25,
+          "direction": "under",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Kansas City Royals"
+        }
+      ]
+    },
+    "676571": {
+      "player_info": {
+        "player_id": 676571,
+        "name": "PJ Poulin",
+        "team_id": 120,
+        "team_name": "Washington Nationals",
+        "position": "P",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 1.2222222222222223,
+        "rbis": 0.0,
+        "runs": 0.2777777777777778,
+        "total_bases": 2.0555555555555554,
+        "strikeouts": 1.0555555555555556,
+        "pitches": 0.0,
+        "era": 12.5
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "easy",
+          "stat": "Pitches",
+          "line": 85.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "Strikeouts",
+          "line": 8.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Kansas City Royals"
+        }
+      ]
+    },
+    "657557": {
+      "player_info": {
+        "player_id": 657557,
+        "name": "Paul DeJong",
+        "team_id": 120,
+        "team_name": "Washington Nationals",
+        "position": "3B",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 0.88,
+        "rbis": 0.6,
+        "runs": 0.24000000000000002,
+        "total_bases": 1.6800000000000002,
+        "strikeouts": 0.8000000000000002,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.5448788923735801,
+          "price": 54,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "easy",
+          "stat": "Total Bases",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "RBIs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.1644744565771549,
+          "price": 16,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "Runs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Kansas City Royals"
+        }
+      ]
+    },
+    "656180": {
+      "player_info": {
+        "player_id": 656180,
+        "name": "Riley Adams",
+        "team_id": 120,
+        "team_name": "Washington Nationals",
+        "position": "C",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 0.68,
+        "rbis": 0.08,
+        "runs": 0.48000000000000004,
+        "total_bases": 1.04,
+        "strikeouts": 1.12,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "easy",
+          "stat": "Runs",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "Total Bases",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "Hits",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.19086288276988025,
+          "price": 19,
+          "opponent": "@ Kansas City Royals"
+        }
+      ]
+    },
+    "690987": {
+      "player_info": {
+        "player_id": 690987,
+        "name": "Robert Hassell III",
+        "team_id": 120,
+        "team_name": "Washington Nationals",
+        "position": "CF",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 1.0,
+        "rbis": 1.0,
+        "runs": 0.44,
+        "total_bases": 2.08,
+        "strikeouts": 0.48,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.55,
+          "price": 55,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "easy",
+          "stat": "Total Bases",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "Hits",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "Total Bases",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "@ Kansas City Royals"
+        }
+      ]
+    },
+    "829272": {
+      "player_info": {
+        "player_id": 829272,
+        "name": "Shinnosuke Ogasawara",
+        "team_id": 120,
+        "team_name": "Washington Nationals",
+        "position": "P",
+        "game_id": 776759
+      },
+      "predictions": {
+        "hits": 4.095238095238097,
+        "rbis": 0.0,
+        "runs": 2.333333333333334,
+        "total_bases": 6.095238095238097,
+        "strikeouts": 1.7142857142857146,
+        "pitches": 0.0,
+        "era": 7.833487940630798
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "easy",
+          "stat": "Strikeouts",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Kansas City Royals"
+        },
+        {
+          "type": "hard",
+          "stat": "Pitches",
+          "line": 105.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Kansas City Royals"
+        }
+      ]
+    },
+    "650644": {
+      "player_info": {
+        "player_id": 650644,
+        "name": "Aaron Civale",
+        "team_id": 145,
+        "team_name": "Chicago White Sox",
+        "position": "P",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 5.6000000000000005,
+        "rbis": 0.0,
+        "runs": 3.2,
+        "total_bases": 9.319999999999999,
+        "strikeouts": 3.6399999999999997,
+        "pitches": 0.0,
+        "era": 5.163798652959944
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "easy",
+          "stat": "Strikeouts",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "Strikeouts",
+          "line": 8.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Detroit Tigers"
+        }
+      ]
+    },
+    "643217": {
+      "player_info": {
+        "player_id": 643217,
+        "name": "Andrew Benintendi",
+        "team_id": 145,
+        "team_name": "Chicago White Sox",
+        "position": "LF",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 0.68,
+        "rbis": 0.36,
+        "runs": 0.4,
+        "total_bases": 1.64,
+        "strikeouts": 0.8400000000000001,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.5349429451582145,
+          "price": 53,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "easy",
+          "stat": "Total Bases",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "Hits",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.19086288276988025,
+          "price": 19,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "Runs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Detroit Tigers"
+        }
+      ]
+    },
+    "685126": {
+      "player_info": {
+        "player_id": 685126,
+        "name": "Brandon Eisert",
+        "team_id": 145,
+        "team_name": "Chicago White Sox",
+        "position": "P",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 1.0,
+        "rbis": 0.0,
+        "runs": 0.52,
+        "total_bases": 2.12,
+        "strikeouts": 1.4000000000000001,
+        "pitches": 0.0,
+        "era": 12.96
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "easy",
+          "stat": "ERA",
+          "line": 4.5,
+          "direction": "under",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "Strikeouts",
+          "line": 8.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Detroit Tigers"
+        }
+      ]
+    },
+    "681460": {
+      "player_info": {
+        "player_id": 681460,
+        "name": "Brooks Baldwin",
+        "team_id": 145,
+        "team_name": "Chicago White Sox",
+        "position": "LF",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 1.28,
+        "rbis": 0.08,
+        "runs": 0.16,
+        "total_bases": 1.6800000000000002,
+        "strikeouts": 0.48000000000000004,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.5448788923735801,
+          "price": 54,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "easy",
+          "stat": "Total Bases",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "Hits",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "Runs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Detroit Tigers"
+        }
+      ]
+    },
+    "592155": {
+      "player_info": {
+        "player_id": 592155,
+        "name": "Cam Booser",
+        "team_id": 145,
+        "team_name": "Chicago White Sox",
+        "position": "P",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 0.64,
+        "rbis": 0.0,
+        "runs": 0.32,
+        "total_bases": 0.8,
+        "strikeouts": 1.2,
+        "pitches": 0.0,
+        "era": 12.6
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "easy",
+          "stat": "Strikeouts",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "Pitches",
+          "line": 105.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Detroit Tigers"
+        }
+      ]
+    },
+    "695657": {
+      "player_info": {
+        "player_id": 695657,
+        "name": "Colson Montgomery",
+        "team_id": 145,
+        "team_name": "Chicago White Sox",
+        "position": "SS",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 0.7200000000000001,
+        "rbis": 1.12,
+        "runs": 0.56,
+        "total_bases": 2.08,
+        "strikeouts": 1.76,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.55,
+          "price": 55,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "easy",
+          "stat": "Runs",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "Hits",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "RBIs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "vs Detroit Tigers"
+        }
+      ]
+    },
+    "678554": {
+      "player_info": {
+        "player_id": 678554,
+        "name": "Curtis Mead",
+        "team_id": 145,
+        "team_name": "Chicago White Sox",
+        "position": "1B",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 0.6799999999999999,
+        "rbis": 0.27999999999999997,
+        "runs": 0.08,
+        "total_bases": 0.6799999999999999,
+        "strikeouts": 0.96,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "easy",
+          "stat": "Runs",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "Total Bases",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "Hits",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.19086288276988017,
+          "price": 19,
+          "opponent": "vs Detroit Tigers"
+        }
+      ]
+    },
+    "663436": {
+      "player_info": {
+        "player_id": 663436,
+        "name": "Davis Martin",
+        "team_id": 145,
+        "team_name": "Chicago White Sox",
+        "position": "P",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 5.24,
+        "rbis": 0.0,
+        "runs": 2.3600000000000003,
+        "total_bases": 9.399999999999999,
+        "strikeouts": 3.9200000000000004,
+        "pitches": 0.0,
+        "era": 3.465890888756859
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "easy",
+          "stat": "ERA",
+          "line": 4.5,
+          "direction": "under",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "Strikeouts",
+          "line": 8.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Detroit Tigers"
+        }
+      ]
+    },
+    "700337": {
+      "player_info": {
+        "player_id": 700337,
+        "name": "Edgar Quero",
+        "team_id": 145,
+        "team_name": "Chicago White Sox",
+        "position": "C",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 1.08,
+        "rbis": 0.48,
+        "runs": 0.36000000000000004,
+        "total_bases": 1.72,
+        "strikeouts": 0.5599999999999999,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.55,
+          "price": 55,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "easy",
+          "stat": "Total Bases",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "Hits",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "Total Bases",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "vs Detroit Tigers"
+        }
+      ]
+    },
+    "691799": {
+      "player_info": {
+        "player_id": 691799,
+        "name": "Grant Taylor",
+        "team_id": 145,
+        "team_name": "Chicago White Sox",
+        "position": "P",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 1.32,
+        "rbis": 0.0,
+        "runs": 0.6,
+        "total_bases": 1.7199999999999998,
+        "strikeouts": 1.8800000000000001,
+        "pitches": 0.0,
+        "era": 4.5
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "easy",
+          "stat": "ERA",
+          "line": 4.5,
+          "direction": "under",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "Pitches",
+          "line": 105.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Detroit Tigers"
+        }
+      ]
+    },
+    "676070": {
+      "player_info": {
+        "player_id": 676070,
+        "name": "Jacob Amaya",
+        "team_id": 145,
+        "team_name": "Chicago White Sox",
+        "position": "SS",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 0.39999999999999997,
+        "rbis": 0.39999999999999997,
+        "runs": 0.48,
+        "total_bases": 0.39999999999999997,
+        "strikeouts": 0.16,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "easy",
+          "stat": "Hits",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "RBIs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "Total Bases",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Detroit Tigers"
+        }
+      ]
+    },
+    "673929": {
+      "player_info": {
+        "player_id": 673929,
+        "name": "Jordan Leasure",
+        "team_id": 145,
+        "team_name": "Chicago White Sox",
+        "position": "P",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 0.92,
+        "rbis": 0.0,
+        "runs": 0.52,
+        "total_bases": 1.9999999999999998,
+        "strikeouts": 1.28,
+        "pitches": 0.0,
+        "era": 21.96
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "easy",
+          "stat": "Pitches",
+          "line": 85.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "Pitches",
+          "line": 105.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Detroit Tigers"
+        }
+      ]
+    },
+    "668942": {
+      "player_info": {
+        "player_id": 668942,
+        "name": "Josh Rojas",
+        "team_id": 145,
+        "team_name": "Chicago White Sox",
+        "position": "3B",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 0.4,
+        "rbis": 0.12,
+        "runs": 0.39999999999999997,
+        "total_bases": 0.92,
+        "strikeouts": 0.04,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "easy",
+          "stat": "Runs",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "Total Bases",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "RBIs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Detroit Tigers"
+        }
+      ]
+    },
+    "691019": {
+      "player_info": {
+        "player_id": 691019,
+        "name": "Kyle Teel",
+        "team_id": 145,
+        "team_name": "Chicago White Sox",
+        "position": "C",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 0.64,
+        "rbis": 0.36,
+        "runs": 0.04,
+        "total_bases": 0.84,
+        "strikeouts": 0.76,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "easy",
+          "stat": "Total Bases",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "Total Bases",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "Runs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Detroit Tigers"
+        }
+      ]
+    },
+    "672820": {
+      "player_info": {
+        "player_id": 672820,
+        "name": "Lenyn Sosa",
+        "team_id": 145,
+        "team_name": "Chicago White Sox",
+        "position": "2B",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 0.92,
+        "rbis": 0.4,
+        "runs": 0.8,
+        "total_bases": 1.8800000000000001,
+        "strikeouts": 0.6,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.55,
+          "price": 55,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "easy",
+          "stat": "Hits",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.8,
+          "price": 80,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "Hits",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "Runs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "vs Detroit Tigers"
+        }
+      ]
+    },
+    "673357": {
+      "player_info": {
+        "player_id": 673357,
+        "name": "Luis Robert Jr.",
+        "team_id": 145,
+        "team_name": "Chicago White Sox",
+        "position": "CF",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 1.24,
+        "rbis": 0.39999999999999997,
+        "runs": 0.76,
+        "total_bases": 1.7999999999999998,
+        "strikeouts": 0.48000000000000004,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.55,
+          "price": 55,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "easy",
+          "stat": "Total Bases",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "Total Bases",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "RBIs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Detroit Tigers"
+        }
+      ]
+    },
+    "572191": {
+      "player_info": {
+        "player_id": 572191,
+        "name": "Michael A. Taylor",
+        "team_id": 145,
+        "team_name": "Chicago White Sox",
+        "position": "RF",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 0.44,
+        "rbis": 0.24,
+        "runs": 0.39999999999999997,
+        "total_bases": 1.28,
+        "strikeouts": 0.56,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "easy",
+          "stat": "Hits",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "Hits",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "Total Bases",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "vs Detroit Tigers"
+        }
+      ]
+    },
+    "678246": {
+      "player_info": {
+        "player_id": 678246,
+        "name": "Miguel Vargas",
+        "team_id": 145,
+        "team_name": "Chicago White Sox",
+        "position": "3B",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 1.1600000000000001,
+        "rbis": 0.28,
+        "runs": 0.7200000000000001,
+        "total_bases": 1.28,
+        "strikeouts": 0.64,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "easy",
+          "stat": "Total Bases",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "Hits",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "Runs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "vs Detroit Tigers"
+        }
+      ]
+    },
+    "643565": {
+      "player_info": {
+        "player_id": 643565,
+        "name": "Mike Tauchman",
+        "team_id": 145,
+        "team_name": "Chicago White Sox",
+        "position": "RF",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 0.6399999999999999,
+        "rbis": 0.24,
+        "runs": 0.2,
+        "total_bases": 0.9999999999999999,
+        "strikeouts": 1.1600000000000001,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "easy",
+          "stat": "Hits",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "RBIs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "Hits",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.17731987039779634,
+          "price": 17,
+          "opponent": "vs Detroit Tigers"
+        }
+      ]
+    },
+    "678024": {
+      "player_info": {
+        "player_id": 678024,
+        "name": "Mike Vasil",
+        "team_id": 145,
+        "team_name": "Chicago White Sox",
+        "position": "P",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 1.1199999999999999,
+        "rbis": 0.0,
+        "runs": 0.44,
+        "total_bases": 1.4400000000000002,
+        "strikeouts": 1.8000000000000003,
+        "pitches": 0.0,
+        "era": 2.127272727272727
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.55,
+          "price": 55,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "easy",
+          "stat": "Pitches",
+          "line": 85.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "Strikeouts",
+          "line": 8.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Detroit Tigers"
+        }
+      ]
+    },
+    "680732": {
+      "player_info": {
+        "player_id": 680732,
+        "name": "Sean Burke",
+        "team_id": 145,
+        "team_name": "Chicago White Sox",
+        "position": "P",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 5.5600000000000005,
+        "rbis": 0.0,
+        "runs": 3.4400000000000004,
+        "total_bases": 9.92,
+        "strikeouts": 5.5200000000000005,
+        "pitches": 0.0,
+        "era": 6.885627812415289
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "easy",
+          "stat": "Strikeouts",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.8,
+          "price": 80,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "Pitches",
+          "line": 105.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Detroit Tigers"
+        }
+      ]
+    },
+    "681343": {
+      "player_info": {
+        "player_id": 681343,
+        "name": "Shane Smith",
+        "team_id": 145,
+        "team_name": "Chicago White Sox",
+        "position": "P",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 4.0,
+        "rbis": 0.0,
+        "runs": 2.68,
+        "total_bases": 6.16,
+        "strikeouts": 4.44,
+        "pitches": 0.0,
+        "era": 6.894993031358885
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "easy",
+          "stat": "ERA",
+          "line": 4.5,
+          "direction": "under",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "ERA",
+          "line": 2.25,
+          "direction": "under",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Detroit Tigers"
+        }
+      ]
+    },
+    "621051": {
+      "player_info": {
+        "player_id": 621051,
+        "name": "Steven Wilson",
+        "team_id": 145,
+        "team_name": "Chicago White Sox",
+        "position": "P",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 1.52,
+        "rbis": 0.0,
+        "runs": 0.84,
+        "total_bases": 1.92,
+        "strikeouts": 0.8,
+        "pitches": 0.0,
+        "era": 41.400000000000006
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "easy",
+          "stat": "Strikeouts",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "ERA",
+          "line": 2.25,
+          "direction": "under",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Detroit Tigers"
+        }
+      ]
+    },
+    "641302": {
+      "player_info": {
+        "player_id": 641302,
+        "name": "Tyler Alexander",
+        "team_id": 145,
+        "team_name": "Chicago White Sox",
+        "position": "P",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 1.04,
+        "rbis": 0.0,
+        "runs": 0.6000000000000001,
+        "total_bases": 1.84,
+        "strikeouts": 2.3600000000000003,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "easy",
+          "stat": "Strikeouts",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "Strikeouts",
+          "line": 8.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Detroit Tigers"
+        }
+      ]
+    },
+    "656457": {
+      "player_info": {
+        "player_id": 656457,
+        "name": "Tyler Gilbert",
+        "team_id": 145,
+        "team_name": "Chicago White Sox",
+        "position": "P",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 0.24,
+        "rbis": 0.0,
+        "runs": 0.2,
+        "total_bases": 0.52,
+        "strikeouts": 0.76,
+        "pitches": 0.0,
+        "era": 1.44
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.55,
+          "price": 55,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "easy",
+          "stat": "ERA",
+          "line": 4.5,
+          "direction": "under",
+          "implied_prob": 0.8,
+          "price": 80,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "Pitches",
+          "line": 105.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Detroit Tigers"
+        }
+      ]
+    },
+    "672782": {
+      "player_info": {
+        "player_id": 672782,
+        "name": "Yoendrys G\u00f3mez",
+        "team_id": 145,
+        "team_name": "Chicago White Sox",
+        "position": "P",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 1.76,
+        "rbis": 0.0,
+        "runs": 1.4000000000000001,
+        "total_bases": 2.8800000000000003,
+        "strikeouts": 1.44,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "easy",
+          "stat": "Strikeouts",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "vs Detroit Tigers"
+        },
+        {
+          "type": "hard",
+          "stat": "Pitches",
+          "line": 105.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "vs Detroit Tigers"
+        }
+      ]
+    },
+    "628451": {
+      "player_info": {
+        "player_id": 628451,
+        "name": "Andy Ib\u00e1\u00f1ez",
+        "team_id": 116,
+        "team_name": "Detroit Tigers",
+        "position": "3B",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 1.1600000000000001,
+        "rbis": 0.48,
+        "runs": 0.56,
+        "total_bases": 2.3200000000000003,
+        "strikeouts": 0.56,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.55,
+          "price": 55,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "easy",
+          "stat": "Runs",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "hard",
+          "stat": "Runs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15231569061424194,
+          "price": 15,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "hard",
+          "stat": "Hits",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "@ Chicago White Sox"
+        }
+      ]
+    },
+    "676428": {
+      "player_info": {
+        "player_id": 676428,
+        "name": "Brant Hurter",
+        "team_id": 116,
+        "team_name": "Detroit Tigers",
+        "position": "P",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 1.12,
+        "rbis": 0.0,
+        "runs": 0.8800000000000001,
+        "total_bases": 1.84,
+        "strikeouts": 1.64,
+        "pitches": 0.0,
+        "era": 46.8
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "easy",
+          "stat": "Strikeouts",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "hard",
+          "stat": "Strikeouts",
+          "line": 8.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Chicago White Sox"
+        }
+      ]
+    },
+    "663554": {
+      "player_info": {
+        "player_id": 663554,
+        "name": "Casey Mize",
+        "team_id": 116,
+        "team_name": "Detroit Tigers",
+        "position": "P",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 5.840000000000001,
+        "rbis": 0.0,
+        "runs": 2.2,
+        "total_bases": 9.44,
+        "strikeouts": 5.0,
+        "pitches": 0.0,
+        "era": 3.7874459203036057
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "easy",
+          "stat": "Pitches",
+          "line": 85.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "hard",
+          "stat": "Pitches",
+          "line": 105.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Chicago White Sox"
+        }
+      ]
+    },
+    "450203": {
+      "player_info": {
+        "player_id": 450203,
+        "name": "Charlie Morton",
+        "team_id": 116,
+        "team_name": "Detroit Tigers",
+        "position": "P",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 5.36,
+        "rbis": 0.0,
+        "runs": 1.8,
+        "total_bases": 7.56,
+        "strikeouts": 6.6,
+        "pitches": 0.0,
+        "era": 3.1426698755033096
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.5249791874789399,
+          "price": 52,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.5268068020795521,
+          "price": 52,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "easy",
+          "stat": "Pitches",
+          "line": 85.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "hard",
+          "stat": "Pitches",
+          "line": 105.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Chicago White Sox"
+        }
+      ]
+    },
+    "663978": {
+      "player_info": {
+        "player_id": 663978,
+        "name": "Chris Paddack",
+        "team_id": 116,
+        "team_name": "Detroit Tigers",
+        "position": "P",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 5.840000000000001,
+        "rbis": 0.0,
+        "runs": 3.6399999999999997,
+        "total_bases": 10.32,
+        "strikeouts": 3.64,
+        "pitches": 0.0,
+        "era": 6.401802197802198
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "easy",
+          "stat": "Strikeouts",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "hard",
+          "stat": "Pitches",
+          "line": 105.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Chicago White Sox"
+        }
+      ]
+    },
+    "676051": {
+      "player_info": {
+        "player_id": 676051,
+        "name": "Codi Heuer",
+        "team_id": 116,
+        "team_name": "Detroit Tigers",
+        "position": "P",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 1.2666666666666666,
+        "rbis": 0.0,
+        "runs": 1.0,
+        "total_bases": 4.266666666666667,
+        "strikeouts": 1.6,
+        "pitches": 0.0,
+        "era": 7.7727272727272725
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "easy",
+          "stat": "ERA",
+          "line": 4.5,
+          "direction": "under",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "hard",
+          "stat": "Strikeouts",
+          "line": 8.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Chicago White Sox"
+        }
+      ]
+    },
+    "690993": {
+      "player_info": {
+        "player_id": 690993,
+        "name": "Colt Keith",
+        "team_id": 116,
+        "team_name": "Detroit Tigers",
+        "position": "2B",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 1.68,
+        "rbis": 0.52,
+        "runs": 0.8400000000000001,
+        "total_bases": 2.3600000000000003,
+        "strikeouts": 0.32,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.5448788923735801,
+          "price": 54,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.55,
+          "price": 55,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "easy",
+          "stat": "Hits",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.8,
+          "price": 80,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "hard",
+          "stat": "Hits",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "hard",
+          "stat": "Total Bases",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "@ Chicago White Sox"
+        }
+      ]
+    },
+    "693307": {
+      "player_info": {
+        "player_id": 693307,
+        "name": "Dillon Dingler",
+        "team_id": 116,
+        "team_name": "Detroit Tigers",
+        "position": "C",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 0.36,
+        "rbis": 0.28,
+        "runs": 0.76,
+        "total_bases": 0.9600000000000001,
+        "strikeouts": 0.36,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "easy",
+          "stat": "Total Bases",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "hard",
+          "stat": "RBIs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "hard",
+          "stat": "Total Bases",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "@ Chicago White Sox"
+        }
+      ]
+    },
+    "650402": {
+      "player_info": {
+        "player_id": 650402,
+        "name": "Gleyber Torres",
+        "team_id": 116,
+        "team_name": "Detroit Tigers",
+        "position": "2B",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 1.0,
+        "rbis": 1.12,
+        "runs": 0.68,
+        "total_bases": 2.3600000000000003,
+        "strikeouts": 0.64,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.55,
+          "price": 55,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "easy",
+          "stat": "Hits",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.8,
+          "price": 80,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "hard",
+          "stat": "Hits",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "hard",
+          "stat": "RBIs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "@ Chicago White Sox"
+        }
+      ]
+    },
+    "656427": {
+      "player_info": {
+        "player_id": 656427,
+        "name": "Jack Flaherty",
+        "team_id": 116,
+        "team_name": "Detroit Tigers",
+        "position": "P",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 5.5600000000000005,
+        "rbis": 0.0,
+        "runs": 4.0,
+        "total_bases": 8.680000000000001,
+        "strikeouts": 6.24,
+        "pitches": 0.0,
+        "era": 11.922265608042498
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "easy",
+          "stat": "Strikeouts",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.8,
+          "price": 80,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "hard",
+          "stat": "ERA",
+          "line": 2.25,
+          "direction": "under",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Chicago White Sox"
+        }
+      ]
+    },
+    "663330": {
+      "player_info": {
+        "player_id": 663330,
+        "name": "Jahmai Jones",
+        "team_id": 116,
+        "team_name": "Detroit Tigers",
+        "position": "RF",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 0.36,
+        "rbis": 0.16,
+        "runs": 0.2,
+        "total_bases": 0.5599999999999999,
+        "strikeouts": 0.4,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "easy",
+          "stat": "Total Bases",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "hard",
+          "stat": "Hits",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "hard",
+          "stat": "Total Bases",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.17027973628380622,
+          "price": 17,
+          "opponent": "@ Chicago White Sox"
+        }
+      ]
+    },
+    "668670": {
+      "player_info": {
+        "player_id": 668670,
+        "name": "Jake Rogers",
+        "team_id": 116,
+        "team_name": "Detroit Tigers",
+        "position": "C",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 0.27999999999999997,
+        "rbis": 0.48,
+        "runs": 0.27999999999999997,
+        "total_bases": 0.76,
+        "strikeouts": 1.28,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "easy",
+          "stat": "Runs",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "hard",
+          "stat": "Runs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "hard",
+          "stat": "RBIs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Chicago White Sox"
+        }
+      ]
+    },
+    "595879": {
+      "player_info": {
+        "player_id": 595879,
+        "name": "Javier B\u00e1ez",
+        "team_id": 116,
+        "team_name": "Detroit Tigers",
+        "position": "CF",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 0.9600000000000001,
+        "rbis": 0.88,
+        "runs": 0.4,
+        "total_bases": 2.0,
+        "strikeouts": 0.64,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.55,
+          "price": 55,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "easy",
+          "stat": "Total Bases",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "hard",
+          "stat": "RBIs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "hard",
+          "stat": "Runs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Chicago White Sox"
+        }
+      ]
+    },
+    "681481": {
+      "player_info": {
+        "player_id": 681481,
+        "name": "Kerry Carpenter",
+        "team_id": 116,
+        "team_name": "Detroit Tigers",
+        "position": "RF",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 0.9600000000000001,
+        "rbis": 1.0,
+        "runs": 0.6000000000000001,
+        "total_bases": 2.68,
+        "strikeouts": 1.2,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.55,
+          "price": 55,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "easy",
+          "stat": "Total Bases",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "hard",
+          "stat": "Hits",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "hard",
+          "stat": "RBIs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "@ Chicago White Sox"
+        }
+      ]
+    },
+    "640448": {
+      "player_info": {
+        "player_id": 640448,
+        "name": "Kyle Finnegan",
+        "team_id": 116,
+        "team_name": "Detroit Tigers",
+        "position": "P",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 1.88,
+        "rbis": 0.0,
+        "runs": 1.96,
+        "total_bases": 2.7200000000000006,
+        "strikeouts": 0.7999999999999999,
+        "pitches": 0.0,
+        "era": 156.96
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "easy",
+          "stat": "Pitches",
+          "line": 85.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "hard",
+          "stat": "Pitches",
+          "line": 105.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Chicago White Sox"
+        }
+      ]
+    },
+    "606160": {
+      "player_info": {
+        "player_id": 606160,
+        "name": "Rafael Montero",
+        "team_id": 116,
+        "team_name": "Detroit Tigers",
+        "position": "P",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 1.0,
+        "rbis": 0.0,
+        "runs": 0.92,
+        "total_bases": 2.2,
+        "strikeouts": 0.6000000000000001,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "easy",
+          "stat": "Pitches",
+          "line": 85.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "hard",
+          "stat": "Strikeouts",
+          "line": 8.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Chicago White Sox"
+        }
+      ]
+    },
+    "682985": {
+      "player_info": {
+        "player_id": 682985,
+        "name": "Riley Greene",
+        "team_id": 116,
+        "team_name": "Detroit Tigers",
+        "position": "LF",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 0.4,
+        "rbis": 0.12,
+        "runs": 0.16,
+        "total_bases": 0.64,
+        "strikeouts": 1.2799999999999998,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "easy",
+          "stat": "Total Bases",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "hard",
+          "stat": "Total Bases",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.1921132032700088,
+          "price": 19,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "hard",
+          "stat": "RBIs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Chicago White Sox"
+        }
+      ]
+    },
+    "679529": {
+      "player_info": {
+        "player_id": 679529,
+        "name": "Spencer Torkelson",
+        "team_id": 116,
+        "team_name": "Detroit Tigers",
+        "position": "1B",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 1.1600000000000001,
+        "rbis": 0.16,
+        "runs": 0.44,
+        "total_bases": 1.6400000000000001,
+        "strikeouts": 1.4,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.5349429451582145,
+          "price": 53,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "easy",
+          "stat": "Runs",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "hard",
+          "stat": "Runs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "hard",
+          "stat": "RBIs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Chicago White Sox"
+        }
+      ]
+    },
+    "669373": {
+      "player_info": {
+        "player_id": 669373,
+        "name": "Tarik Skubal",
+        "team_id": 116,
+        "team_name": "Detroit Tigers",
+        "position": "P",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 4.2,
+        "rbis": 0.0,
+        "runs": 1.5199999999999998,
+        "total_bases": 6.48,
+        "strikeouts": 7.840000000000001,
+        "pitches": 0.0,
+        "era": 2.495515065579582
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.55,
+          "price": 55,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.55,
+          "price": 55,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "easy",
+          "stat": "ERA",
+          "line": 4.5,
+          "direction": "under",
+          "implied_prob": 0.8,
+          "price": 80,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "hard",
+          "stat": "Strikeouts",
+          "line": 8.5,
+          "direction": "over",
+          "implied_prob": 0.2,
+          "price": 20,
+          "opponent": "@ Chicago White Sox"
+        }
+      ]
+    },
+    "592454": {
+      "player_info": {
+        "player_id": 592454,
+        "name": "Tommy Kahnle",
+        "team_id": 116,
+        "team_name": "Detroit Tigers",
+        "position": "P",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 1.2400000000000002,
+        "rbis": 0.0,
+        "runs": 1.4000000000000001,
+        "total_bases": 3.52,
+        "strikeouts": 0.5599999999999999,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "easy",
+          "stat": "Pitches",
+          "line": 85.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "hard",
+          "stat": "Pitches",
+          "line": 105.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Chicago White Sox"
+        }
+      ]
+    },
+    "700242": {
+      "player_info": {
+        "player_id": 700242,
+        "name": "Trey Sweeney",
+        "team_id": 116,
+        "team_name": "Detroit Tigers",
+        "position": "SS",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 0.27999999999999997,
+        "rbis": 0.0,
+        "runs": 0.04,
+        "total_bases": 0.27999999999999997,
+        "strikeouts": 0.7999999999999999,
+        "pitches": 0.0
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Runs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "RBIs",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "Hits",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "Total Bases",
+          "line": 1.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "easy",
+          "stat": "Runs",
+          "line": 0.5,
+          "direction": "over",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "hard",
+          "stat": "Total Bases",
+          "line": 3.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "hard",
+          "stat": "RBIs",
+          "line": 2.5,
+          "direction": "over",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Chicago White Sox"
+        }
+      ]
+    },
+    "675512": {
+      "player_info": {
+        "player_id": 675512,
+        "name": "Troy Melton",
+        "team_id": 116,
+        "team_name": "Detroit Tigers",
+        "position": "P",
+        "game_id": 776754
+      },
+      "predictions": {
+        "hits": 4.055555555555555,
+        "rbis": 0.0,
+        "runs": 2.1666666666666665,
+        "total_bases": 6.888888888888888,
+        "strikeouts": 4.277777777777778,
+        "pitches": 0.0,
+        "era": 4.083870967741936
+      },
+      "props": [
+        {
+          "type": "medium",
+          "stat": "Strikeouts",
+          "line": 6.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "ERA",
+          "line": 3.25,
+          "direction": "under",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "medium",
+          "stat": "Pitches",
+          "line": 95.5,
+          "direction": "over",
+          "implied_prob": 0.45,
+          "price": 45,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "easy",
+          "stat": "ERA",
+          "line": 4.5,
+          "direction": "under",
+          "implied_prob": 0.75,
+          "price": 75,
+          "opponent": "@ Chicago White Sox"
+        },
+        {
+          "type": "hard",
+          "stat": "ERA",
+          "line": 2.25,
+          "direction": "under",
+          "implied_prob": 0.15,
+          "price": 15,
+          "opponent": "@ Chicago White Sox"
+        }
+      ]
+    }
+  }
+}

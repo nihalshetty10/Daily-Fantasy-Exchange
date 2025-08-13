@@ -37,7 +37,12 @@ A real-time sports betting platform for daily fantasy sports with machine learni
    pip install -r requirements.txt
    ```
 
-4. **Run the application**
+4. **Generate fresh props (optional)**
+   ```bash
+   python prop_generation.py
+   ```
+
+5. **Run the application**
    ```bash
    python app.py
    ```
@@ -91,7 +96,7 @@ eb open
 ```
 daily_fantasy_exchange/
 ├── app.py                 # Main Flask application
-├── e                      # MLB prop scraper and generator
+├── prop_generation.py     # MLB prop scraper and generator
 ├── backend/               # Backend models and services
 │   ├── models/           # Database models
 │   ├── services/         # Business logic

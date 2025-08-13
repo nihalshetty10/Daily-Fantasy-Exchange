@@ -94,6 +94,11 @@
             margin-bottom: 10px;
             border-left: 4px solid #007bff;
         }
+        
+        .portfolio-item .btn {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.5rem;
+        }
         .trade-history {
             max-height: 400px;
             overflow-y: auto;
@@ -240,11 +245,8 @@
                 <div class="col-md-8">
                     <!-- Market Section -->
                     <div class="card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
+                        <div class="card-header">
                             <h5><i class="fas fa-chart-bar"></i> Live Market</h5>
-                            <button class="btn btn-sm btn-outline-primary" onclick="refreshMLBProps()">
-                                <i class="fas fa-sync-alt"></i> Refresh Props
-                            </button>
                         </div>
                         <div class="card-body">
                             <!-- Filters -->
@@ -254,8 +256,8 @@
                                         <label class="form-label">Sport</label>
                                         <select class="form-select" id="sport-filter">
                                             <option value="">All Sports</option>
-                                            <option value="NBA">NBA</option>
                                             <option value="MLB">MLB</option>
+                                            <option value="NBA">NBA</option>
                                             <option value="NFL">NFL</option>
                                         </select>
                                     </div>
@@ -277,9 +279,19 @@
                                             <option value="FINAL">Final</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-3">
-                                        <!-- Refresh button removed -->
-                                    </div>
+                                                                <div class="col-md-3" id="stat-category-container" style="display: none;">
+                                <label for="stat-category-filter" class="form-label text-muted small">Stat Category</label>
+                                <select class="form-select" id="stat-category-filter">
+                                    <option value="">All Categories</option>
+                                    <option value="rbis"> RBIs</option>
+                                    <option value="runs"> Runs</option>
+                                    <option value="total_bases"> Total Bases</option>
+                                    <option value="hits"> Hits</option>
+                                    <option value="strikeouts"> Strikeouts</option>
+                                    <option value="pitches"> Pitches</option>
+                                    <option value="era"> ERA</option>
+                                </select>
+                            </div>
                                 </div>
                             </div>
 
@@ -444,7 +456,7 @@
                     <!-- Portfolio Constraints -->
                     <div class="alert alert-info mt-3">
                         <i class="fas fa-info-circle"></i>
-                        <strong>Portfolio Limits:</strong> Maximum 10 contracts total, 1 contract per player
+                        <strong>Portfolio Limits:</strong> Maximum 10 contracts total, 1 contract per player (any prop type), max 50% from same team (starts after 1st contract). <strong>Pending orders count toward these limits.</strong>
                     </div>
                     
                     <!-- Game Status Info -->
@@ -594,7 +606,7 @@
         }
         
         // Use real props by default, fallback to demo
-        let mockProps = realProps;
+        let mockProps = [];
 
         // Authentication (Demo Mode)
         document.getElementById('login-form').addEventListener('submit', async (e) => {
@@ -616,7 +628,7 @@
             
             // Load real MLB props first
             try {
-                await loadRealMLBProps();
+                const realProps = await loadRealMLBProps();
                 mockProps = realProps; // Update the props reference
                 console.log('Real MLB props loaded successfully');
             } catch (error) {
@@ -644,9 +656,14 @@
 
         // Market Data
         async function loadMarketData() {
+            console.log('🔄 Loading market data...');
+            console.log('📊 Current mockProps:', mockProps);
+            console.log('📊 mockProps length:', mockProps.length);
+            
             const sportFilter = document.getElementById('sport-filter').value;
             const difficultyFilter = document.getElementById('difficulty-filter').value;
             const statusFilter = document.getElementById('status-filter').value;
+            const statCategoryFilter = document.getElementById('stat-category-filter').value;
 
             // Update props status indicator
             const statusElement = document.getElementById('props-status');
@@ -669,6 +686,15 @@
             if (difficultyFilter) {
                 filteredProps = filteredProps.filter(prop => prop.difficulty === difficultyFilter);
             }
+            if (statusFilter) {
+                filteredProps = filteredProps.filter(prop => prop.status_badge === statusFilter);
+            }
+                         if (statCategoryFilter) {
+                             // Filter for specific stat categories
+                             filteredProps = filteredProps.filter(prop => 
+                                 prop.prop_type.toLowerCase() === statCategoryFilter.toLowerCase()
+                             );
+                         }
 
             displayProps(filteredProps, statusFilter);
         }
@@ -954,19 +980,26 @@
             const prop = tradingProp.prop;
             
             if (action === 'buy') {
-                // Check portfolio limit (max 10 contracts)
-                if (userPortfolio.length >= 10) {
-                    alert('Portfolio limit reached! Maximum 10 contracts allowed.');
+                // Check portfolio limit (including pending buy orders)
+                const totalPortfolioContracts = userPortfolio.length;
+                const totalPendingBuyContracts = pendingOrders.filter(order => 
+                    order.side === 'buy' && order.status === 'pending'
+                ).length;
+                const totalContracts = totalPortfolioContracts + totalPendingBuyContracts;
+                
+                if (totalContracts >= 10) {
+                    alert(`Portfolio limit reached! Maximum 10 contracts allowed (${totalPortfolioContracts} owned + ${totalPendingBuyContracts} pending = ${totalContracts}/10).`);
                     return;
                 }
                 
-                // Check if user already owns this contract
-                const existingPosition = userPortfolio.find(p => 
-                    p.prop_id === prop.id && p.trade_type === tradingProp.type
-                );
+                // Check if user already owns ANY contract for this player (regardless of prop type)
+                if (!checkPlayerContractLimit(prop)) {
+                    return;
+                }
                 
-                if (existingPosition) {
-                    alert('You already own 1 contract for this player. Maximum 1 contract per player allowed.');
+                // Check team concentration constraint (max 50% from same team)
+                if (!checkTeamConcentrationConstraint(prop.player_team)) {
+                    alert('Team concentration limit reached! No more than 50% of your contracts can be from the same team.');
                     return;
                 }
                 
@@ -987,7 +1020,12 @@
                     }
                     
                     currentUser.balance -= totalCost;
-                    prop.available_contracts -= 1;
+                    
+                    // Update the mockProps array so the change persists
+                    const mockProp = mockProps.find(p => p.id === prop.id);
+                    if (mockProp) {
+                        mockProp.available_contracts -= 1;
+                    }
                     
                     // Add to portfolio
                     userPortfolio.push({
@@ -995,6 +1033,7 @@
                         player_name: prop.player_name,
                         prop_type: prop.prop_type,
                         trade_type: tradingProp.type,
+                        team_name: prop.player_team,
                         quantity: 1,
                         avg_price: marketPrice,
                         live_price: marketPrice,
@@ -1029,7 +1068,15 @@
                         
                         // Execute immediately at market price
                         currentUser.balance -= marketPrice;
-                        prop.available_contracts -= 1;
+                        
+                        // Update the mockProps array so the change persists
+                        const mockProp = mockProps.find(p => p.id === prop.id);
+                        if (mockProp) {
+                            mockProp.available_contracts -= 1;
+                        }
+                        
+                        // Cancel any pending buy orders for this contract
+                        cancelPendingBuyOrders(prop.id, tradingProp.type);
                         
                         // Add to portfolio
                         userPortfolio.push({
@@ -1037,6 +1084,7 @@
                             player_name: prop.player_name,
                             prop_type: prop.prop_type,
                             trade_type: tradingProp.type,
+                            team_name: prop.player_team,
                             quantity: 1,
                             avg_price: marketPrice,
                             live_price: marketPrice,
@@ -1061,6 +1109,7 @@
                             player_name: prop.player_name,
                             prop_type: prop.prop_type,
                             trade_type: tradingProp.type,
+                            team_name: prop.player_team,
                             side: 'buy',
                             price: limitPrice,
                             quantity: 1,
@@ -1089,10 +1138,18 @@
                     
                     const marketPrice = getMarketPrice(prop.id);
                     currentUser.balance += marketPrice;
-                    prop.available_contracts += 1;
+                    
+                    // Update the mockProps array so the change persists
+                    const mockProp = mockProps.find(p => p.id === prop.id);
+                    if (mockProp) {
+                        mockProp.available_contracts += 1;
+                    }
                     
                     // Remove from portfolio
                     userPortfolio = userPortfolio.filter(p => p !== position);
+                    
+                    // Cancel any pending sell orders for this contract
+                    cancelPendingSellOrders(prop.id, tradingProp.type);
                     
                     // Record trade
                     recordTrade('SELL', prop, marketPrice, 'market');
@@ -1121,10 +1178,18 @@
                     if (limitPrice <= marketPrice) {
                         // Execute immediately at market price
                         currentUser.balance += marketPrice;
-                        prop.available_contracts += 1;
+                        
+                        // Update the mockProps array so the change persists
+                        const mockProp = mockProps.find(p => p.id === prop.id);
+                        if (mockProp) {
+                            mockProp.available_contracts += 1;
+                        }
                         
                         // Remove from portfolio
                         userPortfolio = userPortfolio.filter(p => p !== position);
+                        
+                        // Cancel any pending sell orders for this contract
+                        cancelPendingSellOrders(prop.id, tradingProp.type);
                         
                         // Record trade
                         recordTrade('SELL', prop, marketPrice, 'limit_auto_execute');
@@ -1138,12 +1203,18 @@
                             player_name: prop.player_name,
                             prop_type: prop.prop_type,
                             trade_type: tradingProp.type,
+                            team_name: prop.player_team,
                             side: 'sell',
                             price: limitPrice,
                             quantity: 1,
                             timestamp: new Date().toLocaleString(),
                             status: 'pending'
                         };
+                        
+                        // Debug: Log the order and prop to console
+                        console.log('Creating sell order:', order);
+                        console.log('Prop object:', prop);
+                        console.log('Team name from prop:', prop.player_team);
                         
                         pendingOrders.push(order);
                         
@@ -1183,11 +1254,68 @@
             return prop.live_contract_price;
         }
 
+        // Constraint validation functions
+        function checkPlayerContractLimit(prop) {
+            // Check portfolio
+            const existingContract = userPortfolio.find(p => p.player_name === prop.player_name);
+            if (existingContract) {
+                alert(`You already own a contract for ${prop.player_name}. Maximum 1 contract per player (any prop type).`);
+                return false;
+            }
+            
+            // Check pending buy orders
+            const existingPendingBuy = pendingOrders.find(order => 
+                order.player_name === prop.player_name && 
+                order.side === 'buy' && 
+                order.status === 'pending'
+            );
+            if (existingPendingBuy) {
+                alert(`You already have a pending buy order for ${prop.player_name}. Maximum 1 contract per player (any prop type).`);
+                return false;
+            }
+            
+            return true;
+        }
+        
+        function checkTeamConcentrationConstraint(teamName) {
+            // Calculate total contracts (portfolio + pending buy orders)
+            const totalPortfolioContracts = userPortfolio.length;
+            const totalPendingBuyContracts = pendingOrders.filter(order => 
+                order.side === 'buy' && order.status === 'pending'
+            ).length;
+            const totalContracts = totalPortfolioContracts + totalPendingBuyContracts;
+            
+            if (totalContracts === 0) return true; // No constraints until first contract
+            
+            const maxTeamContracts = Math.ceil(totalContracts * 0.5);
+            
+            // Count team contracts from portfolio
+            const portfolioTeamContracts = userPortfolio.filter(p => p.team_name === teamName).length;
+            
+            // Count team contracts from pending buy orders
+            const pendingTeamContracts = pendingOrders.filter(order => 
+                order.team_name === teamName && 
+                order.side === 'buy' && 
+                order.status === 'pending'
+            ).length;
+            
+            const totalTeamContracts = portfolioTeamContracts + pendingTeamContracts;
+            
+            if (totalTeamContracts >= maxTeamContracts) {
+                alert(`Team concentration limit reached. You can only have ${maxTeamContracts} contracts from ${teamName} (50% of ${totalContracts} total contracts).`);
+                return false;
+            }
+            
+            return true;
+        }
+
+
         function recordTrade(action, prop, price, orderType) {
             tradeHistory.unshift({
                 player_name: prop.player_name,
                 prop_type: prop.prop_type,
                 trade_type: prop.trade_type || 'over',
+                team_name: prop.team_name,
                 action: action,
                 quantity: 1,
                 price: price,
@@ -1215,13 +1343,28 @@
             }
 
             orders.forEach(order => {
+                // Try to find team name from portfolio if missing
+                let teamName = order.team_name;
+                if (!teamName || teamName === 'Unknown Team') {
+                    const portfolioItem = userPortfolio.find(p => 
+                        p.player_name === order.player_name && 
+                        p.prop_type === order.prop_type
+                    );
+                    if (portfolioItem && portfolioItem.team_name) {
+                        teamName = portfolioItem.team_name;
+                        // Update the order with the found team name
+                        order.team_name = teamName;
+                    }
+                }
+                
                 const div = document.createElement('div');
                 div.className = 'pending-order-item';
                 div.innerHTML = `
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <strong>${order.player_name}</strong><br>
-                            <small>${order.prop_type.toUpperCase()} ${order.side.toUpperCase()} @ $${order.price.toFixed(2)}</small>
+                            <small>${order.prop_type.toUpperCase()} ${order.side.toUpperCase()} @ $${order.price.toFixed(2)}</small><br>
+                            <small class="text-muted">${teamName || 'Unknown Team'}</small>
                         </div>
                         <div class="text-end">
                             <small class="text-muted">${order.timestamp}</small><br>
@@ -1268,6 +1411,32 @@
                 return;
             }
 
+            // Add team concentration warning at the top
+            const teamCounts = {};
+            portfolio.forEach(item => {
+                const team = item.team_name || 'Unknown Team';
+                teamCounts[team] = (teamCounts[team] || 0) + 1;
+            });
+
+            // Only show warning if portfolio has contracts
+            if (portfolio.length > 0) {
+                const maxTeamContracts = Math.ceil(portfolio.length * 0.5);
+                const concentrationWarning = Object.entries(teamCounts)
+                    .filter(([team, count]) => count > maxTeamContracts)
+                    .map(([team, count]) => `${team}: ${count}/${portfolio.length}`)
+                    .join(', ');
+
+                if (concentrationWarning) {
+                    const warningDiv = document.createElement('div');
+                    warningDiv.className = 'alert alert-warning mb-3';
+                    warningDiv.innerHTML = `
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Team Concentration Warning:</strong> ${concentrationWarning} exceeds 50% limit
+                    `;
+                    container.appendChild(warningDiv);
+                }
+            }
+
             portfolio.forEach(item => {
                 const profitLoss = (item.live_price - item.avg_price) * item.quantity;
                 const profitLossClass = profitLoss >= 0 ? 'text-success' : 'text-danger';
@@ -1279,7 +1448,8 @@
                     <div class="d-flex justify-content-between">
                         <div>
                             <strong>${item.player_name}</strong><br>
-                            <small>${item.prop_type.toUpperCase()} ${item.trade_type.toUpperCase()}</small>
+                            <small>${item.prop_type.toUpperCase()} ${item.trade_type.toUpperCase()}</small><br>
+                            <small class="text-muted">${item.team_name || 'Unknown Team'}</small>
                         </div>
                         <div class="text-end">
                             <div>Qty: 1</div>
@@ -1289,9 +1459,14 @@
                             </div>
                         </div>
                     </div>
-                    ${item.game_status === 'LIVE' ? `
-                        <small class="text-danger">LIVE</small>
-                    ` : ''}
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        ${item.game_status === 'LIVE' ? `
+                            <small class="text-danger">LIVE</small>
+                        ` : '<small class="text-muted">UPCOMING</small>'}
+                        <button class="btn btn-sm btn-outline-primary" onclick="openPortfolioTrade('${item.player_name}', '${item.prop_type}', '${item.trade_type}', '${item.team_name}')">
+                            <i class="fas fa-trade"></i> Trade
+                        </button>
+                    </div>
                 `;
                 container.appendChild(div);
             });
@@ -1318,7 +1493,8 @@
                     <div class="d-flex justify-content-between">
                         <div>
                             <strong>${trade.player_name}</strong><br>
-                            <small>${trade.prop_type.toUpperCase()} ${trade.trade_type.toUpperCase()}</small>
+                            <small>${trade.prop_type.toUpperCase()} ${trade.trade_type.toUpperCase()}</small><br>
+                            <small class="text-muted">${trade.team_name || 'Unknown Team'}</small>
                         </div>
                         <div class="text-end">
                             <div class="${trade.action === 'BUY' ? 'text-success' : 'text-danger'}">
@@ -1359,6 +1535,156 @@
             }, 10000); // Update every 10 seconds
         }
 
+        // Open trade modal for portfolio contract
+        function openPortfolioTrade(playerName, propType, tradeType, teamName) {
+            // Find the portfolio item
+            const portfolioItem = userPortfolio.find(p => 
+                p.player_name === playerName && 
+                p.prop_type === propType && 
+                p.trade_type === tradeType
+            );
+            
+            if (!portfolioItem) {
+                alert('Portfolio item not found');
+                return;
+            }
+            
+            // Create a mock prop object for the trading modal
+            const mockProp = {
+                id: portfolioItem.prop_id,
+                player_name: portfolioItem.player_name,
+                prop_type: portfolioItem.prop_type,
+                trade_type: portfolioItem.trade_type,
+                team_name: portfolioItem.team_name,
+                live_contract_price: portfolioItem.live_price,
+                available_contracts: 1,
+                total_contracts: 1,
+                status_badge: portfolioItem.game_status,
+                is_tradeable: true
+            };
+            
+            // Set the current trading prop
+            window.currentTradingProp = {
+                prop: mockProp,
+                type: tradeType
+            };
+            
+            // Update the modal title
+            document.getElementById('tradingModalTitle').textContent = `Trade ${playerName} - ${propType.toUpperCase()} ${tradeType.toUpperCase()}`;
+            
+            // Show the modal
+            const tradingModal = new bootstrap.Modal(document.getElementById('tradingModal'));
+            tradingModal.show();
+            
+            // Update the sell options to show current portfolio info
+            updateSellOptions(portfolioItem);
+        }
+        
+        // Cancel pending sell orders for a specific contract
+        function cancelPendingSellOrders(propId, tradeType) {
+            // Find and remove all pending sell orders for this contract
+            const ordersToCancel = pendingOrders.filter(order => 
+                order.prop_id === propId && 
+                order.trade_type === tradeType && 
+                order.side === 'sell' && 
+                order.status === 'pending'
+            );
+            
+            if (ordersToCancel.length > 0) {
+                console.log(`Cancelling ${ordersToCancel.length} pending sell orders for contract ${propId}`);
+                
+                // Remove the cancelled orders
+                pendingOrders = pendingOrders.filter(order => 
+                    !(order.prop_id === propId && 
+                      order.trade_type === tradeType && 
+                      order.side === 'sell' && 
+                      order.status === 'pending')
+                );
+                
+                // Update the display
+                loadPendingOrders();
+            }
+        }
+        
+        // Cancel pending buy orders for a specific contract
+        function cancelPendingBuyOrders(propId, tradeType) {
+            // Find and remove all pending buy orders for this contract
+            const ordersToCancel = pendingOrders.filter(order => 
+                order.prop_id === propId && 
+                order.trade_type === tradeType && 
+                order.side === 'buy' && 
+                order.status === 'pending'
+            );
+            
+            if (ordersToCancel.length > 0) {
+                console.log(`Cancelling ${ordersToCancel.length} pending buy orders for contract ${propId}`);
+                
+                // Remove the cancelled orders
+                pendingOrders = pendingOrders.filter(order => 
+                    !(order.prop_id === propId && 
+                      order.trade_type === tradeType && 
+                      order.side === 'buy' && 
+                      order.status === 'pending')
+                );
+                
+                // Update the display
+                loadPendingOrders();
+            }
+        }
+        
+        // Update sell options for portfolio trading
+        function updateSellOptions(portfolioItem) {
+            // Update trading details section
+            document.getElementById('trading-details').innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Player:</strong> ${portfolioItem.player_name} (${portfolioItem.team_name})</p>
+                        <p><strong>Prop:</strong> ${portfolioItem.prop_type.replace(/_/g, ' ').toUpperCase()} ${portfolioItem.trade_type.toUpperCase()}</p>
+                        <p><strong>Current Position:</strong> ${portfolioItem.quantity} contract(s)</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Entry Price:</strong> $${portfolioItem.avg_price.toFixed(2)}</p>
+                        <p><strong>Current Price:</strong> $${portfolioItem.live_price.toFixed(2)}</p>
+                        <p><strong>P&L:</strong> $${((portfolioItem.live_price - portfolioItem.avg_price) * portfolioItem.quantity).toFixed(2)}</p>
+                        <p><strong>Game Status:</strong> <span class="badge bg-${getStatusColor(portfolioItem.game_status)}">${portfolioItem.game_status}</span></p>
+                    </div>
+                </div>
+            `;
+            
+            // Update market price display
+            document.getElementById('current-market-price').textContent = `$${portfolioItem.live_price.toFixed(2)}`;
+            document.getElementById('available-contracts').textContent = portfolioItem.quantity;
+            
+            // Update sell options
+            const sellOptions = document.getElementById('sell-options');
+            sellOptions.innerHTML = `
+                <div class="mb-3">
+                    <label class="form-label">Sell Now (Market Price)</label>
+                    <button type="button" class="btn btn-danger w-100" onclick="executeTrade('sell', 'market')">
+                        Sell Now (Market Price)
+                    </button>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Limit Sell Order</label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        <input type="number" class="form-control" id="sell-limit-price" placeholder="${portfolioItem.live_price.toFixed(2)}" step="0.01" min="0.01" max="99.99">
+                    </div>
+                    <button type="button" class="btn btn-outline-danger w-100 mt-2" onclick="executeTrade('sell', 'limit')">
+                        Place Sell Order
+                    </button>
+                </div>
+            `;
+            
+            // Clear buy options since this is portfolio trading (selling only)
+            const buyOptions = document.getElementById('buy-options');
+            buyOptions.innerHTML = `
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> Portfolio Trading Mode - You can only sell contracts you own
+                </div>
+            `;
+        }
+
         // Cash Out Contract
         function cashOutContract() {
             const tradingProp = window.currentTradingProp;
@@ -1382,8 +1708,17 @@
             const cashOutAmount = marketPrice * position.quantity;
             currentUser.balance += cashOutAmount;
 
+            // Update the mockProps array so the change persists
+            const mockProp = mockProps.find(p => p.id === prop.id);
+            if (mockProp) {
+                mockProp.available_contracts += 1;
+            }
+
             // Remove from portfolio
             userPortfolio = userPortfolio.filter(p => p !== position);
+
+            // Cancel any pending sell orders for this contract
+            cancelPendingSellOrders(prop.id, tradingProp.type);
 
             // Record trade
             recordTrade('CASH_OUT', prop, marketPrice, 'cash_out');
@@ -1396,10 +1731,27 @@
         }
 
 
+
+
         // Filter event listeners
-        document.getElementById('sport-filter').addEventListener('change', loadMarketData);
+        document.getElementById('sport-filter').addEventListener('change', function() {
+            loadMarketData();
+            
+            // Show/hide stat category filter based on sport selection
+            const sportFilter = this.value;
+            const statCategoryFilter = document.getElementById('stat-category-container');
+            
+            if (sportFilter === 'MLB') {
+                statCategoryFilter.style.display = 'block';
+            } else {
+                statCategoryFilter.style.display = 'none';
+                // Reset stat category filter when switching away from MLB
+                document.getElementById('stat-category-filter').value = '';
+            }
+        });
         document.getElementById('difficulty-filter').addEventListener('change', loadMarketData);
         document.getElementById('status-filter').addEventListener('change', loadMarketData);
+        document.getElementById('stat-category-filter').addEventListener('change', loadMarketData);
 
         // Initialize
         window.addEventListener('load', () => {

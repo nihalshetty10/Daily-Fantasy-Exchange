@@ -65,7 +65,7 @@ class MLBPropScraper:
             return []
 
     def get_players_from_games(self):
-        """Step 2: Get list of players from all games playing today"""
+        """Step 2: Get list of players from actual game lineups and starting pitchers"""
         self.players_today = []
         
         for game in self.games_today:
@@ -73,58 +73,78 @@ class MLBPropScraper:
                 continue
                 
             game_id = game['game_id']
-            url = f"{self.base_url}/game/{game_id}/boxscore"
             
             try:
-                response = requests.get(url, headers=self.headers)
-                response.raise_for_status()
-                data = response.json()
+                # Get probable pitchers from the schedule (this is the correct way)
+                schedule_url = f"{self.base_url}/schedule?sportId=1&date={game['game_date'][:10]}&hydrate=probablePitcher"
+                schedule_response = requests.get(schedule_url, headers=self.headers)
                 
-                # Get probable pitchers
-                if 'probablePitchers' in data.get('teams', {}).get('home', {}):
-                    home_pitcher = data['teams']['home']['probablePitchers']
-                    if home_pitcher:
-                        self.players_today.append({
-                            'player_id': home_pitcher['id'],
-                            'name': home_pitcher['fullName'],
-                            'team_id': game['home_team']['id'],
-                            'team_name': game['home_team']['name'],
-                            'position': 'P',
-                            'game_id': game_id
-                        })
+                probable_pitchers = []
+                if schedule_response.status_code == 200:
+                    schedule_data = schedule_response.json()
+                    # Find this specific game in the schedule
+                    for date_data in schedule_data.get('dates', []):
+                        for schedule_game in date_data.get('games', []):
+                            if schedule_game['gamePk'] == game_id:
+                                # Check for probable pitchers
+                                if 'probablePitcher' in schedule_game.get('teams', {}).get('home', {}):
+                                    home_pitcher = schedule_game['teams']['home']['probablePitcher']
+                                    probable_pitchers.append({
+                                        'player_id': home_pitcher['id'],
+                                        'name': home_pitcher['fullName'],
+                                        'team_id': game['home_team']['id'],
+                                        'team_name': game['home_team']['name'],
+                                        'position': 'P',
+                                        'game_id': game_id,
+                                        'is_starter': True
+                                    })
+                                
+                                if 'probablePitcher' in schedule_game.get('teams', {}).get('away', {}):
+                                    away_pitcher = schedule_game['teams']['away']['probablePitcher']
+                                    probable_pitchers.append({
+                                        'player_id': away_pitcher['id'],
+                                        'name': away_pitcher['fullName'],
+                                        'team_id': game['away_team']['id'],
+                                        'team_name': game['away_team']['name'],
+                                        'position': 'P',
+                                        'game_id': game_id,
+                                        'is_starter': True
+                                    })
+                                break
                 
-                if 'probablePitchers' in data.get('teams', {}).get('away', {}):
-                    away_pitcher = data['teams']['away']['probablePitchers']
-                    if away_pitcher:
-                        self.players_today.append({
-                            'player_id': away_pitcher['id'],
-                            'name': away_pitcher['fullName'],
-                            'team_id': game['away_team']['id'],
-                            'team_name': game['away_team']['name'],
-                            'position': 'P',
-                            'game_id': game_id
-                        })
+                # Add probable pitchers to players list
+                self.players_today.extend(probable_pitchers)
                 
-                # Get roster for both teams
+                # Get position players from team rosters (likely starters)
                 for team_type in ['home', 'away']:
                     team_id = game[f'{team_type}_team']['id']
-                    roster_url = f"{self.base_url}/teams/{team_id}/roster"
+                    team_name = game[f'{team_type}_team']['name']
                     
+                    # Get team roster to find likely starters
+                    roster_url = f"{self.base_url}/teams/{team_id}/roster"
                     roster_response = requests.get(roster_url, headers=self.headers)
+                    
                     if roster_response.status_code == 200:
                         roster_data = roster_response.json()
                         
+                        # Get likely starters (focus on key positions and recent players)
                         for player in roster_data.get('roster', []):
-                            # Focus on position players and starting pitchers
                             position = player['position']['abbreviation']
-                            if position in ['C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'DH', 'OF', 'P']:
+                            
+                            # Focus on position players (not pitchers - we already have them)
+                            if position in ['C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'DH', 'OF']:
+                                # Get player stats to determine if they're likely to start
+                                player_id = player['person']['id']
+                                
+                                # Add position players (we'll filter by stats later)
                                 self.players_today.append({
-                                    'player_id': player['person']['id'],
+                                    'player_id': player_id,
                                     'name': player['person']['fullName'],
                                     'team_id': team_id,
-                                    'team_name': game[f'{team_type}_team']['name'],
+                                    'team_name': team_name,
                                     'position': position,
-                                    'game_id': game_id
+                                    'game_id': game_id,
+                                    'is_starter': True  # Assume they're starters for now
                                 })
                 
                 time.sleep(0.5)  # Rate limiting
@@ -141,7 +161,18 @@ class MLBPropScraper:
                 unique_players[key] = player
         
         self.players_today = list(unique_players.values())
-        print(f"Found {len(self.players_today)} players playing today")
+        
+        # Count starters vs bench players
+        starters = [p for p in self.players_today if p.get('is_starter', False)]
+        bench_players = [p for p in self.players_today if not p.get('is_starter', False)]
+        pitchers = [p for p in self.players_today if p['position'] == 'P']
+        position_players = [p for p in self.players_today if p['position'] != 'P']
+        
+        print(f"Found {len(self.players_today)} total players playing today")
+        print(f"  - Starting pitchers: {len(pitchers)}")
+        print(f"  - Position players: {len(position_players)}")
+        print(f"  - Bench players: {len(bench_players)}")
+        
         return self.players_today
 
     def get_player_stats(self, player_id: int, seasons: List[int] = None):
@@ -193,7 +224,7 @@ class MLBPropScraper:
         return player_data
 
     def calculate_predictions(self, player_id: int):
-        """Step 4: Use historical data to predict player performance (simplified LSTM concept)"""
+        """Step 4: Use historical data to predict player performance (80% recent 10 games, 20% past 2 seasons)"""
         if player_id not in self.player_stats:
             return None
         
@@ -201,71 +232,177 @@ class MLBPropScraper:
         predictions = {}
         
         try:
-            # For batters
-            if stats['recent_games']:
+            # Get player info to determine position
+            player = None
+            for p in self.players_today:
+                if p['player_id'] == player_id:
+                    player = p
+                    break
+            
+            if not player:
+                return None
+            
+            is_pitcher = player['position'] == 'P'
+            
+            if is_pitcher:
+                # PITCHER STATS ONLY: Strikeouts, ERA, Pitches
+                recent_k = []
+                recent_pitches = []
+                recent_era = []
+                
+                # Get recent 10 games (80% weight)
+                if stats['recent_games']:
+                    for game in stats['recent_games']:
+                        game_stat = game.get('stat', {})
+                        if 'strikeOuts' in game_stat:  # This is a pitcher
+                            recent_k.append(float(game_stat.get('strikeOuts', 0)))
+                            
+                            # Get pitches thrown - handle missing data
+                            pitches = game_stat.get('pitchesThrown', 0)
+                            if pitches and pitches > 0:
+                                recent_pitches.append(float(pitches))
+                            else:
+                                # If no pitches data, estimate based on innings (typical: 15-20 pitches per inning)
+                                innings = float(game_stat.get('inningsPitched', 0))
+                                if innings > 0:
+                                    estimated_pitches = innings * 17.5  # Average of 17.5 pitches per inning
+                                    recent_pitches.append(estimated_pitches)
+                            
+                            # Calculate game ERA
+                            earned_runs = float(game_stat.get('earnedRuns', 0))
+                            innings = float(game_stat.get('inningsPitched', 0))
+                            if innings > 0:
+                                game_era = (earned_runs * 9) / innings
+                                recent_era.append(game_era)
+                
+                # Get season stats (20% weight)
+                season_k = []
+                season_pitches = []
+                season_era = []
+                
+                for season, season_stat in stats['season_stats'].items():
+                    if 'strikeOuts' in season_stat:
+                        season_k.append(float(season_stat.get('strikeOuts', 0)))
+                        
+                        # Get season pitches - handle missing data
+                        season_pitches_val = season_stat.get('pitchesThrown', 0)
+                        if season_pitches_val and season_pitches_val > 0:
+                            season_pitches.append(float(season_pitches_val))
+                        else:
+                            # If no season pitches data, estimate based on innings
+                            innings = float(season_stat.get('inningsPitched', 0))
+                            if innings > 0:
+                                estimated_pitches = innings * 17.5
+                                season_pitches.append(estimated_pitches)
+                        
+                        # Calculate season ERA
+                        earned_runs = float(season_stat.get('earnedRuns', 0))
+                        innings = float(season_stat.get('inningsPitched', 0))
+                        if innings > 0:
+                            season_era_val = (earned_runs * 9) / innings
+                            season_era.append(season_era_val)
+                
+                # Calculate weighted predictions: 80% recent games, 20% season stats
+                if recent_k:
+                    # Recent games weight (80%)
+                    recent_weights = np.array([0.3, 0.25, 0.2, 0.15, 0.1] + [0.05] * (len(recent_k) - 5))
+                    recent_weights = recent_weights[:len(recent_k)]
+                    recent_weights = recent_weights / recent_weights.sum()
+                    
+                    recent_k_avg = np.average(recent_k, weights=recent_weights)
+                    recent_pitches_avg = np.average(recent_pitches, weights=recent_weights) if recent_pitches else 0
+                    recent_era_avg = np.average(recent_era, weights=recent_weights) if recent_era else 0
+                    
+                    # Season stats weight (20%)
+                    season_k_avg = np.average(season_k) if season_k else recent_k_avg
+                    season_pitches_avg = np.average(season_pitches) if season_pitches else recent_pitches_avg
+                    season_era_avg = np.average(season_era) if season_era else recent_era_avg
+                    
+                    # Final weighted average: 80% recent + 20% season
+                    predictions['strikeouts'] = 0.8 * recent_k_avg + 0.2 * season_k_avg
+                    
+                    # Always calculate pitches - use estimated if no real data
+                    if recent_pitches_avg > 0 or season_pitches_avg > 0:
+                        predictions['pitches'] = 0.8 * recent_pitches_avg + 0.2 * season_pitches_avg
+                    else:
+                        # Fallback: estimate based on strikeouts (typical: 4-5 pitches per strikeout)
+                        predictions['pitches'] = recent_k_avg * 4.5
+                    
+                    if recent_era_avg > 0 or season_era_avg > 0:
+                        predictions['era'] = 0.8 * recent_era_avg + 0.2 * season_era_avg
+                
+            else:
+                # HITTER STATS ONLY: Runs, RBIs, Hits, Total Bases
                 recent_hitting = []
                 recent_rbis = []
                 recent_runs = []
                 recent_total_bases = []
                 
-                for game in stats['recent_games']:
-                    game_stat = game.get('stat', {})
-                    # Handle hitting stats
-                    if 'hits' in game_stat:
-                        recent_hitting.append(float(game_stat.get('hits', 0)))
-                        recent_rbis.append(float(game_stat.get('rbi', 0)))
-                        recent_runs.append(float(game_stat.get('runs', 0)))
+                # Get recent 10 games (80% weight)
+                if stats['recent_games']:
+                    for game in stats['recent_games']:
+                        game_stat = game.get('stat', {})
+                        # Handle hitting stats
+                        if 'hits' in game_stat:
+                            recent_hitting.append(float(game_stat.get('hits', 0)))
+                            recent_rbis.append(float(game_stat.get('rbi', 0)))
+                            recent_runs.append(float(game_stat.get('runs', 0)))
+                            
+                            # Calculate total bases - ensure all values are numbers
+                            hits = float(game_stat.get('hits', 0))
+                            doubles = float(game_stat.get('doubles', 0))
+                            triples = float(game_stat.get('triples', 0))
+                            homers = float(game_stat.get('homeRuns', 0))
+                            
+                            singles = hits - doubles - triples - homers
+                            total_bases = singles + (doubles * 2) + (triples * 3) + (homers * 4)
+                            recent_total_bases.append(total_bases)
+                
+                # Get season stats (20% weight)
+                season_hits = []
+                season_rbis = []
+                season_runs = []
+                season_total_bases = []
+                
+                for season, season_stat in stats['season_stats'].items():
+                    if 'hits' in season_stat:
+                        season_hits.append(float(season_stat.get('hits', 0)))
+                        season_rbis.append(float(season_stat.get('rbi', 0)))
+                        season_runs.append(float(season_stat.get('runs', 0)))
                         
-                        # Calculate total bases - ensure all values are numbers
-                        hits = float(game_stat.get('hits', 0))
-                        doubles = float(game_stat.get('doubles', 0))
-                        triples = float(game_stat.get('triples', 0))
-                        homers = float(game_stat.get('homeRuns', 0))
+                        # Calculate season total bases
+                        hits = float(season_stat.get('hits', 0))
+                        doubles = float(season_stat.get('doubles', 0))
+                        triples = float(season_stat.get('triples', 0))
+                        homers = float(season_stat.get('homeRuns', 0))
                         
                         singles = hits - doubles - triples - homers
                         total_bases = singles + (doubles * 2) + (triples * 3) + (homers * 4)
-                        recent_total_bases.append(total_bases)
+                        season_total_bases.append(total_bases)
                 
+                # Calculate weighted predictions: 80% recent games, 20% season stats
                 if recent_hitting:
-                    # Simple prediction using weighted average (more weight on recent games)
-                    weights = np.array([0.3, 0.25, 0.2, 0.15, 0.1] + [0.05] * (len(recent_hitting) - 5))
-                    weights = weights[:len(recent_hitting)]
-                    weights = weights / weights.sum()
+                    # Recent games weight (80%)
+                    recent_weights = np.array([0.3, 0.25, 0.2, 0.15, 0.1] + [0.05] * (len(recent_hitting) - 5))
+                    recent_weights = recent_weights[:len(recent_hitting)]
+                    recent_weights = recent_weights / recent_weights.sum()
                     
-                    predictions['hits'] = np.average(recent_hitting, weights=weights)
-                    predictions['rbis'] = np.average(recent_rbis, weights=weights)
-                    predictions['runs'] = np.average(recent_runs, weights=weights)
-                    predictions['total_bases'] = np.average(recent_total_bases, weights=weights)
-            
-            # For pitchers - check if they have pitching stats
-            if stats['recent_games']:
-                recent_k = []
-                recent_pitches = []
-                recent_era = []
-                
-                for game in stats['recent_games']:
-                    game_stat = game.get('stat', {})
-                    if 'strikeOuts' in game_stat:  # This is a pitcher
-                        recent_k.append(float(game_stat.get('strikeOuts', 0)))
-                        recent_pitches.append(float(game_stat.get('pitchesThrown', 0)))
-                        
-                        # Calculate game ERA
-                        earned_runs = float(game_stat.get('earnedRuns', 0))
-                        innings = float(game_stat.get('inningsPitched', 0))
-                        if innings > 0:
-                            game_era = (earned_runs * 9) / innings
-                            recent_era.append(game_era)
-                
-                if recent_k:
-                    weights = np.array([0.3, 0.25, 0.2, 0.15, 0.1] + [0.05] * (len(recent_k) - 5))
-                    weights = weights[:len(recent_k)]
-                    weights = weights / weights.sum()
+                    recent_hits_avg = np.average(recent_hitting, weights=recent_weights)
+                    recent_rbis_avg = np.average(recent_rbis, weights=recent_weights)
+                    recent_runs_avg = np.average(recent_runs, weights=recent_weights)
+                    recent_total_bases_avg = np.average(recent_total_bases, weights=recent_weights)
                     
-                    predictions['strikeouts'] = np.average(recent_k, weights=weights)
-                    if recent_pitches:
-                        predictions['pitches'] = np.average(recent_pitches, weights=weights)
-                    if recent_era:
-                        predictions['era'] = np.average(recent_era, weights=weights)
+                    # Season stats weight (20%)
+                    season_hits_avg = np.average(season_hits) if season_hits else recent_hits_avg
+                    season_rbis_avg = np.average(season_rbis) if season_rbis else recent_rbis_avg
+                    season_runs_avg = np.average(season_runs) if season_runs else recent_runs_avg
+                    season_total_bases_avg = np.average(season_total_bases) if season_total_bases else recent_total_bases_avg
+                    
+                    # Final weighted average: 80% recent + 20% season
+                    predictions['hits'] = 0.8 * recent_hits_avg + 0.2 * season_hits_avg
+                    predictions['rbis'] = 0.8 * recent_rbis_avg + 0.2 * season_rbis_avg
+                    predictions['runs'] = 0.8 * recent_runs_avg + 0.2 * season_runs_avg
+                    predictions['total_bases'] = 0.8 * recent_total_bases_avg + 0.2 * season_total_bases_avg
         
         except Exception as e:
             print(f"Error calculating predictions for player {player_id}: {e}")
@@ -412,8 +549,10 @@ class MLBPropScraper:
                         'opponent': self._get_opponent_info(player)
                     })
                 elif hard_stat == 'era':
-                    hard_line = 2.25
-                    hard_prob = max(0.15, min(0.20, 1 / (1 + np.exp((expected_value - hard_line)))))
+                    hard_line = 1.5
+                    # Since 1.5 is much harder than 2.25, adjust probability calculation
+                    # Use a more aggressive sigmoid curve for the tougher line
+                    hard_prob = max(0.10, min(0.18, 1 / (1 + np.exp((expected_value - hard_line) * 2))))
                     props.append({
                         'type': 'hard',
                         'stat': 'ERA',
@@ -550,8 +689,8 @@ class MLBPropScraper:
                         'opponent': self._get_opponent_info(player)
                     })
             
-            # Randomly select 2 HARD props from the 4 batter stats (runs, rbis, hits, total_bases - RBIs can be hard props)
-            available_hard_stats = [s for s in ['runs', 'rbis', 'hits', 'total_bases'] if s in predictions]
+            # Randomly select 2 HARD props from the 3 batter stats (runs, rbis, total_bases - no hits for hard props)
+            available_hard_stats = [s for s in ['runs', 'rbis', 'total_bases'] if s in predictions]
             if len(available_hard_stats) >= 2:
                 import random
                 random.seed(player_id + 2000)  # Different seed for hard props
@@ -560,19 +699,7 @@ class MLBPropScraper:
                 for hard_stat in hard_stats:
                     expected_value = predictions[hard_stat]
                     
-                    if hard_stat == 'hits':
-                        hard_line = 2.5
-                        hard_prob = max(0.15, min(0.20, np.exp(-((hard_line - expected_value) ** 2) / 2)))
-                        props.append({
-                            'type': 'hard',
-                            'stat': 'Hits',
-                            'line': hard_line,
-                            'direction': 'over',
-                            'implied_prob': hard_prob,
-                            'price': int(hard_prob * 100),
-                            'opponent': self._get_opponent_info(player)
-                        })
-                    elif hard_stat == 'runs':
+                    if hard_stat == 'runs':
                         hard_line = 2.5
                         hard_prob = max(0.15, min(0.20, np.exp(-((hard_line - expected_value) ** 2) / 2)))
                         props.append({
@@ -646,16 +773,27 @@ class MLBPropScraper:
         # Process more players for better prop coverage
         players = players[:100]  # Increased from 20 to 100
         
+        # Prioritize starters over bench players
+        starters = [p for p in players if p.get('is_starter', False)]
+        bench_players = [p for p in players if not p.get('is_starter', False)]
+        
+        # Process starters first, then bench players if needed
+        players_to_process = starters + bench_players[:50]  # Max 50 bench players
+        
+        print(f"Processing {len(players_to_process)} players:")
+        print(f"  - Starters: {len(starters)}")
+        print(f"  - Bench players: {len(players_to_process) - len(starters)}")
+        
         all_props = {}
         
         # Steps 3-5: For each player, get stats, predict, and calculate props
-        print(f"\n=== Steps 3-5: Processing {len(players)} players ===")
+        print(f"\n=== Steps 3-5: Processing {len(players_to_process)} players ===")
         
-        for i, player in enumerate(players):
+        for i, player in enumerate(players_to_process):
             player_id = player['player_id']
             player_name = player['name']
             
-            print(f"Processing {player_name} ({i+1}/{len(players)})")
+            print(f"Processing {player_name} ({i+1}/{len(players_to_process)})")
             
             # Step 3: Get player stats
             stats = self.get_player_stats(player_id)
@@ -706,13 +844,23 @@ class MLBPropScraper:
             print(f"Player: {player['name']} ({player['position']}) - {player['team_name']}")
             print(f"{'='*50}")
             
-            print(f"\nPredictions:")
+            print(f"\nPredictions (80% recent 10 games, 20% past 2 seasons):")
             for stat, value in predictions.items():
                 print(f"  {stat}: {value:.2f}")
             
             print(f"\nProps ({len(props)} total):")
             for prop in props:
-                print(f"  [{prop['type'].upper()}] {prop['stat']} {prop['direction'].upper()} {prop['line']} - ${prop['price']} ({prop['implied_prob']:.1%})")
+                if isinstance(prop, dict) and 'type' in prop and 'stat' in prop and 'direction' in prop and 'line' in prop and 'price' in prop and 'implied_prob' in prop:
+                    print(f"  [{prop['type'].upper()}] {prop['stat']} {prop['direction'].upper()} {prop['line']} - ${prop['price']} ({prop['implied_prob']:.1%})")
+                else:
+                    print(f"  [INVALID PROP] {prop}")
+            
+            # Show weight breakdown for first few players
+            if player_id == list(self.props.keys())[0]:  # Only show for first player as example
+                print(f"\n📊 Weight Calculation Example ({player['name']}):")
+                print(f"  Recent 10 games: 80% weight")
+                print(f"  Past 2 seasons: 20% weight")
+                print(f"  Final prediction = (0.8 × recent_avg) + (0.2 × season_avg)")
 
 def main():
     # Initialize scraper

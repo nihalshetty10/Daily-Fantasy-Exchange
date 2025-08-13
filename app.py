@@ -42,7 +42,8 @@ def create_app():
 
     return app
 
-    app = create_app()
+# Create the Flask app instance
+app = create_app()
 
 if __name__ == '__main__':
     # Start the live tracker automatically as a background service

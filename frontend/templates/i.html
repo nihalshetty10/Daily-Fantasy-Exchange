@@ -295,6 +295,14 @@
                                 </div>
                             </div>
 
+                            <!-- Game Schedule Header -->
+                            <div class="mb-3 p-3 bg-light border rounded" id="game-schedule-header" style="display: none;">
+                                <h6><i class="fas fa-calendar-alt"></i> Today's Game Schedule (Earliest First)</h6>
+                                <div id="game-schedule-content">
+                                    <small class="text-muted">Game schedule will appear here...</small>
+                                </div>
+                            </div>
+
                             <!-- Props List -->
                             <div id="props-container">
                                 <!-- Props will be loaded here -->
@@ -527,7 +535,7 @@
                             total_contracts: 10,
                             status_badge: 'UPCOMING',
                             is_tradeable: true,
-                            formatted_game_time: '7:05 PM EST',
+                            formatted_game_time: prop.game_time || 'TBD',
                             direction: prop.direction,
                             implied_probability: prop.implied_prob,
                             game_id: player.game_id,
@@ -540,7 +548,35 @@
                     }
                 }
                 
-                console.log(`✅ Successfully loaded ${realProps.length} real MLB props with 10 contracts each`);
+                // Sort props by game time (earlier games first)
+                realProps.sort((a, b) => {
+                    const timeA = a.formatted_game_time;
+                    const timeB = b.formatted_game_time;
+                    
+                    // Extract hour and minute from time strings like "06:10 PM ET"
+                    const parseTime = (timeStr) => {
+                        if (!timeStr || timeStr === 'TBD') return Infinity;
+                        const match = timeStr.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+                        if (!match) return Infinity;
+                        
+                        let hour = parseInt(match[1]);
+                        const minute = parseInt(match[2]);
+                        const period = match[3].toUpperCase();
+                        
+                        // Convert to 24-hour format for comparison
+                        if (period === 'PM' && hour !== 12) hour += 12;
+                        if (period === 'AM' && hour === 12) hour = 0;
+                        
+                        return hour * 60 + minute;
+                    };
+                    
+                    const timeAValue = parseTime(timeA);
+                    const timeBValue = parseTime(timeB);
+                    
+                    return timeAValue - timeBValue;
+                });
+                
+                console.log(`✅ Successfully loaded ${realProps.length} real MLB props with 10 contracts each, sorted by game time`);
                 return realProps;
                 
             } catch (error) {
@@ -667,12 +703,16 @@
 
             // Update props status indicator
             const statusElement = document.getElementById('props-status');
-            if (mockProps === realProps && realProps.length > 0) {
-                statusElement.innerHTML = `<i class="fas fa-check-circle text-success"></i> ${realProps.length} real MLB props loaded from scraper`;
-                statusElement.className = 'mt-3 text-center text-success';
-            } else if (mockProps.length > 0) {
-                statusElement.innerHTML = `<i class="fas fa-exclamation-triangle text-warning"></i> ${mockProps.length} demo props loaded (real props failed to load)`;
-                statusElement.className = 'mt-3 text-center text-warning';
+            if (mockProps.length > 0) {
+                // Check if we have real game times
+                const hasRealTimes = mockProps.some(prop => prop.formatted_game_time && prop.formatted_game_time !== 'TBD');
+                if (hasRealTimes) {
+                    statusElement.innerHTML = `<i class="fas fa-check-circle text-success"></i> ${mockProps.length} real MLB props loaded with actual game times (sorted by start time)`;
+                    statusElement.className = 'mt-3 text-center text-success';
+                } else {
+                    statusElement.innerHTML = `<i class="fas fa-exclamation-triangle text-warning"></i> ${mockProps.length} props loaded (game times may be demo)`;
+                    statusElement.className = 'mt-3 text-center text-warning';
+                }
             } else {
                 statusElement.innerHTML = `<i class="fas fa-info-circle text-muted"></i> No props available`;
                 statusElement.className = 'mt-3 text-center text-muted';
@@ -697,6 +737,9 @@
                          }
 
             displayProps(filteredProps, statusFilter);
+            
+            // Show game schedule
+            showGameSchedule();
         }
 
         // Display props in the market
@@ -737,7 +780,7 @@
                                 <div>
                                     <h6 class="mb-0">${prop.player_name} (${prop.player_team})</h6>
                                     <small class="text-muted">
-                                        ${prop.player_position || ''} • ${prop.formatted_game_time || ''}
+                                        ${prop.player_position || ''} • <strong class="text-primary"><i class="fas fa-clock"></i> ${prop.formatted_game_time || 'TBD'}</strong>
                                     </small>
                                     ${prop.opponent ? `<br><small class="text-info"><i class="fas fa-gamepad"></i> ${prop.opponent}</small>` : ''}
                                 </div>
@@ -1732,6 +1775,66 @@
 
 
 
+
+        // Show game schedule
+        function showGameSchedule() {
+            const scheduleHeader = document.getElementById('game-schedule-header');
+            const scheduleContent = document.getElementById('game-schedule-content');
+            
+            if (!scheduleHeader || !scheduleContent || mockProps.length === 0) return;
+            
+            // Get unique games with their earliest time
+            const games = {};
+            mockProps.forEach(prop => {
+                if (prop.formatted_game_time && prop.formatted_game_time !== 'TBD') {
+                    const key = `${prop.player_team} vs ${prop.opponent}`;
+                    if (!games[key] || prop.formatted_game_time < games[key].time) {
+                        games[key] = {
+                            time: prop.formatted_game_time,
+                            team: prop.player_team,
+                            opponent: prop.opponent
+                        };
+                    }
+                }
+            });
+            
+            // Sort games by time
+            const sortedGames = Object.values(games).sort((a, b) => {
+                const parseTime = (timeStr) => {
+                    const match = timeStr.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+                    if (!match) return Infinity;
+                    
+                    let hour = parseInt(match[1]);
+                    const minute = parseInt(match[2]);
+                    const period = match[3].toUpperCase();
+                    
+                    if (period === 'PM' && hour !== 12) hour += 12;
+                    if (period === 'AM' && hour === 12) hour = 0;
+                    
+                    return hour * 60 + minute;
+                };
+                
+                return parseTime(a.time) - parseTime(b.time);
+            });
+            
+            if (sortedGames.length > 0) {
+                scheduleHeader.style.display = 'block';
+                scheduleContent.innerHTML = `
+                    <div class="row">
+                        ${sortedGames.map(game => `
+                            <div class="col-md-4 mb-2">
+                                <div class="badge bg-primary">
+                                    <i class="fas fa-clock"></i> ${game.time}
+                                </div>
+                                <br><small>${game.team} ${game.opponent}</small>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else {
+                scheduleHeader.style.display = 'none';
+            }
+        }
 
         // Filter event listeners
         document.getElementById('sport-filter').addEventListener('change', function() {

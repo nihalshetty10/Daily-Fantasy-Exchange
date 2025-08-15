@@ -36,13 +36,21 @@ class MLBPropScraper:
             response.raise_for_status()
             data = response.json()
             
+
+            
             self.games_today = []
             
             for date_data in data.get('dates', []):
                 for game in date_data.get('games', []):
+                    # Extract game time from gameDate
+                    game_datetime = datetime.fromisoformat(game['gameDate'].replace('Z', '+00:00'))
+                    game_time_et = game_datetime.astimezone().strftime('%I:%M %p ET')
+                    
                     game_info = {
                         'game_id': game['gamePk'],
                         'game_date': game['gameDate'],
+                        'game_time_et': game_time_et,
+                        'game_datetime': game_datetime.isoformat(),
                         'status': game['status']['abstractGameState'],
                         'home_team': {
                             'id': game['teams']['home']['team']['id'],
@@ -444,45 +452,45 @@ class MLBPropScraper:
                         over_prob = 1 / (1 + np.exp(-(expected_value - medium_line)))
                         over_prob = max(0.45, min(0.55, over_prob))
                         
-                        props.append({
+                        prop = {
                             'type': 'medium',
                             'stat': 'Strikeouts',
                             'line': medium_line,
                             'direction': 'over',
                             'implied_prob': over_prob,
-                            'price': int(over_prob * 100),
-                            'opponent': self._get_opponent_info(player)
-                        })
+                            'price': int(over_prob * 100)
+                        }
+                        props.append(self._add_prop_metadata(prop, player))
                     
                     elif stat == 'era':
                         medium_line = 3.25
                         under_prob = 1 / (1 + np.exp((expected_value - medium_line)))
                         under_prob = max(0.45, min(0.55, under_prob))
                         
-                        props.append({
+                        prop = {
                             'type': 'medium',
                             'stat': 'ERA',
                             'line': medium_line,
                             'direction': 'under',
                             'implied_prob': under_prob,
-                            'price': int(under_prob * 100),
-                            'opponent': self._get_opponent_info(player)
-                        })
+                            'price': int(under_prob * 100)
+                        }
+                        props.append(self._add_prop_metadata(prop, player))
                     
                     elif stat == 'pitches':
                         medium_line = 95.5
                         over_prob = 1 / (1 + np.exp(-(expected_value - medium_line) / 10))
                         over_prob = max(0.45, min(0.55, over_prob))
                         
-                        props.append({
+                        prop = {
                             'type': 'medium',
                             'stat': 'Pitches',
                             'line': medium_line,
                             'direction': 'over',
                             'implied_prob': over_prob,
-                            'price': int(over_prob * 100),
-                            'opponent': self._get_opponent_info(player)
-                        })
+                            'price': int(over_prob * 100)
+                        }
+                        props.append(self._add_prop_metadata(prop, player))
             
             # Randomly select 1 EASY prop from the 3 pitcher stats
             available_easy_stats = [s for s in pitcher_stats if s in predictions]
@@ -495,39 +503,39 @@ class MLBPropScraper:
                 if easy_stat == 'strikeouts':
                     easy_line = 3.5
                     easy_prob = min(0.80, max(0.75, 1 / (1 + np.exp(-(expected_value - easy_line)))))
-                    props.append({
+                    prop = {
                         'type': 'easy',
                         'stat': 'Strikeouts',
                         'line': easy_line,
                         'direction': 'over',
                         'implied_prob': easy_prob,
-                        'price': int(easy_prob * 100),
-                        'opponent': self._get_opponent_info(player)
-                    })
+                        'price': int(easy_prob * 100)
+                    }
+                    props.append(self._add_prop_metadata(prop, player))
                 elif easy_stat == 'era':
                     easy_line = 4.5
                     easy_prob = min(0.80, max(0.75, 1 / (1 + np.exp((expected_value - easy_line)))))
-                    props.append({
+                    prop = {
                         'type': 'easy',
                         'stat': 'ERA',
                         'line': easy_line,
                         'direction': 'under',
                         'implied_prob': easy_prob,
-                        'price': int(easy_prob * 100),
-                        'opponent': self._get_opponent_info(player)
-                    })
+                        'price': int(easy_prob * 100)
+                    }
+                    props.append(self._add_prop_metadata(prop, player))
                 elif easy_stat == 'pitches':
                     easy_line = 85.5
                     easy_prob = min(0.80, max(0.75, 1 / (1 + np.exp(-(expected_value - easy_line) / 10))))
-                    props.append({
+                    prop = {
                         'type': 'easy',
                         'stat': 'Pitches',
                         'line': easy_line,
                         'direction': 'over',
                         'implied_prob': easy_prob,
-                        'price': int(easy_prob * 100),
-                        'opponent': self._get_opponent_info(player)
-                    })
+                        'price': int(easy_prob * 100)
+                    }
+                    props.append(self._add_prop_metadata(prop, player))
             
             # Randomly select 1 HARD prop from the 3 pitcher stats
             available_hard_stats = [s for s in pitcher_stats if s in predictions]
@@ -539,41 +547,41 @@ class MLBPropScraper:
                 if hard_stat == 'strikeouts':
                     hard_line = 8.5
                     hard_prob = max(0.15, min(0.20, 1 / (1 + np.exp(-(expected_value - hard_line)))))
-                    props.append({
+                    prop = {
                         'type': 'hard',
                         'stat': 'Strikeouts',
                         'line': hard_line,
                         'direction': 'over',
                         'implied_prob': hard_prob,
-                        'price': int(hard_prob * 100),
-                        'opponent': self._get_opponent_info(player)
-                    })
+                        'price': int(hard_prob * 100)
+                    }
+                    props.append(self._add_prop_metadata(prop, player))
                 elif hard_stat == 'era':
                     hard_line = 1.5
                     # Since 1.5 is much harder than 2.25, adjust probability calculation
                     # Use a more aggressive sigmoid curve for the tougher line
                     hard_prob = max(0.10, min(0.18, 1 / (1 + np.exp((expected_value - hard_line) * 2))))
-                    props.append({
+                    prop = {
                         'type': 'hard',
                         'stat': 'ERA',
                         'line': hard_line,
                         'direction': 'under',
                         'implied_prob': hard_prob,
-                        'price': int(hard_prob * 100),
-                        'opponent': self._get_opponent_info(player)
-                    })
+                        'price': int(hard_prob * 100)
+                    }
+                    props.append(self._add_prop_metadata(prop, player))
                 elif hard_stat == 'pitches':
                     hard_line = 105.5
                     hard_prob = max(0.15, min(0.20, 1 / (1 + np.exp(-(expected_value - hard_line) / 10))))
-                    props.append({
+                    prop = {
                         'type': 'hard',
                         'stat': 'Pitches',
                         'line': hard_line,
                         'direction': 'over',
                         'implied_prob': hard_prob,
-                        'price': int(hard_prob * 100),
-                        'opponent': self._get_opponent_info(player)
-                    })
+                        'price': int(hard_prob * 100)
+                    }
+                    props.append(self._add_prop_metadata(prop, player))
         
         else:
             # NON-PITCHER PROPS: Runs, RBIs, Hits, Total Bases
@@ -589,60 +597,60 @@ class MLBPropScraper:
                         over_prob = 1 / (1 + np.exp(-(expected_value - medium_line)))
                         over_prob = max(0.45, min(0.55, over_prob))
                         
-                        props.append({
+                        prop = {
                             'type': 'medium',
                             'stat': 'Hits',
                             'line': medium_line,
                             'direction': 'over',
                             'implied_prob': over_prob,
-                            'price': int(over_prob * 100),
-                            'opponent': self._get_opponent_info(player)
-                        })
+                            'price': int(over_prob * 100)
+                        }
+                        props.append(self._add_prop_metadata(prop, player))
                     
                     elif stat == 'rbis':
                         medium_line = 1.5
                         over_prob = 1 / (1 + np.exp(-(expected_value - medium_line)))
                         over_prob = max(0.45, min(0.55, over_prob))
                         
-                        props.append({
+                        prop = {
                             'type': 'medium',
                             'stat': 'RBIs',
                             'line': medium_line,
                             'direction': 'over',
                             'implied_prob': over_prob,
-                            'price': int(over_prob * 100),
-                            'opponent': self._get_opponent_info(player)
-                        })
+                            'price': int(over_prob * 100)
+                        }
+                        props.append(self._add_prop_metadata(prop, player))
                     
                     elif stat == 'runs':
                         medium_line = 1.5
                         over_prob = 1 / (1 + np.exp(-(expected_value - medium_line)))
                         over_prob = max(0.45, min(0.55, over_prob))
                         
-                        props.append({
+                        prop = {
                             'type': 'medium',
                             'stat': 'Runs',
                             'line': medium_line,
                             'direction': 'over',
                             'implied_prob': over_prob,
-                            'price': int(over_prob * 100),
-                            'opponent': self._get_opponent_info(player)
-                        })
+                            'price': int(over_prob * 100)
+                        }
+                        props.append(self._add_prop_metadata(prop, player))
                     
                     elif stat == 'total_bases':
                         medium_line = 1.5
                         over_prob = 1 / (1 + np.exp(-(expected_value - medium_line)))
                         over_prob = max(0.45, min(0.55, over_prob))
                         
-                        props.append({
+                        prop = {
                             'type': 'medium',
                             'stat': 'Total Bases',
                             'line': medium_line,
                             'direction': 'over',
                             'implied_prob': over_prob,
-                            'price': int(over_prob * 100),
-                            'opponent': self._get_opponent_info(player)
-                        })
+                            'price': int(over_prob * 100)
+                        }
+                        props.append(self._add_prop_metadata(prop, player))
             
             # Randomly select 1 EASY prop from the 3 batter stats (runs, hits, total_bases - no RBIs)
             available_easy_stats = [s for s in ['runs', 'hits', 'total_bases'] if s in predictions]
@@ -655,39 +663,39 @@ class MLBPropScraper:
                 if easy_stat == 'hits':
                     easy_line = 0.5
                     easy_prob = min(0.80, max(0.75, 1 - np.exp(-expected_value * 2)))
-                    props.append({
+                    prop = {
                         'type': 'easy',
                         'stat': 'Hits',
                         'line': easy_line,
                         'direction': 'over',
                         'implied_prob': easy_prob,
-                        'price': int(easy_prob * 100),
-                        'opponent': self._get_opponent_info(player)
-                    })
+                        'price': int(easy_prob * 100)
+                    }
+                    props.append(self._add_prop_metadata(prop, player))
                 elif easy_stat == 'runs':
                     easy_line = 0.5
                     easy_prob = min(0.80, max(0.75, 1 - np.exp(-expected_value * 2)))
-                    props.append({
+                    prop = {
                         'type': 'easy',
                         'stat': 'Runs',
                         'line': easy_line,
                         'direction': 'over',
                         'implied_prob': easy_prob,
-                        'price': int(easy_prob * 100),
-                        'opponent': self._get_opponent_info(player)
-                    })
+                        'price': int(easy_prob * 100)
+                    }
+                    props.append(self._add_prop_metadata(prop, player))
                 elif easy_stat == 'total_bases':
                     easy_line = 0.5
                     easy_prob = min(0.80, max(0.75, 1 - np.exp(-expected_value / 2)))
-                    props.append({
+                    prop = {
                         'type': 'easy',
                         'stat': 'Total Bases',
                         'line': easy_line,
                         'direction': 'over',
                         'implied_prob': easy_prob,
-                        'price': int(easy_prob * 100),
-                        'opponent': self._get_opponent_info(player)
-                    })
+                        'price': int(easy_prob * 100)
+                    }
+                    props.append(self._add_prop_metadata(prop, player))
             
             # Randomly select 2 HARD props from the 3 batter stats (runs, rbis, total_bases - no hits for hard props)
             available_hard_stats = [s for s in ['runs', 'rbis', 'total_bases'] if s in predictions]
@@ -702,41 +710,41 @@ class MLBPropScraper:
                     if hard_stat == 'runs':
                         hard_line = 2.5
                         hard_prob = max(0.15, min(0.20, np.exp(-((hard_line - expected_value) ** 2) / 2)))
-                        props.append({
+                        prop = {
                             'type': 'hard',
                             'stat': 'Runs',
                             'line': hard_line,
                             'direction': 'over',
                             'implied_prob': hard_prob,
-                            'price': int(hard_prob * 100),
-                            'opponent': self._get_opponent_info(player)
-                        })
+                            'price': int(hard_prob * 100)
+                        }
+                        props.append(self._add_prop_metadata(prop, player))
                     elif hard_stat == 'rbis':
                         hard_line = 2.5
                         hard_prob = max(0.15, min(0.20, np.exp(-((hard_line - expected_value) ** 2) / 2)))
-                        props.append({
+                        prop = {
                             'type': 'hard',
                             'stat': 'RBIs',
                             'line': hard_line,
                             'direction': 'over',
                             'implied_prob': hard_prob,
-                            'price': int(hard_prob * 100),
-                            'opponent': self._get_opponent_info(player)
-                        })
+                            'price': int(hard_prob * 100)
+                        }
+                        props.append(self._add_prop_metadata(prop, player))
                     elif hard_stat == 'total_bases':
                         hard_line = 3.5
                         hard_prob = max(0.15, min(0.20, 1 - np.exp(-expected_value / 3)))
                         if expected_value > hard_line:
                             hard_prob = min(0.20, hard_prob * 1.5)
-                        props.append({
+                        prop = {
                             'type': 'hard',
                             'stat': 'Total Bases',
                             'line': hard_line,
                             'direction': 'over',
                             'implied_prob': hard_prob,
-                            'price': int(hard_prob * 100),
-                            'opponent': self._get_opponent_info(player)
-                        })
+                            'price': int(hard_prob * 100)
+                        }
+                        props.append(self._add_prop_metadata(prop, player))
         
         return props
 
@@ -749,6 +757,19 @@ class MLBPropScraper:
                 else:
                     return f"@ {game['home_team']['name']}"
         return "vs Unknown"
+    
+    def _get_game_time(self, player):
+        """Get game time for a player"""
+        for game in self.games_today:
+            if game['game_id'] == player['game_id']:
+                return game.get('game_time_et', 'TBD')
+        return 'TBD'
+    
+    def _add_prop_metadata(self, prop, player):
+        """Add game time and opponent to a prop"""
+        prop['game_time'] = self._get_game_time(player)
+        prop['opponent'] = self._get_opponent_info(player)
+        return prop
 
     def run_full_pipeline(self, date_str=None):
         """Run the complete pipeline"""
@@ -770,15 +791,15 @@ class MLBPropScraper:
             print("No players found")
             return
         
-        # Process more players for better prop coverage
-        players = players[:100]  # Increased from 20 to 100
+        # Process ALL players for complete coverage of all 14 games
+        # No limit on total players - process everyone found
         
         # Prioritize starters over bench players
         starters = [p for p in players if p.get('is_starter', False)]
         bench_players = [p for p in players if not p.get('is_starter', False)]
         
         # Process starters first, then bench players if needed
-        players_to_process = starters + bench_players[:50]  # Max 50 bench players
+        players_to_process = starters + bench_players  # No limit on bench players
         
         print(f"Processing {len(players_to_process)} players:")
         print(f"  - Starters: {len(starters)}")
@@ -874,9 +895,12 @@ def main():
     
     # Save to JSON for web app
     if props:
+        # Preserve the original games list before any modifications
+        original_games = scraper.games_today.copy()
+        
         output = {
             'generated_at': datetime.now().isoformat(),
-            'games': scraper.games_today,
+            'games': original_games,
             'props': {str(k): v for k, v in props.items()}
         }
         

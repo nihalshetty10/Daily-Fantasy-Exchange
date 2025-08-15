@@ -8,6 +8,7 @@ import time
 import re
 from typing import List, Dict, Tuple
 import warnings
+import pytz
 warnings.filterwarnings('ignore')
 
 class MLBPropScraper:
@@ -44,7 +45,9 @@ class MLBPropScraper:
                 for game in date_data.get('games', []):
                     # Extract game time from gameDate
                     game_datetime = datetime.fromisoformat(game['gameDate'].replace('Z', '+00:00'))
-                    game_time_et = game_datetime.astimezone().strftime('%I:%M %p ET')
+                    # Convert to Eastern Time explicitly
+                    eastern_tz = pytz.timezone('America/New_York')
+                    game_time_et = game_datetime.astimezone(eastern_tz).strftime('%I:%M %p ET')
                     
                     game_info = {
                         'game_id': game['gamePk'],

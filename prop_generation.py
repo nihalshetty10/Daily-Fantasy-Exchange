@@ -453,7 +453,9 @@ class MLBPropScraper:
                     if stat == 'strikeouts':
                         medium_line = 6.5
                         over_prob = 1 / (1 + np.exp(-(expected_value - medium_line)))
-                        over_prob = max(0.45, min(0.55, over_prob))
+                        # Dynamic probability based on player performance - no hard limits
+                        # Better players get higher probabilities, worse players get lower
+                        over_prob = max(0.40, min(0.60, over_prob))  # Tighter range: 40-60%
                         
                         prop = {
                             'type': 'medium',
@@ -468,7 +470,8 @@ class MLBPropScraper:
                     elif stat == 'era':
                         medium_line = 3.25
                         under_prob = 1 / (1 + np.exp((expected_value - medium_line)))
-                        under_prob = max(0.45, min(0.55, under_prob))
+                        # Dynamic probability based on player performance
+                        under_prob = max(0.40, min(0.60, under_prob))  # Tighter range: 40-60%
                         
                         prop = {
                             'type': 'medium',
@@ -483,7 +486,8 @@ class MLBPropScraper:
                     elif stat == 'pitches':
                         medium_line = 95.5
                         over_prob = 1 / (1 + np.exp(-(expected_value - medium_line) / 10))
-                        over_prob = max(0.45, min(0.55, over_prob))
+                        # Dynamic probability based on player performance
+                        over_prob = max(0.40, min(0.60, over_prob))  # Tighter range: 40-60%
                         
                         prop = {
                             'type': 'medium',
@@ -505,7 +509,10 @@ class MLBPropScraper:
                 
                 if easy_stat == 'strikeouts':
                     easy_line = 3.5
-                    easy_prob = min(0.80, max(0.75, 1 / (1 + np.exp(-(expected_value - easy_line)))))
+                    easy_prob = 1 / (1 + np.exp(-(expected_value - easy_line)))
+                    # Dynamic probability based on player performance - better players get higher odds
+                    easy_prob = max(0.65, min(0.85, easy_prob))  # Range: 65-85%
+                    
                     prop = {
                         'type': 'easy',
                         'stat': 'Strikeouts',
@@ -517,7 +524,10 @@ class MLBPropScraper:
                     props.append(self._add_prop_metadata(prop, player))
                 elif easy_stat == 'era':
                     easy_line = 4.5
-                    easy_prob = min(0.80, max(0.75, 1 / (1 + np.exp((expected_value - easy_line)))))
+                    easy_prob = 1 / (1 + np.exp((expected_value - easy_line)))
+                    # Dynamic probability based on player performance
+                    easy_prob = max(0.65, min(0.85, easy_prob))  # Range: 65-85%
+                    
                     prop = {
                         'type': 'easy',
                         'stat': 'ERA',
@@ -529,7 +539,10 @@ class MLBPropScraper:
                     props.append(self._add_prop_metadata(prop, player))
                 elif easy_stat == 'pitches':
                     easy_line = 85.5
-                    easy_prob = min(0.80, max(0.75, 1 / (1 + np.exp(-(expected_value - easy_line) / 10))))
+                    easy_prob = 1 / (1 + np.exp(-(expected_value - easy_line) / 10))
+                    # Dynamic probability based on player performance
+                    easy_prob = max(0.65, min(0.85, easy_prob))  # Range: 65-85%
+                    
                     prop = {
                         'type': 'easy',
                         'stat': 'Pitches',
@@ -549,7 +562,10 @@ class MLBPropScraper:
                 
                 if hard_stat == 'strikeouts':
                     hard_line = 8.5
-                    hard_prob = max(0.15, min(0.20, 1 / (1 + np.exp(-(expected_value - hard_line)))))
+                    hard_prob = 1 / (1 + np.exp(-(expected_value - hard_line)))
+                    # Dynamic probability based on player performance - worse players get lower odds
+                    hard_prob = max(0.10, min(0.25, hard_prob))  # Range: 10-25%
+                    
                     prop = {
                         'type': 'hard',
                         'stat': 'Strikeouts',
@@ -563,7 +579,10 @@ class MLBPropScraper:
                     hard_line = 1.5
                     # Since 1.5 is much harder than 2.25, adjust probability calculation
                     # Use a more aggressive sigmoid curve for the tougher line
-                    hard_prob = max(0.10, min(0.18, 1 / (1 + np.exp((expected_value - hard_line) * 2))))
+                    hard_prob = 1 / (1 + np.exp((expected_value - hard_line) * 2))
+                    # Dynamic probability based on player performance
+                    hard_prob = max(0.08, min(0.20, hard_prob))  # Range: 8-20%
+                    
                     prop = {
                         'type': 'hard',
                         'stat': 'ERA',
@@ -575,7 +594,10 @@ class MLBPropScraper:
                     props.append(self._add_prop_metadata(prop, player))
                 elif hard_stat == 'pitches':
                     hard_line = 105.5
-                    hard_prob = max(0.15, min(0.20, 1 / (1 + np.exp(-(expected_value - hard_line) / 10))))
+                    hard_prob = 1 / (1 + np.exp(-(expected_value - hard_line) / 10))
+                    # Dynamic probability based on player performance
+                    hard_prob = max(0.10, min(0.25, hard_prob))  # Range: 10-25%
+                    
                     prop = {
                         'type': 'hard',
                         'stat': 'Pitches',
@@ -598,7 +620,8 @@ class MLBPropScraper:
                     if stat == 'hits':
                         medium_line = 1.5
                         over_prob = 1 / (1 + np.exp(-(expected_value - medium_line)))
-                        over_prob = max(0.45, min(0.55, over_prob))
+                        # Dynamic probability based on player performance
+                        over_prob = max(0.40, min(0.60, over_prob))  # Range: 40-60%
                         
                         prop = {
                             'type': 'medium',
@@ -613,7 +636,8 @@ class MLBPropScraper:
                     elif stat == 'rbis':
                         medium_line = 1.5
                         over_prob = 1 / (1 + np.exp(-(expected_value - medium_line)))
-                        over_prob = max(0.45, min(0.55, over_prob))
+                        # Dynamic probability based on player performance
+                        over_prob = max(0.40, min(0.60, over_prob))  # Range: 40-60%
                         
                         prop = {
                             'type': 'medium',
@@ -628,7 +652,8 @@ class MLBPropScraper:
                     elif stat == 'runs':
                         medium_line = 1.5
                         over_prob = 1 / (1 + np.exp(-(expected_value - medium_line)))
-                        over_prob = max(0.45, min(0.55, over_prob))
+                        # Dynamic probability based on player performance
+                        over_prob = max(0.40, min(0.60, over_prob))  # Range: 40-60%
                         
                         prop = {
                             'type': 'medium',
@@ -643,7 +668,8 @@ class MLBPropScraper:
                     elif stat == 'total_bases':
                         medium_line = 1.5
                         over_prob = 1 / (1 + np.exp(-(expected_value - medium_line)))
-                        over_prob = max(0.45, min(0.55, over_prob))
+                        # Dynamic probability based on player performance
+                        over_prob = max(0.40, min(0.60, over_prob))  # Range: 40-60%
                         
                         prop = {
                             'type': 'medium',
@@ -665,7 +691,10 @@ class MLBPropScraper:
                 
                 if easy_stat == 'hits':
                     easy_line = 0.5
-                    easy_prob = min(0.80, max(0.75, 1 - np.exp(-expected_value * 2)))
+                    easy_prob = 1 - np.exp(-expected_value * 2)
+                    # Dynamic probability based on player performance
+                    easy_prob = max(0.65, min(0.85, easy_prob))  # Range: 65-85%
+                    
                     prop = {
                         'type': 'easy',
                         'stat': 'Hits',
@@ -677,7 +706,10 @@ class MLBPropScraper:
                     props.append(self._add_prop_metadata(prop, player))
                 elif easy_stat == 'runs':
                     easy_line = 0.5
-                    easy_prob = min(0.80, max(0.75, 1 - np.exp(-expected_value * 2)))
+                    easy_prob = 1 - np.exp(-expected_value * 2)
+                    # Dynamic probability based on player performance
+                    easy_prob = max(0.65, min(0.85, easy_prob))  # Range: 65-85%
+                    
                     prop = {
                         'type': 'easy',
                         'stat': 'Runs',
@@ -689,7 +721,10 @@ class MLBPropScraper:
                     props.append(self._add_prop_metadata(prop, player))
                 elif easy_stat == 'total_bases':
                     easy_line = 0.5
-                    easy_prob = min(0.80, max(0.75, 1 - np.exp(-expected_value / 2)))
+                    easy_prob = 1 - np.exp(-expected_value / 2)
+                    # Dynamic probability based on player performance
+                    easy_prob = max(0.65, min(0.85, easy_prob))  # Range: 65-85%
+                    
                     prop = {
                         'type': 'easy',
                         'stat': 'Total Bases',
@@ -712,7 +747,10 @@ class MLBPropScraper:
                     
                     if hard_stat == 'runs':
                         hard_line = 2.5
-                        hard_prob = max(0.15, min(0.20, np.exp(-((hard_line - expected_value) ** 2) / 2)))
+                        hard_prob = np.exp(-((hard_line - expected_value) ** 2) / 2)
+                        # Dynamic probability based on player performance
+                        hard_prob = max(0.10, min(0.25, hard_prob))  # Range: 10-25%
+                        
                         prop = {
                             'type': 'hard',
                             'stat': 'Runs',
@@ -724,7 +762,10 @@ class MLBPropScraper:
                         props.append(self._add_prop_metadata(prop, player))
                     elif hard_stat == 'rbis':
                         hard_line = 2.5
-                        hard_prob = max(0.15, min(0.20, np.exp(-((hard_line - expected_value) ** 2) / 2)))
+                        hard_prob = np.exp(-((hard_line - expected_value) ** 2) / 2)
+                        # Dynamic probability based on player performance
+                        hard_prob = max(0.10, min(0.25, hard_prob))  # Range: 10-25%
+                        
                         prop = {
                             'type': 'hard',
                             'stat': 'RBIs',
@@ -736,9 +777,12 @@ class MLBPropScraper:
                         props.append(self._add_prop_metadata(prop, player))
                     elif hard_stat == 'total_bases':
                         hard_line = 3.5
-                        hard_prob = max(0.15, min(0.20, 1 - np.exp(-expected_value / 3)))
+                        hard_prob = 1 - np.exp(-expected_value / 3)
+                        # Dynamic probability based on player performance
                         if expected_value > hard_line:
-                            hard_prob = min(0.20, hard_prob * 1.5)
+                            hard_prob = min(0.25, hard_prob * 1.5)
+                        hard_prob = max(0.10, min(0.25, hard_prob))  # Range: 10-25%
+                        
                         prop = {
                             'type': 'hard',
                             'stat': 'Total Bases',

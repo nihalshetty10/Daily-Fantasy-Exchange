@@ -55,6 +55,10 @@
             background: #ffc107;
             color: #212529;
         }
+        .status-ruled-out {
+            background: #6c757d;
+            color: white;
+        }
         @keyframes pulse {
             0% { opacity: 1; }
             50% { opacity: 0.7; }
@@ -535,6 +539,9 @@
                         // Get the game status for this player's game
                         const gameStatus = gameStatuses[player.game_id] || 'UPCOMING';
                         
+                        // Check if player is ruled out (this would come from the live tracker)
+                        const isPlayerRuledOut = player.status === 'RULED_OUT' || player.status === 'NOT_PLAYING';
+                        
                         // Convert scraper prop format to trading platform format
                         const tradingProp = {
                             id: propId++,
@@ -548,22 +555,23 @@
                             live_contract_price: prop.price,
                             available_contracts: 10,
                             total_contracts: 10,
-                            status_badge: gameStatus, // Use actual game status
-                            is_tradeable: gameStatus === 'UPCOMING' || gameStatus === 'LIVE', // Only tradeable if upcoming or live
+                            status_badge: isPlayerRuledOut ? 'RULED_OUT' : gameStatus, // Show RULED_OUT if player can't play
+                            is_tradeable: !isPlayerRuledOut && (gameStatus === 'UPCOMING' || gameStatus === 'LIVE'), // Not tradeable if ruled out
                             formatted_game_time: prop.game_time || 'TBD',
                             direction: prop.direction,
                             implied_probability: prop.implied_prob,
                             game_id: player.game_id,
-                            opponent: prop.opponent || null
+                            opponent: prop.opponent || null,
+                            player_status: player.status || 'ACTIVE'
                         };
                         
-                        console.log(`📈 Created prop: ${tradingProp.prop_type} ${tradingProp.difficulty} - Status: ${tradingProp.status_badge} - Tradeable: ${tradingProp.is_tradeable}`);
+                        console.log(`📈 Created prop: ${tradingProp.prop_type} ${tradingProp.difficulty} - Status: ${tradingProp.status_badge} - Player Status: ${tradingProp.player_status} - Tradeable: ${tradingProp.is_tradeable}`);
                         
                         realProps.push(tradingProp);
                     }
                 }
                 
-                // Sort props by game time (earlier games first)
+                // Sort props by game time (earliest games first)
                 realProps.sort((a, b) => {
                     const timeA = a.formatted_game_time;
                     const timeB = b.formatted_game_time;
@@ -783,7 +791,8 @@
                 
                 const statusClass = prop.status_badge === 'LIVE' ? 'status-live' : 
                                   prop.status_badge === 'FINAL' ? 'status-final' : 
-                                  prop.status_badge === 'CANCELLED' ? 'status-cancelled' : 'status-upcoming';
+                                  prop.status_badge === 'CANCELLED' ? 'status-cancelled' :
+                                  prop.status_badge === 'RULED_OUT' ? 'status-ruled-out' : 'status-upcoming';
 
                 const formatPropType = (propType) => {
                     return propType.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
@@ -829,6 +838,13 @@
                                 </div>
                             ` : ''}
                             
+                            ${prop.status_badge === 'RULED_OUT' ? `
+                                <div class="game-info">
+                                    <small><strong>Player Status:</strong> <span class="text-danger">RULED OUT - NOT PLAYING</span></small><br>
+                                    <small><strong>Action:</strong> All contracts automatically refunded at purchase price</small>
+                                </div>
+                            ` : ''}
+                            
                             <div class="player-stats">
                                 <strong>Line:</strong> ${prop.line_value} | 
                                 <strong>Current Price:</strong> <span class="live-price">${prop.live_contract_price.toFixed(2)}</span>
@@ -842,6 +858,10 @@
                             ${(() => {
                                 if (prop.status_badge === 'CANCELLED') {
                                     return '<div class="text-warning"><i class="fas fa-exclamation-triangle"></i> Game Cancelled</div>';
+                                }
+                                
+                                if (prop.status_badge === 'RULED_OUT') {
+                                    return '<div class="text-danger"><i class="fas fa-user-times"></i> Player Ruled Out</div>';
                                 }
                                 
                                 if (prop.status_badge === 'FINAL') {
@@ -1623,6 +1643,9 @@
                 // Check for cancelled games and process refunds
                 checkForCancelledGames();
                 
+                // Check for ruled out players and process refunds
+                checkForRuledOutPlayers();
+                
                 // Refresh game statuses every 30 seconds
                 refreshGameStatuses();
                 
@@ -1907,6 +1930,8 @@
                     return 'secondary';
                 case 'CANCELLED':
                     return 'warning';
+                case 'RULED_OUT':
+                    return 'secondary';
                 case 'UPCOMING':
                 default:
                     return 'success';
@@ -2017,6 +2042,61 @@
             const hasCancelledGames = mockProps.some(prop => prop.status_badge === 'CANCELLED');
             if (hasCancelledGames) {
                 handleCancelledGameRefunds();
+            }
+        }
+        
+        // Handle automatic refunds for ruled out players
+        function handleRuledOutPlayerRefunds() {
+            // Find all props with ruled out status
+            const ruledOutProps = mockProps.filter(prop => prop.status_badge === 'RULED_OUT');
+            
+            ruledOutProps.forEach(prop => {
+                // Find user's position for this prop
+                const position = userPortfolio.find(p => p.prop_id === prop.id);
+                if (position) {
+                    // Calculate refund amount
+                    const refundAmount = position.avg_price * position.quantity;
+                    
+                    // Update user balance
+                    currentUser.balance += refundAmount;
+                    
+                    // Remove from portfolio
+                    userPortfolio = userPortfolio.filter(p => p !== position);
+                    
+                    // Record the refund
+                    recordTrade('REFUND', prop, refundAmount, 'ruled_out_player');
+                    
+                    console.log(`Auto-refunded $${refundAmount.toFixed(2)} for ${prop.player_name} (Player ruled out)`);
+                }
+            });
+            
+            // Refresh displays if any refunds were processed
+            if (ruledOutProps.length > 0) {
+                loadMarketData();
+                loadPortfolio();
+                loadTradeHistory();
+            }
+        }
+        
+        // Check for ruled out players and process refunds
+        function checkForRuledOutPlayers() {
+            const hasRuledOutPlayers = mockProps.some(prop => prop.status_badge === 'RULED_OUT');
+            if (hasRuledOutPlayers) {
+                handleRuledOutPlayerRefunds();
+            }
+        }
+
+        // Refresh game statuses from backend
+        async function refreshGameStatuses() {
+            try {
+                // Reload props to get updated statuses
+                const realProps = await loadRealMLBProps();
+                if (realProps && realProps.length > 0) {
+                    mockProps = realProps;
+                    console.log('🔄 Game statuses refreshed from backend');
+                }
+            } catch (error) {
+                console.error('Error refreshing game statuses:', error);
             }
         }
     </script>

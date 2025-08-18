@@ -56,6 +56,19 @@ class LiveGameTracker:
                 )
             ''')
             
+            # Player status table to track who's playing/ruled out
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS player_status (
+                    player_id TEXT PRIMARY KEY,
+                    player_name TEXT,
+                    team_name TEXT,
+                    game_id TEXT,
+                    status TEXT DEFAULT 'ACTIVE', -- ACTIVE, RULED_OUT, NOT_PLAYING
+                    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (game_id) REFERENCES games (game_id)
+                )
+            ''')
+            
             conn.commit()
             print("Database initialized successfully")
         except Exception as e:
@@ -63,6 +76,196 @@ class LiveGameTracker:
         finally:
             if conn:
                 conn.close()
+    
+    def check_player_availability(self):
+        """Check which players are available to play in upcoming games"""
+        try:
+            print("Checking player availability...")
+            
+            # Get today's date in Eastern Time
+            et_tz = pytz.timezone('America/New_York')
+            today = datetime.now(et_tz).strftime('%Y-%m-%d')
+            
+            # Fetch today's games
+            url = f"{self.mlb_base_url}/schedule"
+            params = {
+                'sportId': 1,  # MLB
+                'date': today,
+                'fields': 'dates,games,gamePk,gameDate,status,abstractGameState'
+            }
+            
+            response = requests.get(url, params=params, headers=self.headers)
+            if response.status_code != 200:
+                print(f"Failed to fetch MLB schedule: {response.status_code}")
+                return
+            
+            data = response.json()
+            
+            # Process each game
+            for date_data in data.get('dates', []):
+                for game in date_data.get('games', []):
+                    game_id = str(game['gamePk'])
+                    game_status = game['status']['abstractGameState']
+                    
+                    # Only check player availability for upcoming games
+                    if game_status == 'Preview':
+                        self.check_game_lineup(game_id)
+                        
+        except Exception as e:
+            print(f"Error checking player availability: {e}")
+    
+    def check_game_lineup(self, game_id):
+        """Check the actual lineup for a specific game"""
+        try:
+            # Get the game's boxscore to see who's actually playing
+            url = f"{self.mlb_base_url}/game/{game_id}/boxscore"
+            response = requests.get(url, headers=self.headers)
+            
+            if response.status_code != 200:
+                print(f"Failed to fetch boxscore for game {game_id}")
+                return
+            
+            data = response.json()
+            
+            # Get all players who are actually in the lineup
+            active_players = set()
+            
+            for team_type in ['home', 'away']:
+                if team_type in data.get('teams', {}):
+                    team_data = data['teams'][team_type]
+                    
+                    # Check starting lineup
+                    if 'battingOrder' in team_data:
+                        for player_id in team_data['battingOrder']:
+                            active_players.add(str(player_id))
+                    
+                    # Check bench players
+                    if 'bench' in team_data:
+                        for player_id in team_data['bench']:
+                            active_players.add(str(player_id))
+                    
+                    # Check pitchers
+                    if 'pitchers' in team_data:
+                        for player_id in team_data['pitchers']:
+                            active_players.add(str(player_id))
+            
+            # Update player statuses in database
+            self.update_player_statuses(game_id, active_players)
+            
+        except Exception as e:
+            print(f"Error checking lineup for game {game_id}: {e}")
+    
+    def update_player_statuses(self, game_id, active_players):
+        """Update player statuses based on who's actually playing"""
+        try:
+            conn = sqlite3.connect(self.db_path)
+            cursor = conn.cursor()
+            
+            # Get all players for this game from our props
+            cursor.execute('''
+                SELECT DISTINCT player_id, player_name, team_name 
+                FROM player_status 
+                WHERE game_id = ?
+            ''', (game_id,))
+            
+            existing_players = cursor.fetchall()
+            
+            for player_id, player_name, team_name in existing_players:
+                if player_id in active_players:
+                    # Player is active
+                    new_status = 'ACTIVE'
+                else:
+                    # Player is ruled out or not playing
+                    new_status = 'RULED_OUT'
+                    
+                    # Process refunds for this player
+                    self.process_player_refunds(player_id, game_id)
+                
+                # Update player status
+                cursor.execute('''
+                    UPDATE player_status 
+                    SET status = ?, last_updated = CURRENT_TIMESTAMP
+                    WHERE player_id = ?
+                ''', (new_status, player_id))
+                
+                print(f"Updated {player_name} status: {new_status}")
+            
+            conn.commit()
+            
+        except Exception as e:
+            print(f"Error updating player statuses: {e}")
+        finally:
+            if conn:
+                conn.close()
+    
+    def process_player_refunds(self, player_id, game_id):
+        """Process refunds for a player who is ruled out"""
+        try:
+            print(f"Processing refunds for ruled out player {player_id}")
+            
+            conn = sqlite3.connect(self.db_path)
+            cursor = conn.cursor()
+            
+            # Get all active contracts for this player
+            cursor.execute('''
+                SELECT contract_id, user_id, avg_price, quantity 
+                FROM contracts 
+                WHERE player_id = ? AND status = 'ACTIVE'
+            ''', (player_id,))
+            
+            contracts = cursor.fetchall()
+            
+            for contract in contracts:
+                contract_id, user_id, avg_price, quantity = contract
+                refund_amount = avg_price * quantity
+                
+                print(f"Refunding user {user_id}: ${refund_amount} for ruled out player")
+                
+                # Mark contract as refunded
+                cursor.execute('''
+                    UPDATE contracts 
+                    SET status = 'REFUNDED' 
+                    WHERE contract_id = ?
+                ''', (contract_id,))
+                
+                # In a real system, you'd also:
+                # 1. Update user balance
+                # 2. Send refund notification
+                # 3. Log the refund transaction
+            
+            conn.commit()
+            
+            # Remove props for this player from mlb_props.json
+            self.remove_player_props(player_id)
+            
+        except Exception as e:
+            print(f"Error processing player refunds: {e}")
+        finally:
+            if conn:
+                conn.close()
+    
+    def remove_player_props(self, player_id):
+        """Remove all props for a ruled out player from mlb_props.json"""
+        try:
+            # Read current mlb_props.json
+            with open('mlb_props.json', 'r') as f:
+                props_data = json.load(f)
+            
+            # Remove the player's props
+            if player_id in props_data.get('props', {}):
+                player_name = props_data['props'][player_id]['player_info']['name']
+                print(f"Removing props for ruled out player: {player_name}")
+                
+                del props_data['props'][player_id]
+                
+                # Save updated data
+                with open('mlb_props.json', 'w') as f:
+                    json.dump(props_data, f, indent=2)
+                
+                print(f"Removed {player_name} props from mlb_props.json")
+            
+        except Exception as e:
+            print(f"Error removing player props: {e}")
     
     def update_game_statuses_from_mlb(self):
         """Fetch current game statuses from MLB API and update database"""
@@ -128,6 +331,9 @@ class LiveGameTracker:
                         self.handle_final_game(game_id)
                     elif mapped_status == 'CANCELLED':
                         self.handle_cancelled_game(game_id)
+                    elif mapped_status == 'UPCOMING':
+                        # Check player availability for upcoming games
+                        self.check_game_lineup(game_id)
             
             # Update mlb_props.json with current statuses
             self.update_props_with_game_statuses()
@@ -286,7 +492,12 @@ class LiveGameTracker:
         def tracking_loop():
             while True:
                 try:
+                    # Check player availability first (for upcoming games)
+                    self.check_player_availability()
+                    
+                    # Then update game statuses
                     self.update_game_statuses_from_mlb()
+                    
                     time.sleep(30)  # Update every 30 seconds
                 except Exception as e:
                     print(f"Error in tracking loop: {e}")

@@ -106,7 +106,7 @@ class LiveGameTracker:
             for (game_id,) in live_games:
                 self.check_game_live_stats(game_id)
             
-            conn.close()
+                conn.close()
             
         except Exception as e:
             print(f"Error checking live prop results: {e}")
@@ -145,8 +145,8 @@ class LiveGameTracker:
                 props_data = json.load(f)
             
             if player_id not in props_data.get('props', {}):
-                return
-            
+            return
+        
             player_props = props_data['props'][player_id]
             player_name = player_props['player_info']['name']
             
@@ -340,15 +340,15 @@ class LiveGameTracker:
                 print(f"Failed to fetch boxscore for game {game_id}")
                 return
             
-            data = response.json()
-            
+                data = response.json()
+                
             # Get all players who are actually in the lineup
             active_players = set()
-            
-            for team_type in ['home', 'away']:
-                if team_type in data.get('teams', {}):
-                    team_data = data['teams'][team_type]
-                    
+                
+                for team_type in ['home', 'away']:
+                    if team_type in data.get('teams', {}):
+                        team_data = data['teams'][team_type]
+                        
                     # Check starting lineup
                     if 'battingOrder' in team_data:
                         for player_id in team_data['battingOrder']:
@@ -366,7 +366,7 @@ class LiveGameTracker:
             
             # Update player statuses in database
             self.update_player_statuses(game_id, active_players)
-            
+                
         except Exception as e:
             print(f"Error checking lineup for game {game_id}: {e}")
     
@@ -535,7 +535,7 @@ class LiveGameTracker:
                         utc_time = datetime.fromisoformat(game_time.replace('Z', '+00:00'))
                         et_time = utc_time.astimezone(pytz.timezone('America/New_York'))
                         formatted_time = et_time.strftime('%I:%M %p ET')
-                    else:
+                else:
                         formatted_time = 'TBD'
                     
                     # Update game in database
@@ -569,7 +569,7 @@ class LiveGameTracker:
                 INSERT OR REPLACE INTO games (game_id, home_team, away_team, game_time, status, last_updated)
                 VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
             ''', (game_id, home_team, away_team, game_time, status))
-            
+                    
             conn.commit()
             print(f"Updated game {game_id}: {away_team} @ {home_team} - {status}")
             
@@ -595,7 +595,7 @@ class LiveGameTracker:
             return 'UPCOMING'
         finally:
             if conn:
-                conn.close()
+            conn.close()
     
     def handle_final_game(self, game_id):
         """Handle actions when a game goes final"""

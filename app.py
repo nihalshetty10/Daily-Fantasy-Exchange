@@ -6,7 +6,7 @@ Integrates ML prop generation with live trading platform
 
 import os
 from flask import Flask, render_template, redirect, jsonify
-from backend.services.live_tracker import live_tracker
+from backend.services.live_tracker import LiveGameTracker
 
 def create_app():
     app = Flask(__name__, template_folder='frontend/templates')
@@ -48,6 +48,7 @@ app = create_app()
 if __name__ == '__main__':
     # Start the live tracker automatically as a background service
     print("🚀 Starting Live Game Tracker as background service...")
+    live_tracker = LiveGameTracker()
     live_tracker.start_tracking()
     
     # Production settings for AWS

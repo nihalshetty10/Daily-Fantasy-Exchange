@@ -320,7 +320,7 @@
                             <div id="props-container">
                                 <!-- Props will be loaded here -->
                             </div>
-                            
+
                             <!-- Props Status Indicator -->
                             <div class="mt-3 text-center">
                                 <small class="text-muted" id="props-status">
@@ -741,11 +741,11 @@
                 if (hasRealTimes) {
                     statusElement.innerHTML = `<i class="fas fa-check-circle text-success"></i> ${mockProps.length} real MLB props loaded with actual game times (sorted by start time)`;
                     statusElement.className = 'mt-3 text-center text-success';
-                } else {
+                    } else {
                     statusElement.innerHTML = `<i class="fas fa-exclamation-triangle text-warning"></i> ${mockProps.length} props loaded (game times may be demo)`;
                     statusElement.className = 'mt-3 text-center text-warning';
-                }
-            } else {
+                    }
+                } else {
                 statusElement.innerHTML = `<i class="fas fa-info-circle text-muted"></i> No props available`;
                 statusElement.className = 'mt-3 text-center text-muted';
             }
@@ -812,8 +812,8 @@
                 const isTradingAvailable = prop.is_tradeable && prop.available_contracts > 0;
                 const tradingDisabled = !isTradingAvailable ? 'disabled' : '';
 
-                card.innerHTML = `
-                    <div class="row">
+            card.innerHTML = `
+                        <div class="row">
                         <div class="col-md-8">
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <div>
@@ -822,7 +822,7 @@
                                         ${prop.player_position || ''} • <strong class="text-primary"><i class="fas fa-clock"></i> ${prop.formatted_game_time || 'TBD'}</strong>
                                     </small>
                                     ${prop.opponent ? `<br><small class="text-info"><i class="fas fa-gamepad"></i> ${prop.opponent}</small>` : ''}
-                                </div>
+                            </div>
                                 <span class="status-badge ${statusClass}">${prop.status_badge}</span>
                             </div>
                             <p class="text-muted mb-2">${prop.sport} • ${formatPropType(prop.prop_type)} • ${prop.difficulty}</p>
@@ -831,28 +831,28 @@
                                 <div class="game-info">
                                     <small><strong>Game Status:</strong> <span class="text-danger">LIVE - Trading Closed</span></small><br>
                                     <small><strong>Note:</strong> Game is in progress, contracts can be cashed out when final</small>
-                                </div>
+                        </div>
                             ` : ''}
                             
                             ${prop.status_badge === 'FINAL' ? `
                                 <div class="game-info">
                                     <small><strong>Game Status:</strong> <span class="text-secondary">FINAL</span></small><br>
                                     <small><strong>Action:</strong> Cash out your contracts to collect winnings!</small>
-                                </div>
+                        </div>
                             ` : ''}
                             
                             ${prop.status_badge === 'CANCELLED' ? `
                                 <div class="game-info">
                                     <small><strong>Game Status:</strong> <span class="text-warning">CANCELLED/POSTPONED</span></small><br>
                                     <small><strong>Action:</strong> Contracts automatically refunded at purchase price</small>
-                                </div>
+                    </div>
                             ` : ''}
                             
                             ${prop.status_badge === 'RULED_OUT' ? `
                                 <div class="game-info">
                                     <small><strong>Player Status:</strong> <span class="text-danger">RULED OUT - NOT PLAYING</span></small><br>
                                     <small><strong>Action:</strong> All contracts automatically refunded at purchase price</small>
-                                </div>
+                </div>
                             ` : ''}
                             
                             ${prop.status_badge === 'OVER_HIT' ? `
@@ -893,37 +893,37 @@
                                     return '<div class="text-muted">Trading Closed</div>';
                                 }
             
-                                let tradingOptions = '';
-                                const isAvailable = prop.available_contracts > 0;
+            let tradingOptions = '';
+            const isAvailable = prop.available_contracts > 0;
                                 const disabledAttr = isAvailable ? '' : 'disabled';
             
                                 // Use the actual prop direction from scraper data
-                                const propDirection = prop.direction || 'over';
-                                const buttonText = propDirection.toUpperCase() + ' ' + prop.line_value;
-                                
-                                if (prop.difficulty === 'EASY' || prop.difficulty === 'HARD') {
-                                    // Single direction for easy/hard props
+            const propDirection = prop.direction || 'over';
+            const buttonText = propDirection.toUpperCase() + ' ' + prop.line_value;
+            
+            if (prop.difficulty === 'EASY' || prop.difficulty === 'HARD') {
+                // Single direction for easy/hard props
                                     const buttonColor = isAvailable ? 'btn-success' : 'btn-secondary';
-                                    tradingOptions = `
+                tradingOptions = `
                                         <button class="btn ${buttonColor} btn-trade w-100 mb-2" onclick="openTradingModal(${prop.id}, '${propDirection}')" ${disabledAttr}>
                                             ${isAvailable ? buttonText : 'NO CONTRACTS'}
-                                        </button>
-                                    `;
-                                } else if (prop.difficulty === 'MEDIUM') {
-                                    // Both directions for medium props
+                    </button>
+                `;
+            } else if (prop.difficulty === 'MEDIUM') {
+                // Both directions for medium props
                                     const overColor = isAvailable ? 'btn-success' : 'btn-secondary';
                                     const underColor = isAvailable ? 'btn-danger' : 'btn-secondary';
-                                    
-                                    tradingOptions = `
+                
+                tradingOptions = `
                                         <button class="btn ${overColor} btn-trade w-100 mb-2" onclick="openTradingModal(${prop.id}, 'over')" ${disabledAttr}>
                                             ${isAvailable ? `OVER ${prop.line_value}` : 'NO CONTRACTS'}
-                                        </button>
+                    </button>
                                         <button class="btn ${underColor} btn-trade w-100 mb-2" onclick="openTradingModal(${prop.id}, 'under')" ${disabledAttr}>
                                             ${isAvailable ? `UNDER ${prop.line_value}` : 'NO CONTRACTS'}
-                                        </button>
-                                    `;
-                                }
-                                return tradingOptions;
+                    </button>
+                `;
+            }
+            return tradingOptions;
                             })()}
                         </div>
                     </div>

@@ -80,8 +80,9 @@ class MLBPropScraper:
         self.players_today = []
         
         for game in self.games_today:
-            if game['status'] != 'Preview':  # Skip completed/in-progress games for props
-                continue
+            # Process all games regardless of status for today's props
+            # if game['status'] != 'Preview':  # Skip completed/in-progress games for props
+            #     continue
                 
             game_id = game['game_id']
             

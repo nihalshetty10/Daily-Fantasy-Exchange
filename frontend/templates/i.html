@@ -483,7 +483,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Local development - no real API needed
-        const API_BASE = 'http://localhost:5000/api';
+        const API_BASE = 'http://localhost:8007/api';
         let currentUser = { username: 'Demo User', balance: 10000 };
         let liveUpdateInterval = null;
         let userPortfolio = [];
@@ -1783,17 +1783,24 @@
             
             if (!scheduleHeader || !scheduleContent || mockProps.length === 0) return;
             
-            // Get unique games with their earliest time
+            // Get unique games - ONLY keep games where player is AWAY team (opponent starts with "@")
             const games = {};
             mockProps.forEach(prop => {
                 if (prop.formatted_game_time && prop.formatted_game_time !== 'TBD') {
-                    const key = `${prop.player_team} vs ${prop.opponent}`;
-                    if (!games[key] || prop.formatted_game_time < games[key].time) {
-                        games[key] = {
-                            time: prop.formatted_game_time,
-                            team: prop.player_team,
-                            opponent: prop.opponent
-                        };
+                    // Only process props where opponent starts with "@" (player is away team)
+                    if (prop.opponent && prop.opponent.startsWith('@ ')) {
+                        const awayTeam = prop.player_team;
+                        const homeTeam = prop.opponent.substring(2); // Remove "@ " prefix
+                        const key = `${awayTeam} @ ${homeTeam}`;
+                        
+                        if (!games[key] || prop.formatted_game_time < games[key].time) {
+                            games[key] = {
+                                time: prop.formatted_game_time,
+                                awayTeam: awayTeam,
+                                homeTeam: homeTeam,
+                                displayName: `${awayTeam} @ ${homeTeam}`
+                            };
+                        }
                     }
                 }
             });
@@ -1826,7 +1833,7 @@
                                 <div class="badge bg-primary">
                                     <i class="fas fa-clock"></i> ${game.time}
                                 </div>
-                                <br><small>${game.team} ${game.opponent}</small>
+                                <br><small>${game.displayName}</small>
                             </div>
                         `).join('')}
                     </div>

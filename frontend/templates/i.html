@@ -51,6 +51,10 @@
             background: #28a745;
             color: white;
         }
+        .status-cancelled {
+            background: #ffc107;
+            color: #212529;
+        }
         @keyframes pulse {
             0% { opacity: 1; }
             50% { opacity: 0.7; }
@@ -513,6 +517,14 @@
                 const realProps = [];
                 let propId = 1;
                 
+                // Create a map of game statuses for quick lookup
+                const gameStatuses = {};
+                if (data.games) {
+                    data.games.forEach(game => {
+                        gameStatuses[game.game_id] = game.status;
+                    });
+                }
+                
                 for (const [playerId, playerData] of Object.entries(data.props)) {
                     const player = playerData.player_info;
                     const playerProps = playerData.props || [];
@@ -520,6 +532,9 @@
                     console.log(`👤 Processing player: ${player.name} with ${playerProps.length} props`);
                     
                     for (const prop of playerProps) {
+                        // Get the game status for this player's game
+                        const gameStatus = gameStatuses[player.game_id] || 'UPCOMING';
+                        
                         // Convert scraper prop format to trading platform format
                         const tradingProp = {
                             id: propId++,
@@ -533,8 +548,8 @@
                             live_contract_price: prop.price,
                             available_contracts: 10,
                             total_contracts: 10,
-                            status_badge: 'UPCOMING',
-                            is_tradeable: true,
+                            status_badge: gameStatus, // Use actual game status
+                            is_tradeable: gameStatus === 'UPCOMING' || gameStatus === 'LIVE', // Only tradeable if upcoming or live
                             formatted_game_time: prop.game_time || 'TBD',
                             direction: prop.direction,
                             implied_probability: prop.implied_prob,
@@ -542,7 +557,7 @@
                             opponent: prop.opponent || null
                         };
                         
-                        console.log(`📈 Created prop: ${tradingProp.prop_type} ${tradingProp.difficulty} - Contracts: ${tradingProp.available_contracts}/${tradingProp.total_contracts}`);
+                        console.log(`📈 Created prop: ${tradingProp.prop_type} ${tradingProp.difficulty} - Status: ${tradingProp.status_badge} - Tradeable: ${tradingProp.is_tradeable}`);
                         
                         realProps.push(tradingProp);
                     }
@@ -751,12 +766,12 @@
             if (!container) return;
             
             container.innerHTML = '';
-
+            
             if (props.length === 0) {
                 container.innerHTML = '<div class="text-center text-muted mt-4"><i class="fas fa-info-circle"></i> No props match your filters.</div>';
                 return;
             }
-
+            
             props.forEach(prop => {
                 // Apply status filter
                 if (statusFilter && prop.status_badge !== statusFilter) {
@@ -767,11 +782,16 @@
                 card.className = 'trading-card';
                 
                 const statusClass = prop.status_badge === 'LIVE' ? 'status-live' : 
-                                  prop.status_badge === 'FINAL' ? 'status-final' : 'status-upcoming';
+                                  prop.status_badge === 'FINAL' ? 'status-final' : 
+                                  prop.status_badge === 'CANCELLED' ? 'status-cancelled' : 'status-upcoming';
 
                 const formatPropType = (propType) => {
                     return propType.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
                 };
+
+                // Determine if trading is available
+                const isTradingAvailable = prop.is_tradeable && prop.available_contracts > 0;
+                const tradingDisabled = !isTradingAvailable ? 'disabled' : '';
 
                 card.innerHTML = `
                     <div class="row">
@@ -788,11 +808,24 @@
                             </div>
                             <p class="text-muted mb-2">${prop.sport} • ${formatPropType(prop.prop_type)} • ${prop.difficulty}</p>
                             
-                            ${prop.game_status === 'LIVE' ? `
+                            ${prop.status_badge === 'LIVE' ? `
                                 <div class="game-info">
-                                    <small><strong>Game Time:</strong> ${prop.current_game_time || 'N/A'}</small><br>
-                                    <small><strong>Score:</strong> ${prop.live_score || 'N/A'}</small><br>
-                                    <small><strong>Player Value:</strong> ${prop.player_current_value || 0}</small>
+                                    <small><strong>Game Status:</strong> <span class="text-danger">LIVE - Trading Closed</span></small><br>
+                                    <small><strong>Note:</strong> Game is in progress, contracts can be cashed out when final</small>
+                                </div>
+                            ` : ''}
+                            
+                            ${prop.status_badge === 'FINAL' ? `
+                                <div class="game-info">
+                                    <small><strong>Game Status:</strong> <span class="text-secondary">FINAL</span></small><br>
+                                    <small><strong>Action:</strong> Cash out your contracts to collect winnings!</small>
+                                </div>
+                            ` : ''}
+                            
+                            ${prop.status_badge === 'CANCELLED' ? `
+                                <div class="game-info">
+                                    <small><strong>Game Status:</strong> <span class="text-warning">CANCELLED/POSTPONED</span></small><br>
+                                    <small><strong>Action:</strong> Contracts automatically refunded at purchase price</small>
                                 </div>
                             ` : ''}
                             
@@ -807,14 +840,22 @@
                         </div>
                         <div class="col-md-4">
                             ${(() => {
+                                if (prop.status_badge === 'CANCELLED') {
+                                    return '<div class="text-warning"><i class="fas fa-exclamation-triangle"></i> Game Cancelled</div>';
+                                }
+                                
+                                if (prop.status_badge === 'FINAL') {
+                                    return '<button class="btn btn-warning btn-trade w-100" onclick="openTradingModal(' + prop.id + ', \'cashout\')"><i class="fas fa-trophy"></i> Cash Out</button>';
+                                }
+                                
                                 if (!prop.is_tradeable) {
                                     return '<div class="text-muted">Trading Closed</div>';
                                 }
-                                
+            
                                 let tradingOptions = '';
                                 const isAvailable = prop.available_contracts > 0;
                                 const disabledAttr = isAvailable ? '' : 'disabled';
-                                
+            
                                 // Use the actual prop direction from scraper data
                                 const propDirection = prop.direction || 'over';
                                 const buttonText = propDirection.toUpperCase() + ' ' + prop.line_value;
@@ -858,6 +899,12 @@
             const prop = mockProps.find(p => p.id === propId);
             if (!prop) {
                 console.error('Prop not found:', propId);
+                return;
+            }
+
+            // Handle cash out for final games
+            if (type === 'cashout') {
+                handleCashOut(propId);
                 return;
             }
 
@@ -1573,6 +1620,12 @@
                     }
                 });
                 
+                // Check for cancelled games and process refunds
+                checkForCancelledGames();
+                
+                // Refresh game statuses every 30 seconds
+                refreshGameStatuses();
+                
                 loadMarketData();
                 loadPortfolio();
             }, 10000); // Update every 10 seconds
@@ -1798,7 +1851,8 @@
                                 time: prop.formatted_game_time,
                                 awayTeam: awayTeam,
                                 homeTeam: homeTeam,
-                                displayName: `${awayTeam} @ ${homeTeam}`
+                                displayName: `${awayTeam} @ ${homeTeam}`,
+                                status: prop.status_badge || 'UPCOMING'
                             };
                         }
                     }
@@ -1834,12 +1888,28 @@
                                     <i class="fas fa-clock"></i> ${game.time}
                                 </div>
                                 <br><small>${game.displayName}</small>
+                                <br><small class="badge bg-${getStatusBadgeColor(game.status)}">${game.status}</small>
                             </div>
                         `).join('')}
                     </div>
                 `;
             } else {
                 scheduleHeader.style.display = 'none';
+            }
+        }
+        
+        // Helper function to get status badge color
+        function getStatusBadgeColor(status) {
+            switch (status) {
+                case 'LIVE':
+                    return 'danger';
+                case 'FINAL':
+                    return 'secondary';
+                case 'CANCELLED':
+                    return 'warning';
+                case 'UPCOMING':
+                default:
+                    return 'success';
             }
         }
 
@@ -1868,6 +1938,87 @@
             // Auto-start in demo mode
             showDashboard();
         });
+
+        // Handle cash out for final games
+        function handleCashOut(propId) {
+            const prop = mockProps.find(p => p.id === propId);
+            if (!prop) {
+                alert('Prop not found!');
+                return;
+            }
+            
+            if (prop.status_badge !== 'FINAL') {
+                alert('This game is not final yet!');
+                return;
+            }
+            
+            // Find user's position for this prop
+            const position = userPortfolio.find(p => p.prop_id === propId);
+            if (!position) {
+                alert('You don\'t own any contracts for this player!');
+                return;
+            }
+            
+            // Calculate payout (in a real system, this would be based on actual results)
+            const payout = position.avg_price; // For now, just return the purchase price
+            
+            // Update user balance
+            currentUser.balance += payout;
+            
+            // Remove from portfolio
+            userPortfolio = userPortfolio.filter(p => p !== position);
+            
+            // Record the cash out
+            recordTrade('CASH_OUT', prop, payout, 'cash_out');
+            
+            alert(`Cash out successful! You received $${payout.toFixed(2)} for your ${prop.player_name} contract.`);
+            
+            // Refresh displays
+            loadMarketData();
+            loadPortfolio();
+            loadTradeHistory();
+        }
+
+        // Handle automatic refunds for cancelled games
+        function handleCancelledGameRefunds() {
+            // Find all props with cancelled status
+            const cancelledProps = mockProps.filter(prop => prop.status_badge === 'CANCELLED');
+            
+            cancelledProps.forEach(prop => {
+                // Find user's position for this prop
+                const position = userPortfolio.find(p => p.prop_id === prop.id);
+                if (position) {
+                    // Calculate refund amount
+                    const refundAmount = position.avg_price * position.quantity;
+                    
+                    // Update user balance
+                    currentUser.balance += refundAmount;
+                    
+                    // Remove from portfolio
+                    userPortfolio = userPortfolio.filter(p => p !== position);
+                    
+                    // Record the refund
+                    recordTrade('REFUND', prop, refundAmount, 'cancelled_game');
+                    
+                    console.log(`Auto-refunded $${refundAmount.toFixed(2)} for ${prop.player_name} (Game cancelled)`);
+                }
+            });
+            
+            // Refresh displays if any refunds were processed
+            if (cancelledProps.length > 0) {
+                loadMarketData();
+                loadPortfolio();
+                loadTradeHistory();
+            }
+        }
+        
+        // Check for cancelled games and process refunds
+        function checkForCancelledGames() {
+            const hasCancelledGames = mockProps.some(prop => prop.status_badge === 'CANCELLED');
+            if (hasCancelledGames) {
+                handleCancelledGameRefunds();
+            }
+        }
     </script>
 </body>
 </html>

@@ -4,420 +4,309 @@ Live Game Tracker Service
 Monitors MLB game statuses and automatically settles contracts
 """
 
-import requests
+import sqlite3
 import json
+import requests
 import time
 import threading
-from datetime import datetime, timedelta
-from typing import Dict, List, Optional
-import sqlite3
-import os
+from datetime import datetime, timezone
+import pytz
 
 class LiveGameTracker:
-    def __init__(self, db_path: str = "instance/proptrader.db"):
-        self.db_path = db_path
-        self.base_url = "https://statsapi.mlb.com/api/v1"
+    def __init__(self):
+        self.db_path = 'instance/live_tracker.db'
+        self.mlb_base_url = "https://statsapi.mlb.com/api/v1"
         self.headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
         }
-        self.running = False
-        self.tracked_games = {}  # game_id -> game_info
-        self.active_contracts = {}  # contract_id -> contract_info
+        self.init_database()
         
-    def start_tracking(self):
-        """Start the live tracking service"""
-        if self.running:
-            return
-            
-            self.running = True
-        self.tracked_games = self.load_tracked_games()
-        self.active_contracts = self.load_active_contracts()
-        
-        # Start tracking thread
-        tracking_thread = threading.Thread(target=self._tracking_loop, daemon=True)
-        tracking_thread.start()
-        
-        print("🚀 Live Game Tracker started")
-        
-    def stop_tracking(self):
-        """Stop the live tracking service"""
-        self.running = False
-        print("⏹️ Live Game Tracker stopped")
-    
-    def _tracking_loop(self):
-        """Main tracking loop - runs every 30 seconds"""
-        loop_count = 0
-        while self.running:
-            try:
-                self.update_game_statuses()
-                self.check_for_settlements()
-                
-                # Log status every 10 loops (5 minutes)
-                loop_count += 1
-                if loop_count % 10 == 0:
-                    self.log_status()
-                
-                time.sleep(30)  # Check every 30 seconds
-            except Exception as e:
-                print(f"Error in tracking loop: {e}")
-                time.sleep(60)  # Wait longer on error
-                
-    def load_tracked_games(self) -> Dict:
-        """Load games that need to be tracked from the database"""
-        games = {}
+    def init_database(self):
+        """Initialize the database with required tables"""
         try:
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
             
-            # Check if games table exists and has the right structure
-            cursor.execute("PRAGMA table_info(games)")
-            columns = [col[1] for col in cursor.fetchall()]
+            # Games table to track current status
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS games (
+                    game_id TEXT PRIMARY KEY,
+                    home_team TEXT,
+                    away_team TEXT,
+                    game_time TEXT,
+                    status TEXT DEFAULT 'UPCOMING',
+                    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            ''')
             
-            if 'game_id' not in columns:
-                print("Games table doesn't have required columns, creating sample data")
-                # Create sample game data for testing
-                cursor.execute("""
-                    INSERT OR IGNORE INTO games (game_id, status, game_date, home_team, away_team)
-                    VALUES (12345, 'Preview', '2025-08-11', 'New York Yankees', 'Boston Red Sox')
-                """)
-                conn.commit()
+            # Contracts table to track user positions
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS contracts (
+                    contract_id TEXT PRIMARY KEY,
+                    game_id TEXT,
+                    player_name TEXT,
+                    prop_type TEXT,
+                    trade_type TEXT,
+                    user_id TEXT,
+                    quantity INTEGER,
+                    avg_price REAL,
+                    status TEXT DEFAULT 'ACTIVE',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (game_id) REFERENCES games (game_id)
+                )
+            ''')
             
-            # Get games from props that are still active
-            cursor.execute("""
-                SELECT DISTINCT g.game_id, g.status, g.game_date, g.home_team, g.away_team
-                FROM games g
-                WHERE g.status IN ('Preview', 'Live')
-                ORDER BY g.game_date
-            """)
-            
-            for row in cursor.fetchall():
-                game_id, status, game_date, home_team, away_team = row
-                games[game_id] = {
-                    'game_id': game_id,
-                    'status': status,
-                    'game_date': game_date,
-                    'home_team': home_team,
-                    'away_team': away_team,
-                    'last_checked': datetime.now()
-                }
-                
-            conn.close()
+            conn.commit()
+            print("Database initialized successfully")
         except Exception as e:
-            print(f"Error loading tracked games: {e}")
-            
-        return games
-        
-    def load_active_contracts(self) -> Dict:
-        """Load active contracts that need to be settled"""
-        contracts = {}
-        try:
-            conn = sqlite3.connect(self.db_path)
-            cursor = conn.cursor()
-            
-            # Check if contracts table exists and has the right structure
-            cursor.execute("PRAGMA table_info(contracts)")
-            columns = [col[1] for col in cursor.fetchall()]
-            
-            if 'contract_id' not in columns:
-                print("Contracts table doesn't have required columns, skipping")
+            print(f"Database initialization error: {e}")
+        finally:
+            if conn:
                 conn.close()
-                return contracts
+    
+    def update_game_statuses_from_mlb(self):
+        """Fetch current game statuses from MLB API and update database"""
+        try:
+            print("Updating game statuses from MLB...")
             
-            # Get all active contracts
-            cursor.execute("""
-                SELECT c.contract_id, c.user_id, c.prop_id, c.direction, c.line, c.quantity,
-                       p.stat, p.player_id, p.game_id, u.username
-                FROM contracts c
-                JOIN props p ON c.prop_id = p.prop_id
-                JOIN users u ON c.user_id = u.user_id
-                WHERE c.status = 'active'
-            """)
+            # Get today's date in Eastern Time
+            et_tz = pytz.timezone('America/New_York')
+            today = datetime.now(et_tz).strftime('%Y-%m-%d')
             
-            for row in cursor.fetchall():
-                contract_id, user_id, prop_id, direction, line, quantity, stat, player_id, game_id, username = row
-                contracts[contract_id] = {
-                    'contract_id': contract_id,
-                    'user_id': user_id,
-                    'username': username,
-                    'prop_id': prop_id,
-                    'direction': direction,
-                    'line': line,
-                    'quantity': quantity,
-                    'stat': stat,
-                    'player_id': player_id,
-                    'game_id': game_id
-                }
-                
-            conn.close()
+            # Fetch MLB schedule for today
+            url = f"{self.mlb_base_url}/schedule"
+            params = {
+                'sportId': 1,  # MLB
+                'date': today,
+                'fields': 'dates,games,gamePk,gameDate,status,abstractGameState,detailedState,homeTeam,awayTeam'
+            }
+            
+            response = requests.get(url, params=params, headers=self.headers)
+            if response.status_code != 200:
+                print(f"Failed to fetch MLB schedule: {response.status_code}")
+                return
+            
+            data = response.json()
+            
+            # Process each game
+            for date_data in data.get('dates', []):
+                for game in date_data.get('games', []):
+                    game_id = str(game['gamePk'])
+                    game_status = game['status']['abstractGameState']
+                    detailed_status = game['status'].get('detailedState', '')
+                    
+                    # Map MLB statuses to our statuses
+                    status_mapping = {
+                        'Preview': 'UPCOMING',
+                        'Live': 'LIVE',
+                        'Final': 'FINAL',
+                        'Delayed': 'LIVE',  # Delayed games count as live
+                        'Postponed': 'CANCELLED'  # Postponed games are cancelled
+                    }
+                    
+                    mapped_status = status_mapping.get(game_status, 'UPCOMING')
+                    
+                    # Get team names
+                    home_team = game['homeTeam']['name']
+                    away_team = game['awayTeam']['name']
+                    
+                    # Get game time
+                    game_time = game.get('gameDate', '')
+                    if game_time:
+                        # Convert UTC to Eastern Time
+                        utc_time = datetime.fromisoformat(game_time.replace('Z', '+00:00'))
+                        et_time = utc_time.astimezone(pytz.timezone('America/New_York'))
+                        formatted_time = et_time.strftime('%I:%M %p ET')
+                    else:
+                        formatted_time = 'TBD'
+                    
+                    # Update game in database
+                    self.update_game_status(game_id, mapped_status, home_team, away_team, formatted_time)
+                    
+                    # Handle status-specific actions
+                    if mapped_status == 'FINAL':
+                        self.handle_final_game(game_id)
+                    elif mapped_status == 'CANCELLED':
+                        self.handle_cancelled_game(game_id)
+            
+            # Update mlb_props.json with current statuses
+            self.update_props_with_game_statuses()
+            
         except Exception as e:
-            print(f"Error loading active contracts: {e}")
-            
-        return contracts
-        
-    def update_game_statuses(self):
-        """Update status of tracked games"""
-        if not self.tracked_games:
-            return
-        
-        for game_id in list(self.tracked_games.keys()):
-            try:
-                # Get current game status from MLB API
-                url = f"{self.base_url}/game/{game_id}/linescore"
-                response = requests.get(url, headers=self.headers)
-                
-                if response.status_code == 200:
-                    data = response.json()
-                    current_status = data.get('gameData', {}).get('status', {}).get('abstractGameState', 'Unknown')
-                    
-                    old_status = self.tracked_games[game_id]['status']
-                    
-                    if current_status != old_status:
-                        print(f"🔄 Game {game_id} status changed: {old_status} → {current_status}")
-                        
-                        # Update database
-                        self.update_game_status_in_db(game_id, current_status)
-                        
-                        # Update local tracking
-                        self.tracked_games[game_id]['status'] = current_status
-                        self.tracked_games[game_id]['last_checked'] = datetime.now()
-                        
-                        # If game is final, mark for settlement
-                        if current_status == 'Final':
-                            print(f"🏁 Game {game_id} is FINAL - marking for settlement")
-                            
-                time.sleep(0.1)  # Rate limiting
-                
-            except Exception as e:
-                print(f"Error updating game {game_id}: {e}")
-                
-    def update_game_status_in_db(self, game_id: int, status: str):
+            print(f"Error updating game statuses: {e}")
+    
+    def update_game_status(self, game_id, status, home_team, away_team, game_time):
         """Update game status in database"""
         try:
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
             
-            cursor.execute("""
-                UPDATE games 
-                SET status = ?, updated_at = ?
-                WHERE game_id = ?
-            """, (status, datetime.now(), game_id))
+            cursor.execute('''
+                INSERT OR REPLACE INTO games (game_id, home_team, away_team, game_time, status, last_updated)
+                VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+            ''', (game_id, home_team, away_team, game_time, status))
             
             conn.commit()
-            conn.close()
+            print(f"Updated game {game_id}: {away_team} @ {home_team} - {status}")
             
         except Exception as e:
-            print(f"Error updating game status in DB: {e}")
-            
-    def check_for_settlements(self):
-        """Check if any games are final and settle contracts"""
-        final_games = [g for g in self.tracked_games.values() if g['status'] == 'Final']
-        
-        for game in final_games:
-            game_id = game['game_id']
-            print(f"🔍 Checking settlements for final game {game_id}")
-            
-            # Get final stats for this game
-            game_stats = self.get_final_game_stats(game_id)
-            
-            if game_stats:
-                # Settle all contracts for this game
-                self.settle_game_contracts(game_id, game_stats)
-                
-                # Remove from tracking (game is done)
-                del self.tracked_games[game_id]
-                
-    def get_final_game_stats(self, game_id: int) -> Optional[Dict]:
-        """Get final stats for a completed game"""
-        try:
-            # Get boxscore with final stats
-            url = f"{self.base_url}/game/{game_id}/boxscore"
-            response = requests.get(url, headers=self.headers)
-            
-            if response.status_code == 200:
-                data = response.json()
-                
-                # Extract player stats from both teams
-                player_stats = {}
-                
-                for team_type in ['home', 'away']:
-                    if team_type in data.get('teams', {}):
-                        team_data = data['teams'][team_type]
-                        
-                        # Get player stats
-                        if 'players' in team_data:
-                            for player_id, player_data in team_data['players'].items():
-                                if 'stats' in player_data and 'batting' in player_data['stats']:
-                                    batting_stats = player_data['stats']['batting']
-                                    player_stats[player_id] = {
-                                        'hits': batting_stats.get('hits', 0),
-                                        'runs': batting_stats.get('runs', 0),
-                                        'rbi': batting_stats.get('rbi', 0),
-                                        'doubles': batting_stats.get('doubles', 0),
-                                        'triples': batting_stats.get('triples', 0),
-                                        'homeRuns': batting_stats.get('homeRuns', 0)
-                                    }
-                                    
-                                if 'stats' in player_data and 'pitching' in player_data['stats']:
-                                    pitching_stats = player_data['stats']['pitching']
-                                    if player_id not in player_stats:
-                                        player_stats[player_id] = {}
-                                    player_stats[player_id].update({
-                                        'strikeouts': pitching_stats.get('strikeOuts', 0),
-                                        'earnedRuns': pitching_stats.get('earnedRuns', 0),
-                                        'inningsPitched': pitching_stats.get('inningsPitched', 0),
-                                        'pitchesThrown': pitching_stats.get('pitchesThrown', 0)
-                                    })
-                
-                return player_stats
-                
-        except Exception as e:
-            print(f"Error getting final stats for game {game_id}: {e}")
-            
-        return None
-        
-    def settle_game_contracts(self, game_id: int, game_stats: Dict):
-        """Settle all contracts for a completed game"""
+            print(f"Error updating game status: {e}")
+        finally:
+            if conn:
+                conn.close()
+    
+    def get_game_status(self, game_id):
+        """Get current status of a game"""
         try:
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
             
-            # Check if contracts table has the right structure
-            cursor.execute("PRAGMA table_info(contracts)")
-            columns = [col[1] for col in cursor.fetchall()]
+            cursor.execute('SELECT status FROM games WHERE game_id = ?', (game_id,))
+            result = cursor.fetchone()
             
-            if 'contract_id' not in columns:
-                print("Contracts table doesn't have required columns, skipping settlement")
-                conn.close()
-                return
-            
-            # Get all active contracts for this game
-            cursor.execute("""
-                SELECT c.contract_id, c.user_id, c.prop_id, c.direction, c.line, c.quantity,
-                       p.stat, p.player_id, p.game_id, u.username, u.portfolio_balance
-                FROM contracts c
-                JOIN props p ON c.prop_id = p.prop_id
-                JOIN users u ON c.user_id = u.user_id
-                WHERE c.game_id = ? AND c.status = 'active'
-            """, (game_id,))
-            
-            contracts_to_settle = cursor.fetchall()
-            
-            print(f"📊 Settling {len(contracts_to_settle)} contracts for game {game_id}")
-            
-            for contract_data in contracts_to_settle:
-                contract_id, user_id, prop_id, direction, line, quantity, stat, player_id, game_id, username, portfolio_balance = contract_data
-                
-                # Check if contract won
-                won = self.check_contract_result(player_id, stat, direction, line, game_stats)
-                
-                if won:
-                    # Contract won - add $100 to portfolio
-                    new_balance = portfolio_balance + 100
-                    
-                    cursor.execute("""
-                        UPDATE users 
-                        SET portfolio_balance = ?
-                        WHERE user_id = ?
-                    """, (new_balance, user_id))
-                    
-                    # Mark contract as settled
-                    cursor.execute("""
-                        UPDATE contracts 
-                        SET status = 'settled', settled_at = ?, result = 'won'
-                        WHERE contract_id = ?
-                    """, (datetime.now(), contract_id))
-                    
-                    print(f"✅ {username} WON contract {contract_id} - +$100 (New balance: ${new_balance})")
-                    
-                else:
-                    # Contract lost - mark as settled
-                    cursor.execute("""
-                        UPDATE contracts 
-                        SET status = 'settled', settled_at = ?, result = 'lost'
-                        WHERE contract_id = ?
-                    """, (datetime.now(), contract_id))
-                    
-                    print(f"❌ {username} LOST contract {contract_id}")
-                    
-            conn.commit()
-            conn.close()
+            return result[0] if result else 'UPCOMING'
             
         except Exception as e:
-            print(f"Error settling contracts for game {game_id}: {e}")
-            
-    def check_contract_result(self, player_id: int, stat: str, direction: str, line: float, game_stats: Dict) -> bool:
-        """Check if a contract won based on final game stats"""
-        if str(player_id) not in game_stats:
-            return False
-            
-        player_final_stats = game_stats[str(player_id)]
-        
-        # Map stat names to game stats
-        stat_mapping = {
-            'Hits': 'hits',
-            'Runs': 'runs', 
-            'RBIs': 'rbi',
-            'Total Bases': self._calculate_total_bases(player_final_stats),
-            'Strikeouts': 'strikeouts',
-            'ERA': self._calculate_game_era(player_final_stats),
-            'Pitches': 'pitchesThrown'
-        }
-        
-        if stat not in stat_mapping:
-            return False
-            
-        actual_value = stat_mapping[stat]
-        
-        if isinstance(actual_value, str):
-            actual_value = player_final_stats.get(actual_value, 0)
-            
-        # Check if contract won
-        if direction == 'over':
-            return actual_value > line
-        elif direction == 'under':
-            return actual_value < line
-        else:
-            return False
-            
-    def _calculate_total_bases(self, stats: Dict) -> int:
-        """Calculate total bases from hits stats"""
-        hits = stats.get('hits', 0)
-        doubles = stats.get('doubles', 0)
-        triples = stats.get('triples', 0)
-        homers = stats.get('homeRuns', 0)
-        
-        singles = hits - doubles - triples - homers
-        return singles + (doubles * 2) + (triples * 3) + (homers * 4)
-        
-    def _calculate_game_era(self, stats: Dict) -> float:
-        """Calculate ERA for a single game"""
-        earned_runs = stats.get('earnedRuns', 0)
-        innings = stats.get('inningsPitched', 0)
-        
-        if innings > 0:
-            return (earned_runs * 9) / innings
-        return 0.0
-        
-    def get_tracking_status(self) -> Dict:
-        """Get current tracking status for logging purposes"""
-        return {
-            'tracked_games': len(self.tracked_games),
-            'active_contracts': len(self.active_contracts),
-            'games_by_status': {
-                'Preview': len([g for g in self.tracked_games.values() if g['status'] == 'Preview']),
-                'Live': len([g for g in self.tracked_games.values() if g['status'] == 'Live']),
-                'Final': len([g for g in self.tracked_games.values() if g['status'] == 'Final'])
-            },
-            'last_updated': datetime.now().isoformat()
-        }
+            print(f"Error getting game status: {e}")
+            return 'UPCOMING'
+        finally:
+            if conn:
+                conn.close()
     
-    def log_status(self):
-        """Log current tracking status to console"""
-        status = self.get_tracking_status()
-        print(f"📊 Live Tracker Status: {status['tracked_games']} games, {status['active_contracts']} contracts")
-        for game_status, count in status['games_by_status'].items():
-            if count > 0:
-                print(f"  - {game_status}: {count} games")
+    def handle_final_game(self, game_id):
+        """Handle actions when a game goes final"""
+        try:
+            print(f"Game {game_id} is FINAL - enabling cash out for all contracts")
+            
+            # Update mlb_props.json to mark game as final
+            self.update_props_with_game_statuses()
+            
+            # In a real system, you'd also:
+            # 1. Calculate final results
+            # 2. Determine contract payouts
+            # 3. Update user balances
+            # 4. Send notifications
+            
+        except Exception as e:
+            print(f"Error handling final game: {e}")
+    
+    def handle_cancelled_game(self, game_id):
+        """Handle actions when a game is cancelled/postponed"""
+        try:
+            print(f"Game {game_id} is CANCELLED - processing refunds")
+            
+            # Get all contracts for this game
+            conn = sqlite3.connect(self.db_path)
+            cursor = conn.cursor()
+            
+            cursor.execute('''
+                SELECT contract_id, user_id, avg_price, quantity 
+                FROM contracts 
+                WHERE game_id = ? AND status = 'ACTIVE'
+            ''', (game_id,))
+            
+            contracts = cursor.fetchall()
+            
+            for contract in contracts:
+                contract_id, user_id, avg_price, quantity = contract
+                refund_amount = avg_price * quantity
+                
+                print(f"Refunding user {user_id}: ${refund_amount} for contract {contract_id}")
+                
+                # Mark contract as cancelled
+                cursor.execute('''
+                    UPDATE contracts 
+                    SET status = 'CANCELLED' 
+                    WHERE contract_id = ?
+                ''', (contract_id,))
+                
+                # In a real system, you'd also:
+                # 1. Update user balance
+                # 2. Send refund notification
+                # 3. Log the refund transaction
+            
+            conn.commit()
+            
+            # Update mlb_props.json to mark game as cancelled
+            self.update_props_with_game_statuses()
+            
+        except Exception as e:
+            print(f"Error handling cancelled game: {e}")
+        finally:
+            if conn:
+                conn.close()
+    
+    def update_props_with_game_statuses(self):
+        """Update mlb_props.json with current game statuses"""
+        try:
+            # Read current mlb_props.json
+            with open('mlb_props.json', 'r') as f:
+                props_data = json.load(f)
+            
+            # Get current game statuses from database
+            conn = sqlite3.connect(self.db_path)
+            cursor = conn.cursor()
+            cursor.execute('SELECT game_id, status FROM games')
+            game_statuses = dict(cursor.fetchall())
+            conn.close()
+            
+            updated = False
+            
+            # Update status for each player's props
+            for player_id, player_data in props_data.get('props', {}).items():
+                game_id = str(player_data['player_info']['game_id'])
+                
+                if game_id in game_statuses:
+                    new_status = game_statuses[game_id]
+                    
+                    # Update status in player_info
+                    if player_data['player_info'].get('status') != new_status:
+                        player_data['player_info']['status'] = new_status
+                        updated = True
+                    
+                    # Update status for each individual prop
+                    for prop in player_data.get('props', []):
+                        if prop.get('status') != new_status:
+                            prop['status'] = new_status
+                            updated = True
+            
+            # Save updated data
+            if updated:
+                with open('mlb_props.json', 'w') as f:
+                    json.dump(props_data, f, indent=2)
+                print("Updated mlb_props.json with current game statuses")
+            
+        except Exception as e:
+            print(f"Error updating props with game statuses: {e}")
+    
+    def start_tracking(self):
+        """Start the background tracking service"""
+        print("🚀 Starting Live Game Tracker as background service...")
+        
+        def tracking_loop():
+            while True:
+                try:
+                    self.update_game_statuses_from_mlb()
+                    time.sleep(30)  # Update every 30 seconds
+                except Exception as e:
+                    print(f"Error in tracking loop: {e}")
+                    time.sleep(60)  # Wait longer on error
+        
+        # Start tracking in background thread
+        tracking_thread = threading.Thread(target=tracking_loop, daemon=True)
+        tracking_thread.start()
+        
+        print("🚀 Live Game Tracker started")
+        return tracking_thread
 
-# Global instance
-live_tracker = LiveGameTracker() 
+# Initialize and start the tracker
+if __name__ == "__main__":
+    tracker = LiveGameTracker()
+    tracker.start_tracking()
+    
+    # Keep main thread alive
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print("Stopping Live Game Tracker...") 

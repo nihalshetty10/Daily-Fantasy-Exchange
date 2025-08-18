@@ -59,6 +59,11 @@
             background: #6c757d;
             color: white;
         }
+        .status-over-hit {
+            background: #28a745;
+            color: white;
+            animation: pulse 1s infinite;
+        }
         @keyframes pulse {
             0% { opacity: 1; }
             50% { opacity: 0.7; }
@@ -542,6 +547,9 @@
                         // Check if player is ruled out (this would come from the live tracker)
                         const isPlayerRuledOut = player.status === 'RULED_OUT' || player.status === 'NOT_PLAYING';
                         
+                        // Check if this is an over prop that has already hit (would be removed by live tracker)
+                        const isOverHit = prop.over_hit === true;
+                        
                         // Convert scraper prop format to trading platform format
                         const tradingProp = {
                             id: propId++,
@@ -555,17 +563,18 @@
                             live_contract_price: prop.price,
                             available_contracts: 10,
                             total_contracts: 10,
-                            status_badge: isPlayerRuledOut ? 'RULED_OUT' : gameStatus, // Show RULED_OUT if player can't play
-                            is_tradeable: !isPlayerRuledOut && (gameStatus === 'UPCOMING' || gameStatus === 'LIVE'), // Not tradeable if ruled out
+                            status_badge: isOverHit ? 'OVER_HIT' : (isPlayerRuledOut ? 'RULED_OUT' : gameStatus), // Show OVER_HIT if over already hit
+                            is_tradeable: !isOverHit && !isPlayerRuledOut && (gameStatus === 'UPCOMING' || gameStatus === 'LIVE'), // Not tradeable if over hit or ruled out
                             formatted_game_time: prop.game_time || 'TBD',
                             direction: prop.direction,
                             implied_probability: prop.implied_prob,
                             game_id: player.game_id,
                             opponent: prop.opponent || null,
-                            player_status: player.status || 'ACTIVE'
+                            player_status: player.status || 'ACTIVE',
+                            over_hit: isOverHit
                         };
                         
-                        console.log(`📈 Created prop: ${tradingProp.prop_type} ${tradingProp.difficulty} - Status: ${tradingProp.status_badge} - Player Status: ${tradingProp.player_status} - Tradeable: ${tradingProp.is_tradeable}`);
+                        console.log(`📈 Created prop: ${tradingProp.prop_type} ${tradingProp.difficulty} - Status: ${tradingProp.status_badge} - Player Status: ${tradingProp.player_status} - Over Hit: ${tradingProp.over_hit} - Tradeable: ${tradingProp.is_tradeable}`);
                         
                         realProps.push(tradingProp);
                     }
@@ -792,7 +801,8 @@
                 const statusClass = prop.status_badge === 'LIVE' ? 'status-live' : 
                                   prop.status_badge === 'FINAL' ? 'status-final' : 
                                   prop.status_badge === 'CANCELLED' ? 'status-cancelled' :
-                                  prop.status_badge === 'RULED_OUT' ? 'status-ruled-out' : 'status-upcoming';
+                                  prop.status_badge === 'RULED_OUT' ? 'status-ruled-out' :
+                                  prop.status_badge === 'OVER_HIT' ? 'status-over-hit' : 'status-upcoming';
 
                 const formatPropType = (propType) => {
                     return propType.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
@@ -845,6 +855,13 @@
                                 </div>
                             ` : ''}
                             
+                            ${prop.status_badge === 'OVER_HIT' ? `
+                                <div class="game-info">
+                                    <small><strong>Prop Status:</strong> <span class="text-success">OVER TARGET HIT! 🎯</span></small><br>
+                                    <small><strong>Action:</strong> All over contracts automatically cashed out at full value</small>
+                                </div>
+                            ` : ''}
+                            
                             <div class="player-stats">
                                 <strong>Line:</strong> ${prop.line_value} | 
                                 <strong>Current Price:</strong> <span class="live-price">${prop.live_contract_price.toFixed(2)}</span>
@@ -862,6 +879,10 @@
                                 
                                 if (prop.status_badge === 'RULED_OUT') {
                                     return '<div class="text-danger"><i class="fas fa-user-times"></i> Player Ruled Out</div>';
+                                }
+                                
+                                if (prop.status_badge === 'OVER_HIT') {
+                                    return '<div class="text-success"><i class="fas fa-trophy"></i> Over Target Hit!</div>';
                                 }
                                 
                                 if (prop.status_badge === 'FINAL') {
@@ -1646,6 +1667,9 @@
                 // Check for ruled out players and process refunds
                 checkForRuledOutPlayers();
                 
+                // Check for over hit props and process cash outs
+                checkForOverHitProps();
+                
                 // Refresh game statuses every 30 seconds
                 refreshGameStatuses();
                 
@@ -1932,6 +1956,8 @@
                     return 'warning';
                 case 'RULED_OUT':
                     return 'secondary';
+                case 'OVER_HIT':
+                    return 'success';
                 case 'UPCOMING':
                 default:
                     return 'success';
@@ -2097,6 +2123,47 @@
                 }
             } catch (error) {
                 console.error('Error refreshing game statuses:', error);
+            }
+        }
+
+        // Handle automatic cash outs for over props that have hit
+        function handleOverHitCashouts() {
+            // Find all props with over hit status
+            const overHitProps = mockProps.filter(prop => prop.status_badge === 'OVER_HIT');
+            
+            overHitProps.forEach(prop => {
+                // Find user's position for this prop
+                const position = userPortfolio.find(p => p.prop_id === prop.id);
+                if (position) {
+                    // Calculate cash out amount (full value for hitting over)
+                    const cashOutAmount = position.avg_price * position.quantity;
+                    
+                    // Update user balance
+                    currentUser.balance += cashOutAmount;
+                    
+                    // Remove from portfolio
+                    userPortfolio = userPortfolio.filter(p => p !== position);
+                    
+                    // Record the cash out
+                    recordTrade('OVER_HIT_CASHOUT', prop, cashOutAmount, 'over_hit_automatic');
+                    
+                    console.log(`Auto-cashed out $${cashOutAmount.toFixed(2)} for ${prop.player_name} (Over target hit)`);
+                }
+            });
+            
+            // Refresh displays if any cash outs were processed
+            if (overHitProps.length > 0) {
+                loadMarketData();
+                loadPortfolio();
+                loadTradeHistory();
+            }
+        }
+        
+        // Check for over hit props and process cash outs
+        function checkForOverHitProps() {
+            const hasOverHitProps = mockProps.some(prop => prop.status_badge === 'OVER_HIT');
+            if (hasOverHitProps) {
+                handleOverHitCashouts();
             }
         }
     </script>

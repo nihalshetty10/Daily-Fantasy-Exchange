@@ -69,6 +69,20 @@ class LiveGameTracker:
                 )
             ''')
             
+            # Live stats table to track current player performance
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS live_stats (
+                    player_id TEXT PRIMARY KEY,
+                    game_id TEXT,
+                    prop_type TEXT,
+                    current_value REAL DEFAULT 0,
+                    line_value REAL,
+                    trade_type TEXT,
+                    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (game_id) REFERENCES games (game_id)
+                )
+            ''')
+            
             conn.commit()
             print("Database initialized successfully")
         except Exception as e:
@@ -76,6 +90,207 @@ class LiveGameTracker:
         finally:
             if conn:
                 conn.close()
+    
+    def check_live_prop_results(self):
+        """Check live game stats to see if any over props have hit their targets"""
+        try:
+            print("Checking live prop results...")
+            
+            # Get all live games
+            conn = sqlite3.connect(self.db_path)
+            cursor = conn.cursor()
+            
+            cursor.execute('SELECT game_id FROM games WHERE status = "LIVE"')
+            live_games = cursor.fetchall()
+            
+            for (game_id,) in live_games:
+                self.check_game_live_stats(game_id)
+            
+            conn.close()
+            
+        except Exception as e:
+            print(f"Error checking live prop results: {e}")
+    
+    def check_game_live_stats(self, game_id):
+        """Check live stats for a specific game to see if over props have hit"""
+        try:
+            # Get the game's live stats from MLB API
+            url = f"{self.mlb_base_url}/game/{game_id}/boxscore"
+            response = requests.get(url, headers=self.headers)
+            
+            if response.status_code != 200:
+                print(f"Failed to fetch live stats for game {game_id}")
+                return
+            
+            data = response.json()
+            
+            # Process each team's players
+            for team_type in ['home', 'away']:
+                if team_type in data.get('teams', {}):
+                    team_data = data['teams'][team_type]
+                    
+                    # Check all players in the game
+                    if 'players' in team_data:
+                        for player_id, player_data in team_data['players'].items():
+                            self.check_player_live_props(str(player_id), game_id, player_data)
+                            
+        except Exception as e:
+            print(f"Error checking live stats for game {game_id}: {e}")
+    
+    def check_player_live_props(self, player_id, game_id, player_data):
+        """Check if a player's over props have hit their targets"""
+        try:
+            # Read current mlb_props.json to get this player's props
+            with open('mlb_props.json', 'r') as f:
+                props_data = json.load(f)
+            
+            if player_id not in props_data.get('props', {}):
+                return
+            
+            player_props = props_data['props'][player_id]
+            player_name = player_props['player_info']['name']
+            
+            # Get current stats for this player
+            current_stats = self.extract_player_stats(player_data)
+            
+            # Check each prop to see if over has hit
+            for prop in player_props.get('props', []):
+                if prop.get('trade_type') == 'over':  # Only check over props
+                    prop_type = prop['stat'].lower()
+                    line_value = prop['line']
+                    current_value = current_stats.get(prop_type, 0)
+                    
+                    print(f"Checking {player_name} {prop_type}: {current_value} vs {line_value}")
+                    
+                    # Check if over has hit
+                    if self.has_over_hit(prop_type, current_value, line_value):
+                        print(f"🎯 OVER HIT! {player_name} {prop_type}: {current_value} > {line_value}")
+                        
+                        # Process immediate cash out for all over contracts
+                        self.process_over_hit_cashout(player_id, game_id, prop_type, line_value)
+                        
+                        # Remove all market contracts for this prop
+                        self.remove_market_contracts(player_id, prop_type)
+                        
+        except Exception as e:
+            print(f"Error checking player live props: {e}")
+    
+    def extract_player_stats(self, player_data):
+        """Extract current stats from player data"""
+        stats = {}
+        
+        # Batting stats
+        if 'stats' in player_data and 'batting' in player_data['stats']:
+            batting = player_data['stats']['batting']
+            stats['hits'] = batting.get('hits', 0)
+            stats['runs'] = batting.get('runs', 0)
+            stats['rbis'] = batting.get('rbi', 0)
+            stats['doubles'] = batting.get('doubles', 0)
+            stats['triples'] = batting.get('triples', 0)
+            stats['home_runs'] = batting.get('homeRuns', 0)
+            
+            # Calculate total bases
+            singles = stats['hits'] - stats['doubles'] - stats['triples'] - stats['home_runs']
+            stats['total_bases'] = singles + (stats['doubles'] * 2) + (stats['triples'] * 3) + (stats['home_runs'] * 4)
+        
+        # Pitching stats
+        if 'stats' in player_data and 'pitching' in player_data['stats']:
+            pitching = player_data['stats']['pitching']
+            stats['strikeouts'] = pitching.get('strikeOuts', 0)
+            stats['pitches'] = pitching.get('pitchesThrown', 0)
+            
+            # Calculate ERA for the game
+            earned_runs = pitching.get('earnedRuns', 0)
+            innings = pitching.get('inningsPitched', 0)
+            if innings > 0:
+                stats['era'] = (earned_runs * 9) / innings
+            else:
+                stats['era'] = 0
+        
+        return stats
+    
+    def has_over_hit(self, prop_type, current_value, line_value):
+        """Check if an over prop has hit its target"""
+        if prop_type == 'era':
+            # For ERA, lower is better, so check if current ERA is below the line
+            return current_value < line_value
+        else:
+            # For most stats, higher is better
+            return current_value > line_value
+    
+    def process_over_hit_cashout(self, player_id, game_id, prop_type, line_value):
+        """Process immediate cash out for all over contracts that have hit"""
+        try:
+            print(f"Processing over hit cashout for player {player_id}, {prop_type}")
+            
+            conn = sqlite3.connect(self.db_path)
+            cursor = conn.cursor()
+            
+            # Get all active over contracts for this player/prop
+            cursor.execute('''
+                SELECT contract_id, user_id, avg_price, quantity 
+                FROM contracts 
+                WHERE player_id = ? AND prop_type = ? AND trade_type = 'over' AND status = 'ACTIVE'
+            ''', (player_id, prop_type))
+            
+            contracts = cursor.fetchall()
+            
+            for contract in contracts:
+                contract_id, user_id, avg_price, quantity = contract
+                payout = avg_price * quantity  # Full payout for hitting over
+                
+                print(f"Auto-cashing out user {user_id}: ${payout} for over hit")
+                
+                # Mark contract as cashed out
+                cursor.execute('''
+                    UPDATE contracts 
+                    SET status = 'CASHED_OUT' 
+                    WHERE contract_id = ?
+                ''', (contract_id,))
+                
+                # In a real system, you'd also:
+                # 1. Update user balance
+                # 2. Send cashout notification
+                # 3. Log the transaction
+            
+            conn.commit()
+            
+        except Exception as e:
+            print(f"Error processing over hit cashout: {e}")
+        finally:
+            if conn:
+                conn.close()
+    
+    def remove_market_contracts(self, player_id, prop_type):
+        """Remove all market contracts for a prop that has already hit over"""
+        try:
+            print(f"Removing market contracts for {player_id} {prop_type} (over already hit)")
+            
+            # Read current mlb_props.json
+            with open('mlb_props.json', 'r') as f:
+                props_data = json.load(f)
+            
+            # Find and remove the specific prop
+            if player_id in props_data.get('props', {}):
+                player_props = props_data['props'][player_id]
+                
+                # Remove the specific prop that hit over
+                player_props['props'] = [prop for prop in player_props['props'] 
+                                       if not (prop['stat'].lower() == prop_type and prop.get('trade_type') == 'over')]
+                
+                # If no more props for this player, remove the player entirely
+                if not player_props['props']:
+                    del props_data['props'][player_id]
+                    print(f"Removed all props for player {player_id}")
+                else:
+                    print(f"Removed {prop_type} over prop for player {player_id}")
+                
+                # Save updated data
+                with open('mlb_props.json', 'w') as f:
+                    json.dump(props_data, f, indent=2)
+            
+        except Exception as e:
+            print(f"Error removing market contracts: {e}")
     
     def check_player_availability(self):
         """Check which players are available to play in upcoming games"""
@@ -334,6 +549,9 @@ class LiveGameTracker:
                     elif mapped_status == 'UPCOMING':
                         # Check player availability for upcoming games
                         self.check_game_lineup(game_id)
+                    elif mapped_status == 'LIVE':
+                        # Check live prop results for live games
+                        self.check_game_live_stats(game_id)
             
             # Update mlb_props.json with current statuses
             self.update_props_with_game_statuses()
@@ -497,6 +715,9 @@ class LiveGameTracker:
                     
                     # Then update game statuses
                     self.update_game_statuses_from_mlb()
+                    
+                    # Check live prop results for live games
+                    self.check_live_prop_results()
                     
                     time.sleep(30)  # Update every 30 seconds
                 except Exception as e:

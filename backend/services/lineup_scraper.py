@@ -670,6 +670,17 @@ class LineupScraper:
 				'home_hitters': rc.get('home_hitters',[]),
 			})
 		
+		# Build a team -> hitters fallback map aggregating across all Rotowire cards
+		rot_team_hitters: Dict[str, set] = {}
+		def add_team_hitters(label: str, hitters: List[str]):
+			base = self._clean_team_label(label)
+			keys = team_keys(base)
+			for k in keys:
+				rot_team_hitters.setdefault(k, set()).update(hitters or [])
+		for rc in rot:
+			add_team_hitters(rc.get('away_label',''), rc.get('away_hitters',[]))
+			add_team_hitters(rc.get('home_label',''), rc.get('home_hitters',[]))
+		
 		processed_games = set()
 		out: List[Dict] = []
 		
@@ -682,15 +693,15 @@ class LineupScraper:
 				continue
 			processed_games.add(game_key)
 			
-			away_keys = team_keys(away_team)
-			home_keys = team_keys(home_team)
+			away_k = team_keys(away_team)
+			home_k = team_keys(home_team)
 			best = None
 			best_score = -1
 			for rc in rot_index:
 				score = 0
-				if away_keys & rc['away_keys'] and home_keys & rc['home_keys']:
+				if away_k & rc['away_keys'] and home_k & rc['home_keys']:
 					score = 2
-				elif away_keys & rc['home_keys'] and home_keys & rc['away_keys']:
+				elif away_k & rc['home_keys'] and home_k & rc['away_keys']:
 					score = 2
 				# small bonus if times match
 				if rc['time'] and time_et and rc['time'] == time_et:
@@ -699,8 +710,9 @@ class LineupScraper:
 					best_score = score
 					best = rc
 			
-			away_hitters = best['away_hitters'] if best else []
-			home_hitters = best['home_hitters'] if best else []
+			# Prefer hitters from the best Rotowire card if we found one; otherwise fall back to team-based hitters
+			away_hitters = (best['away_hitters'] if best else []) or list(rot_team_hitters.get(next(iter(away_k)), set()))
+			home_hitters = (best['home_hitters'] if best else []) or list(rot_team_hitters.get(next(iter(home_k)), set()))
 			
 			out.append({
 				'away_label': away_team,

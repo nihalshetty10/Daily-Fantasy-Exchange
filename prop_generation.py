@@ -198,76 +198,89 @@ class RealisticPropGenerator:
             print(f"Error getting team ID for {team_name}: {e}")
             return None
 
-    def resolve_pitcher_id_directly(self, pitcher_name: str, team_name: str) -> tuple:
-        """Directly resolve pitcher ID from team roster by name matching, with MLB people search fallback"""
+    def resolve_pitcher_id_directly(self, player_name: str, team_name: str) -> tuple:
+        """Resolve MLB player ID directly using MLB API search. Works for both pitchers and hitters.
+        Returns (player_id or '', position or '').
+        """
         try:
-            # Get team roster and search for the pitcher by name
+            if not player_name:
+                return '', ''
+            
+            # First try team roster lookup
             team_id = self.get_team_id_from_name(team_name)
-            if not team_id:
-                print(f"       ❌ No team ID found for {team_name}")
-                return '', ''
-            
-            roster_url = f"https://statsapi.mlb.com/api/v1/teams/{team_id}/roster"
-            response = requests.get(roster_url, timeout=10)
-            
-            if response.status_code != 200:
-                print(f"       ❌ Failed to get roster for {team_name}")
-                return '', ''
-            
-            roster_data = response.json()
-            roster = roster_data.get('roster', [])
-            
-            if not roster:
-                print(f"       ❌ Empty roster for {team_name}")
-                return '', ''
-            
-            # Search for the pitcher in the roster
-            for player in roster:
-                player_name = player.get('person', {}).get('fullName', '')
-                position = player.get('position', {}).get('abbreviation', '')
+            if team_id:
+                roster_url = f"https://statsapi.mlb.com/api/v1/teams/{team_id}/roster"
+                response = requests.get(roster_url, timeout=10)
                 
-                # Check if this is a pitcher and if the name matches
-                if position in ['P', 'SP', 'RP'] and player_name.lower() == pitcher_name.lower():
-                    player_id = player.get('person', {}).get('id')
-                    if player_id:
-                        print(f"       🎯 Found pitcher {pitcher_name} -> ID: {player_id} on {team_name}")
-                        return str(player_id), 'P'
+                if response.status_code == 200:
+                    roster_data = response.json()
+                    roster = roster_data.get('roster', [])
+                    
+                    # Try exact name match in team roster
+                    for player in roster:
+                        roster_name = player.get('person', {}).get('fullName', '')
+                        if roster_name.lower() == player_name.lower():
+                            player_id = player.get('person', {}).get('id')
+                            position = player.get('position', {}).get('abbreviation', '')
+                            print(f"✅ Team roster match: {roster_name} -> ID: {player_id}")
+                            return str(player_id), position
             
-            # If no exact match, try fuzzy matching on last name
-            for player in roster:
-                player_name = player.get('person', {}).get('fullName', '')
-                position = player.get('position', {}).get('abbreviation', '')
-                if position in ['P', 'SP', 'RP']:
-                    player_last = player_name.split()[-1].lower() if player_name else ''
-                    pitcher_last = pitcher_name.split()[-1].lower() if pitcher_name else ''
-                    if player_last == pitcher_last:
-                        player_id = player.get('person', {}).get('id')
-                        if player_id:
-                            print(f"       🎯 Found pitcher {pitcher_name} (fuzzy match) -> ID: {player_id} on {team_name}")
-                            return str(player_id), 'P'
+            # Fallback to MLB-wide people search
+            search_url = f"{self.mlb_base_url}/people"
+            params = {
+                'search': player_name,
+                'sportIds': 1,  # MLB only
+                'fields': 'people,id,fullName,primaryPosition,currentTeam'
+            }
             
-            # Final fallback: use MLB people search (ignore team) and pick best exact name match
-            try:
-                q = requests.utils.quote(pitcher_name)
-                search_url = f"https://statsapi.mlb.com/api/v1/people/search?q={q}&sportIds=1"
-                r = requests.get(search_url, timeout=10)
-                if r.status_code == 200:
-                    people = r.json().get('people', [])
-                    for person in people:
-                        full = (person.get('fullName') or '').strip()
-                        if full.lower() == pitcher_name.lower():
-                            pid = person.get('id')
-                            if pid:
-                                print(f"       🎯 People search matched {pitcher_name} -> ID: {pid}")
-                                return str(pid), 'P'
-            except Exception:
-                pass
+            response = requests.get(search_url, params=params, headers=self.headers, timeout=10)
+            if response.status_code != 200:
+                print(f"❌ MLB search failed for {player_name}")
+                return '', ''
             
-            print(f"       ❌ No pitcher found for {pitcher_name} on {team_name}")
+            data = response.json()
+            people = data.get('people', [])
+            
+            if not people:
+                print(f"❌ No MLB people found for {player_name}")
+                return '', ''
+            
+            # Find best match
+            best_match = None
+            best_score = 0
+            
+            for person in people:
+                mlb_name = person.get('fullName', '')
+                current_team = person.get('currentTeam', {}).get('name', '')
+                
+                # Calculate match score
+                score = 0
+                if mlb_name.lower() == player_name.lower():
+                    score = 100  # Exact match
+                elif mlb_name.lower().startswith(player_name.lower()):
+                    score = 80   # Starts with
+                elif player_name.lower() in mlb_name.lower():
+                    score = 60   # Contains
+                
+                # Bonus for team match
+                if current_team.lower() == team_name.lower():
+                    score += 20
+                
+                if score > best_score:
+                    best_score = score
+                    best_match = person
+            
+            if best_match and best_score >= 60:
+                player_id = best_match.get('id')
+                position = best_match.get('primaryPosition', {}).get('abbreviation', '')
+                print(f"✅ MLB search match: {best_match.get('fullName')} -> ID: {player_id} (score: {best_score})")
+                return str(player_id), position
+            
+            print(f"❌ No good MLB match for {player_name}")
             return '', ''
-        
+            
         except Exception as e:
-            print(f"       ⚠️ Error in direct pitcher lookup: {e}")
+            print(f"❌ Error in direct player resolution for {player_name}: {e}")
             return '', ''
 
     def resolve_player_id_and_position(self, team_name: str, scraped_name: str) -> tuple:
@@ -319,6 +332,7 @@ class RealisticPropGenerator:
             if len(scraped_parts) >= 2:
                 last_name = scraped_parts[-1]
                 first_initial = scraped_parts[0][0] if scraped_parts[0] else ''
+                
                 for player in roster:
                     player_name = player.get('person', {}).get('fullName', '')
                     player_parts = player_name.split()
@@ -341,8 +355,15 @@ class RealisticPropGenerator:
                         print(f"✅ Fuzzy last name match found: {player_name} -> ID: {player_id}")
                         return str(player_id), position
             
-            # 4) If nothing matched, do NOT default to pitcher search. Return empty and skip this player.
-            print(f"❌ No match found for '{scraped_name}' in {team_name} roster")
+            # 4) If nothing matched, try broader MLB search as fallback
+            print(f"🔍 No roster match for '{scraped_name}' in {team_name}, trying MLB-wide search...")
+            player_id, position = self.resolve_pitcher_id_directly(scraped_name, team_name)
+            if player_id:
+                print(f"✅ MLB-wide search found: {scraped_name} -> ID: {player_id}")
+                return str(player_id), position
+            
+            # 5) If still nothing, return empty and skip this player
+            print(f"❌ No match found for '{scraped_name}' in {team_name} roster or MLB-wide")
             return '', ''
             
         except Exception as e:
@@ -538,6 +559,7 @@ class RealisticPropGenerator:
                     for side, team_name in [('away', game['away_team']), ('home', game['home_team'])]:
                         self.current_processing_team = team_name
                         starters = find_in(official_lineups, team_name) or []
+                        print(f"  📋 Found {len(starters)} starters for {team_name}")
                         for player in starters:
                             if isinstance(player, dict):
                                 player_name = player['name']
@@ -550,7 +572,9 @@ class RealisticPropGenerator:
                             if props:
                                 for prop in props:
                                     self._add_prop_metadata(prop, game)
-                                all_props[str(player_id or player_name)] = {
+                                # Create unique key for each player
+                                unique_key = f"{player_id or 'unknown'}_{team_name}_{game['game_id']}_{side}"
+                                all_props[unique_key] = {
                                     'player_info': {
                                         'name': player_name,
                                         'team_name': team_name,

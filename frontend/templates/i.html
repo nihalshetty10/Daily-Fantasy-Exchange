@@ -330,6 +330,10 @@
                                 <small class="text-muted" id="props-status">
                                     <i class="fas fa-info-circle"></i> Loading props...
                                 </small>
+                                <br>
+                                <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="refreshProps()">
+                                    <i class="fas fa-sync-alt"></i> Refresh Props
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -515,7 +519,9 @@
         async function loadRealMLBProps() {
             try {
                 console.log('🔄 Loading real MLB props...');
-                const response = await fetch('/mlb_props.json');
+                // Add cache-busting parameter to force refresh
+                const timestamp = new Date().getTime();
+                const response = await fetch(`/mlb_props.json?t=${timestamp}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -743,10 +749,10 @@
                 // Check if we have real game times
                 const hasRealTimes = mockProps.some(prop => prop.formatted_game_time && prop.formatted_game_time !== 'TBD');
                 if (hasRealTimes) {
-                    statusElement.innerHTML = `<i class="fas fa-check-circle text-success"></i> ${mockProps.length} real MLB props loaded with actual game times (sorted by start time)`;
+                    statusElement.innerHTML = `<i class="fas fa-check-circle text-success"></i> ${mockProps.length} real MLB props loaded with actual game times (sorted by start time)<br><button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="refreshProps()"><i class="fas fa-sync-alt"></i> Refresh Props</button>`;
                     statusElement.className = 'mt-3 text-center text-success';
                     } else {
-                    statusElement.innerHTML = `<i class="fas fa-exclamation-triangle text-warning"></i> ${mockProps.length} props loaded (game times may be demo)`;
+                    statusElement.innerHTML = `<i class="fas fa-exclamation-triangle text-warning"></i> ${mockProps.length} props loaded (game times may be demo)<br><button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="refreshProps()"><i class="fas fa-sync-alt"></i> Refresh Props</button>`;
                     statusElement.className = 'mt-3 text-center text-warning';
                     }
                 } else {
@@ -776,6 +782,20 @@
             
             // Show game schedule
             showGameSchedule();
+        }
+
+        // Refresh props function
+        async function refreshProps() {
+            console.log('🔄 Manually refreshing props...');
+            try {
+                const realProps = await loadRealMLBProps();
+                mockProps = realProps;
+                console.log('✅ Props refreshed successfully');
+                loadMarketData(); // Reload the display
+            } catch (error) {
+                console.error('❌ Failed to refresh props:', error);
+                alert('Failed to refresh props. Please try again.');
+            }
         }
 
         // Display props in the market

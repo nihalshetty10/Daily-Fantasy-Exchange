@@ -64,6 +64,10 @@
             color: white;
             animation: pulse 1s infinite;
         }
+        .status-push {
+            background: #0d6efd;
+            color: white;
+        }
         @keyframes pulse {
             0% { opacity: 1; }
             50% { opacity: 0.7; }
@@ -802,7 +806,8 @@
                                   prop.status_badge === 'FINAL' ? 'status-final' : 
                                   prop.status_badge === 'CANCELLED' ? 'status-cancelled' :
                                   prop.status_badge === 'RULED_OUT' ? 'status-ruled-out' :
-                                  prop.status_badge === 'OVER_HIT' ? 'status-over-hit' : 'status-upcoming';
+                                  prop.status_badge === 'OVER_HIT' ? 'status-over-hit' :
+                                  prop.status_badge === 'PUSH' ? 'status-push' : 'status-upcoming';
 
                 const formatPropType = (propType) => {
                     return propType.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
@@ -859,6 +864,12 @@
                                 <div class="game-info">
                                     <small><strong>Prop Status:</strong> <span class="text-success">OVER TARGET HIT! 🎯</span></small><br>
                                     <small><strong>Action:</strong> All over contracts automatically cashed out at full value</small>
+                                </div>
+                            ` : ''}
+                            ${prop.status_badge === 'PUSH' ? `
+                                <div class="game-info">
+                                    <small><strong>Prop Status:</strong> <span class="text-primary">PUSH (Exact on the line)</span></small><br>
+                                    <small><strong>Action:</strong> Your stake is refunded in full.</small>
                                 </div>
                             ` : ''}
                             
@@ -1669,13 +1680,21 @@
                 
                 // Check for over hit props and process cash outs
                 checkForOverHitProps();
-                
-                // Refresh game statuses every 30 seconds
-                refreshGameStatuses();
+                // Check for pushes (exact on the line) and refund stakes
+                checkForPushes();
                 
                 loadMarketData();
                 loadPortfolio();
             }, 10000); // Update every 10 seconds
+            
+            // Add separate interval for game status updates (more frequent)
+            if (window.gameStatusInterval) {
+                clearInterval(window.gameStatusInterval);
+            }
+            
+            window.gameStatusInterval = setInterval(() => {
+                refreshGameStatuses();
+            }, 5000); // Refresh game statuses every 5 seconds
         }
 
         // Open trade modal for portfolio contract
@@ -1883,25 +1902,34 @@
             
             if (!scheduleHeader || !scheduleContent || mockProps.length === 0) return;
             
-            // Get unique games - ONLY keep games where player is AWAY team (opponent starts with "@")
+            // Get all games including doubleheaders - use game_id + time as unique key to handle doubleheaders properly
             const games = {};
             mockProps.forEach(prop => {
-                if (prop.formatted_game_time && prop.formatted_game_time !== 'TBD') {
-                    // Only process props where opponent starts with "@" (player is away team)
-                    if (prop.opponent && prop.opponent.startsWith('@ ')) {
-                        const awayTeam = prop.player_team;
-                        const homeTeam = prop.opponent.substring(2); // Remove "@ " prefix
-                        const key = `${awayTeam} @ ${homeTeam}`;
+                if (prop.formatted_game_time && prop.formatted_game_time !== 'TBD' && prop.game_id) {
+                    // Create unique key that includes game_id to handle doubleheaders (same teams, different times)
+                    const key = `${prop.game_id}_${prop.formatted_game_time}`;
+                    
+                    if (!games[key]) {
+                        // Extract home team from the game_id format (e.g., "MIL@CHC|2:20 PM ET|0|A" -> CHC is home)
+                        let homeTeam = 'Unknown';
+                        let awayTeam = prop.player_team;
                         
-                        if (!games[key] || prop.formatted_game_time < games[key].time) {
-                            games[key] = {
-                                time: prop.formatted_game_time,
-                                awayTeam: awayTeam,
-                                homeTeam: homeTeam,
-                                displayName: `${awayTeam} @ ${homeTeam}`,
-                                status: prop.status_badge || 'UPCOMING'
-                            };
+                        if (prop.game_id && prop.game_id.includes('@')) {
+                            const parts = prop.game_id.split('@');
+                            if (parts.length >= 2) {
+                                awayTeam = parts[0];
+                                homeTeam = parts[1].split('|')[0]; // Remove the time part
+                            }
                         }
+                        
+                        games[key] = {
+                            time: prop.formatted_game_time,
+                            awayTeam: awayTeam,
+                            homeTeam: homeTeam,
+                            displayName: `${awayTeam} @ ${homeTeam}`,
+                            status: prop.status_badge || 'UPCOMING',
+                            gameId: prop.game_id
+                        };
                     }
                 }
             });
@@ -1958,6 +1986,8 @@
                     return 'secondary';
                 case 'OVER_HIT':
                     return 'success';
+                case 'PUSH':
+                    return 'primary';
                 case 'UPCOMING':
                 default:
                     return 'success';
@@ -2115,14 +2145,29 @@
         // Refresh game statuses from backend
         async function refreshGameStatuses() {
             try {
+                console.log('🔄 Refreshing game statuses from backend...');
+                
                 // Reload props to get updated statuses
                 const realProps = await loadRealMLBProps();
                 if (realProps && realProps.length > 0) {
                     mockProps = realProps;
-                    console.log('🔄 Game statuses refreshed from backend');
+                    console.log('✅ Game statuses refreshed from backend');
+                    
+                    // Update the display to show new statuses
+                    loadMarketData();
+                    
+                    // Check for any status changes
+                    const statusCounts = {};
+                    mockProps.forEach(prop => {
+                        const status = prop.status_badge || 'UNKNOWN';
+                        statusCounts[status] = (statusCounts[status] || 0) + 1;
+                    });
+                    console.log('📊 Current game status distribution:', statusCounts);
+                } else {
+                    console.log('⚠️ No props returned from backend refresh');
                 }
             } catch (error) {
-                console.error('Error refreshing game statuses:', error);
+                console.error('❌ Error refreshing game statuses:', error);
             }
         }
 
@@ -2165,6 +2210,32 @@
             if (hasOverHitProps) {
                 handleOverHitCashouts();
             }
+        }
+        
+        // Handle automatic refunds for PUSH (exact on the line)
+        function handlePushRefunds() {
+            const pushProps = mockProps.filter(prop => prop.status_badge === 'PUSH');
+            pushProps.forEach(prop => {
+                const position = userPortfolio.find(p => p.prop_id === prop.id);
+                if (position) {
+                    const refundAmount = position.avg_price * position.quantity;
+                    currentUser.balance += refundAmount;
+                    userPortfolio = userPortfolio.filter(p => p !== position);
+                    recordTrade('REFUND_PUSH', prop, refundAmount, 'push_refund');
+                    console.log(`Auto-refunded $${refundAmount.toFixed(2)} for ${prop.player_name} (PUSH)`);
+                }
+            });
+            if (pushProps.length > 0) {
+                loadMarketData();
+                loadPortfolio();
+                loadTradeHistory();
+            }
+        }
+        
+        // Check for pushes and process refunds
+        function checkForPushes() {
+            const hasPushes = mockProps.some(prop => prop.status_badge === 'PUSH');
+            if (hasPushes) handlePushRefunds();
         }
     </script>
 </body>

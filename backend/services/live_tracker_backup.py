@@ -11,8 +11,6 @@ import time
 import threading
 from datetime import datetime, timezone
 import pytz
-from .lineup_scraper import LineupScraper
-import re
 
 class LiveGameTracker:
     def __init__(self):
@@ -108,11 +106,10 @@ class LiveGameTracker:
             for (game_id,) in live_games:
                 self.check_game_live_stats(game_id)
             
+                conn.close()
+            
         except Exception as e:
             print(f"Error checking live prop results: {e}")
-        finally:
-            if conn:
-                conn.close()
     
     def check_game_live_stats(self, game_id):
         """Check live stats for a specific game to see if over props have hit"""
@@ -344,14 +341,14 @@ class LiveGameTracker:
                 return
             
             data = response.json()
-            
+                
             # Get all players who are actually in the lineup
             active_players = set()
-            
-            for team_type in ['home', 'away']:
-                if team_type in data.get('teams', {}):
-                    team_data = data['teams'][team_type]
-                    
+                
+                for team_type in ['home', 'away']:
+                    if team_type in data.get('teams', {}):
+                        team_data = data['teams'][team_type]
+                        
                     # Check starting lineup
                     if 'battingOrder' in team_data:
                         for player_id in team_data['battingOrder']:
@@ -369,7 +366,7 @@ class LiveGameTracker:
             
             # Update player statuses in database
             self.update_player_statuses(game_id, active_players)
-            
+                
         except Exception as e:
             print(f"Error checking lineup for game {game_id}: {e}")
     
@@ -421,71 +418,43 @@ class LiveGameTracker:
         try:
             print(f"Processing refunds for ruled out player {player_id}")
             
-            # First, get the player name from mlb_props.json since we need it for the database query
-            player_name = None
-            try:
-                with open('mlb_props.json', 'r') as f:
-                    props_data = json.load(f)
-                
-                if player_id in props_data.get('props', {}):
-                    player_name = props_data['props'][player_id]['player_info']['name']
-                    print(f"Found player name: {player_name}")
-                else:
-                    print(f"Player {player_id} not found in props data")
-                    return
-            except Exception as e:
-                print(f"Error reading player name from props: {e}")
-                return
-            
-            if not player_name:
-                print(f"Could not determine player name for {player_id}")
-                return
-            
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
             
-            # Get all active contracts for this player - FIXED: use player_name not player_id
+            # Get all active contracts for this player
             cursor.execute('''
                 SELECT contract_id, user_id, avg_price, quantity 
                 FROM contracts 
-                WHERE player_name = ? AND status = 'ACTIVE'
-            ''', (player_name,))
+                WHERE player_id = ? AND status = 'ACTIVE'
+            ''', (player_id,))
             
             contracts = cursor.fetchall()
             
-            if contracts:
-                print(f"Found {len(contracts)} active contracts for {player_name}")
+            for contract in contracts:
+                contract_id, user_id, avg_price, quantity = contract
+                refund_amount = avg_price * quantity
                 
-                for contract in contracts:
-                    contract_id, user_id, avg_price, quantity = contract
-                    refund_amount = avg_price * quantity
-                    
-                    print(f"Refunding user {user_id}: ${refund_amount} for ruled out player {player_name}")
-                    
-                    # Mark contract as refunded
-                    cursor.execute('''
-                        UPDATE contracts 
-                        SET status = 'REFUNDED' 
-                        WHERE contract_id = ?
-                    ''', (contract_id,))
-                    
-                    # In a real system, you'd also:
-                    # 1. Update user balance
-                    # 2. Send refund notification
-                    # 3. Log the refund transaction
+                print(f"Refunding user {user_id}: ${refund_amount} for ruled out player")
                 
-                conn.commit()
-                print(f"Successfully processed refunds for {player_name}")
-            else:
-                print(f"No active contracts found for {player_name}")
+                # Mark contract as refunded
+                cursor.execute('''
+                    UPDATE contracts 
+                    SET status = 'REFUNDED' 
+                    WHERE contract_id = ?
+                ''', (contract_id,))
+                
+                # In a real system, you'd also:
+                # 1. Update user balance
+                # 2. Send refund notification
+                # 3. Log the refund transaction
+            
+            conn.commit()
             
             # Remove props for this player from mlb_props.json
             self.remove_player_props(player_id)
             
         except Exception as e:
             print(f"Error processing player refunds: {e}")
-            import traceback
-            traceback.print_exc()
         finally:
             if conn:
                 conn.close()
@@ -526,7 +495,8 @@ class LiveGameTracker:
             url = f"{self.mlb_base_url}/schedule"
             params = {
                 'sportId': 1,  # MLB
-                'date': today
+                'date': today,
+                'fields': 'dates,games,gamePk,gameDate,status,abstractGameState,detailedState,homeTeam,awayTeam'
             }
             
             response = requests.get(url, params=params, headers=self.headers)
@@ -554,9 +524,9 @@ class LiveGameTracker:
                     
                     mapped_status = status_mapping.get(game_status, 'UPCOMING')
                     
-                    # Get team names - FIXED: correct path to team names
-                    home_team = game['teams']['home']['team']['name']
-                    away_team = game['teams']['away']['team']['name']
+                    # Get team names
+                    home_team = game['homeTeam']['name']
+                    away_team = game['awayTeam']['name']
                     
                     # Get game time
                     game_time = game.get('gameDate', '')
@@ -567,8 +537,6 @@ class LiveGameTracker:
                         formatted_time = et_time.strftime('%I:%M %p ET')
                     else:
                         formatted_time = 'TBD'
-                    
-                    print(f"Game {game_id}: {away_team} @ {home_team} - {mapped_status} at {formatted_time}")
                     
                     # Update game in database
                     self.update_game_status(game_id, mapped_status, home_team, away_team, formatted_time)
@@ -590,8 +558,6 @@ class LiveGameTracker:
             
         except Exception as e:
             print(f"Error updating game statuses: {e}")
-            import traceback
-            traceback.print_exc()
     
     def update_game_status(self, game_id, status, home_team, away_team, game_time):
         """Update game status in database"""
@@ -696,7 +662,6 @@ class LiveGameTracker:
     
     def update_props_with_game_statuses(self):
         """Update mlb_props.json with current game statuses"""
-        conn = None
         try:
             # Read current mlb_props.json
             with open('mlb_props.json', 'r') as f:
@@ -707,6 +672,7 @@ class LiveGameTracker:
             cursor = conn.cursor()
             cursor.execute('SELECT game_id, status FROM games')
             game_statuses = dict(cursor.fetchall())
+            conn.close()
             
             updated = False
             
@@ -736,72 +702,6 @@ class LiveGameTracker:
             
         except Exception as e:
             print(f"Error updating props with game statuses: {e}")
-            import traceback
-            traceback.print_exc()
-        finally:
-            if conn:
-                conn.close()
-    
-    def check_lineups_and_update_props(self):
-        """Fact-checks generated players against authoritative lineups.
-        - If a generated player is NOT in the official lineup -> mark RULED_OUT, process refunds, remove props
-        - If an official lineup has a player we don't have -> generate props for them on the fly and add
-        """
-        try:
-            # Load current props
-            with open('mlb_props.json', 'r') as f:
-                props_data = json.load(f)
-
-            # Poll MLB.com every 5 minutes regardless of T-3h
-            scraper = LineupScraper()
-            combined = scraper.get_combined_cards()
-            # Build team -> set(players) from MLB.com combined cards
-            mlb_team_players = {}
-            for c in combined:
-                away = c.get('away_label'); home = c.get('home_label')
-                aw = set(c.get('away_hitters', []))
-                hm = set(c.get('home_hitters', []))
-                # Add pitchers to the sets
-                if c.get('away_pitcher'):
-                    aw.add(c.get('away_pitcher'))
-                if c.get('home_pitcher'):
-                    hm.add(c.get('home_pitcher'))
-                if away:
-                    mlb_team_players[away] = aw
-                if home:
-                    mlb_team_players[home] = hm
-
-            players_by_team = {}
-            for pid, pdata in props_data.get('props', {}).items():
-                team = pdata['player_info'].get('team_name')
-                if not team:
-                    continue
-                players_by_team.setdefault(team, set()).add((pid, pdata['player_info'].get('name')))
-
-            updated = False
-
-            # 1) Mark out players not in official lineup
-            for team, generated_players in players_by_team.items():
-                official = set(mlb_team_players.get(team, []))
-                official_norm = {p.lower() for p in official}
-                for pid, pname in list(generated_players):
-                    if pname and pname.lower() not in official_norm and official:
-                        # Player not starting -> mark ruled out and process refunds
-                        print(f"Lineup check: {pname} not in official lineup for {team} -> RULED_OUT")
-                        self.process_player_refunds(pid, props_data['props'][pid]['player_info']['game_id'])
-                        # Remove player props from listing
-                        del props_data['props'][pid]
-                        updated = True
-
-            # 2) Add missing starters (best-effort name→ID resolution can be added here)
-
-            if updated:
-                with open('mlb_props.json', 'w') as f:
-                    json.dump(props_data, f, indent=2)
-                print("Updated mlb_props.json after lineup fact-check")
-
-        except Exception as e:
-            print(f"Error in lineup fact-check: {e}")
     
     def start_tracking(self):
         """Start the background tracking service"""
@@ -812,17 +712,14 @@ class LiveGameTracker:
                 try:
                     # Check player availability first (for upcoming games)
                     self.check_player_availability()
-
-                    # Fact-check lineups every 5 minutes; time gate handled inside
-                    self.check_lineups_and_update_props()
-
+                    
                     # Then update game statuses
                     self.update_game_statuses_from_mlb()
-
+                    
                     # Check live prop results for live games
                     self.check_live_prop_results()
-
-                    time.sleep(300)  # every 5 minutes
+                    
+                    time.sleep(30)  # Update every 30 seconds
                 except Exception as e:
                     print(f"Error in tracking loop: {e}")
                     time.sleep(60)  # Wait longer on error

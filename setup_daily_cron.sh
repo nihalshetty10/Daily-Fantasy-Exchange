@@ -6,10 +6,14 @@
 # Get the current directory (this should be the project root)
 PROJECT_DIR="$(pwd)"
 
-echo "Setting up cron job for project directory: $PROJECT_DIR"
+# Get the correct Python path
+PYTHON_PATH=$(which python3)
 
-# Create the cron job entry
-CRON_JOB="30 1 * * * cd $PROJECT_DIR && /usr/bin/python3 $PROJECT_DIR/prop_generation.py >> $PROJECT_DIR/logs/cron_prop_generation.log 2>&1"
+echo "Setting up cron job for project directory: $PROJECT_DIR"
+echo "Using Python path: $PYTHON_PATH"
+
+# Create the cron job entry with the correct Python path
+CRON_JOB="30 1 * * * cd $PROJECT_DIR && $PYTHON_PATH $PROJECT_DIR/prop_generation.py >> $PROJECT_DIR/logs/cron_prop_generation.log 2>&1"
 
 # Check if cron job already exists
 if crontab -l 2>/dev/null | grep -q "prop_generation.py"; then
@@ -36,7 +40,7 @@ echo "🔍 To verify the cron job was added:"
 echo "   crontab -l"
 echo ""
 echo "🔄 To manually test prop generation:"
-echo "   cd $PROJECT_DIR && python3 prop_generation.py"
+echo "   cd $PROJECT_DIR && $PYTHON_PATH prop_generation.py"
 echo ""
 echo "📊 To view cron logs:"
 echo "   tail -f $PROJECT_DIR/logs/cron_prop_generation.log" 

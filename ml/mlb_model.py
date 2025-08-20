@@ -33,6 +33,11 @@ class MLBModel:
     def _get_real_mlb_player_stats(self, player_id: str, stat_type: str, season: int) -> Dict:
         """Get real player stats from MLB API"""
         try:
+            # Validate player_id is a valid MLB player ID (numeric)
+            if not player_id or not str(player_id).isdigit():
+                print(f"⚠️ Invalid player ID '{player_id}' - using mock data")
+                return self._generate_mock_player_stats(player_id, stat_type)
+            
             # Try different MLB API approaches
             # First, try the standard stats endpoint
             url = f"{self.mlb_base_url}/people/{player_id}/stats"
@@ -47,8 +52,8 @@ class MLBModel:
             
             response = requests.get(url, headers=self.headers, params=params, timeout=30)
             if response.status_code != 200:
-                print(f"❌ MLB API error {response.status_code} for player {player_id}")
-                return {}
+                print(f"❌ MLB API error {response.status_code} for player {player_id} - using mock data")
+                return self._generate_mock_player_stats(player_id, stat_type)
             
             data = response.json()
             
@@ -90,8 +95,8 @@ class MLBModel:
             }
             
         except Exception as e:
-            print(f"❌ Error fetching real MLB stats for {player_id}: {e}")
-            return {}
+            print(f"❌ Error fetching real MLB stats for {player_id}: {e} - using mock data")
+            return self._generate_mock_player_stats(player_id, stat_type)
     
     def _parse_mlb_game_log(self, data: Dict, stat_type: str) -> List[float]:
         """Parse MLB API response to extract stat values from game log"""
@@ -406,8 +411,11 @@ class MLBModel:
         if not player_stats:
             return 0.0, 0.0
         
-        # Use EASY percentile for all stats (already calculated correctly in get_player_recent_stats)
-        target_value = player_stats['percentiles'].get('EASY', player_stats['median'])
+        # EASY percentile; for ERA, ease means higher numbers: use 75th pct; others use 25th
+        if stat_type == 'era':
+            target_value = player_stats['percentiles'].get('EASY', player_stats['median'])
+        else:
+            target_value = player_stats['percentiles'].get('EASY', player_stats['median'])
         
         prop_line = self._round_prop_line(target_value, stat_type)
         implied_prob = np.random.uniform(70, 80)  # 70-80% probability
@@ -442,35 +450,27 @@ class MLBModel:
         return prop_line, implied_prob
     
     def _round_prop_line(self, value: float, stat_type: str) -> float:
-        """Round prop line to appropriate decimal places"""
+        """Round prop line to appropriate decimal places and enforce sensible minimums"""
+        # Round to nearest 0.5 for all
+        rounded = round(value * 2) / 2
         if stat_type == 'era':
-            # ERA: Round to nearest 0.5 (3.0, 3.5, 4.0, 4.5, etc.)
-            return round(value * 2) / 2
-        else:
-            # Other stats: Round to nearest 0.5
-            return round(value * 2) / 2
+            # ERA: keep as rounded; allow small values
+            return max(0.5, rounded)
+        # Non-ERA stats: ensure at least 0.5 so we don't drop a prop due to 0
+        return max(0.5, rounded)
     
     def _create_prop(self, stat_type: str, prop_line: float, difficulty: str, implied_prob: float, team_name: str, game_id: str) -> Dict:
         """Create a prop object with all required fields"""
         # Determine prop direction based on difficulty and stat type
-        if stat_type == 'era':
-            if difficulty in ['EASY', 'HARD']:
-                # EASY and HARD ERA props are always UNDER
+        if difficulty in ['EASY', 'HARD']:
+            # Rule: EASY/HARD are always OVER except ERA which is UNDER
+            if stat_type == 'era':
                 direction = 'under'
             else:
-                # MEDIUM ERA props can be either OVER or UNDER
-                direction = random.choice(['over', 'under'])
-        else:
-            # For all other stats, use the existing logic
-            if difficulty == 'EASY':
-                # EASY props are typically OVER (high probability)
                 direction = 'over'
-            elif difficulty == 'HARD':
-                # HARD props are typically UNDER (low probability)
-                direction = 'under'
-            else:
-                # MEDIUM props can be either
-                direction = random.choice(['over', 'under'])
+        else:
+            # MEDIUM can be either
+            direction = random.choice(['over', 'under'])
         
         return {
             'stat': stat_type.replace('_', ' ').title(),

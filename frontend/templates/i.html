@@ -529,8 +529,8 @@
                 console.log('📊 Raw MLB props data:', data);
                 
                 if (!data.props) {
-                    console.warn('⚠️ No props found in data, using demo props');
-                    return getDemoProps();
+                    console.warn('⚠️ No props found in data');
+                    return [];
                 }
                 
                 const realProps = [];
@@ -623,67 +623,14 @@
                 
             } catch (error) {
                 console.error('❌ Error loading real MLB props:', error);
-                console.log('🔄 Falling back to demo props...');
-                // Fallback to demo props if loading fails
-                return getDemoProps();
+                console.log('❌ No fallback available - real MLB data required');
+                return [];
             }
         }
         
-        // Demo props as fallback
-        function getDemoProps() {
-            return [
-                {
-                    id: 1,
-                    player_name: 'Aaron Judge',
-                    player_team: 'Yankees',
-                    player_position: 'RF',
-                    sport: 'MLB',
-                    prop_type: 'hits',
-                    difficulty: 'EASY',
-                    line_value: 1.5,
-                    live_contract_price: 78.50,
-                    available_contracts: 8,
-                    total_contracts: 10,
-                    status_badge: 'UPCOMING',
-                    is_tradeable: true,
-                    formatted_game_time: 'TBD'
-                },
-                {
-                    id: 2,
-                    player_name: 'Gerrit Cole',
-                    player_team: 'Yankees',
-                    player_position: 'P',
-                    sport: 'MLB',
-                    prop_type: 'strikeouts',
-                    difficulty: 'MEDIUM',
-                    line_value: 6.5,
-                    live_contract_price: 48.25,
-                    available_contracts: 0,
-                    total_contracts: 10,
-                    status_badge: 'LIVE',
-                    is_tradeable: false,
-                    formatted_game_time: 'TBD'
-                },
-                {
-                    id: 3,
-                    player_name: 'Mike Trout',
-                    player_team: 'Angels',
-                    player_position: 'CF',
-                    sport: 'MLB',
-                    prop_type: 'runs',
-                    difficulty: 'HARD',
-                    line_value: 2.5,
-                    live_contract_price: 25.00,
-                    available_contracts: 0,
-                    total_contracts: 10,
-                    status_badge: 'FINAL',
-                    is_tradeable: false,
-                    formatted_game_time: 'TBD'
-                }
-            ];
-        }
+
         
-        // Use real props by default, fallback to demo
+        // Real MLB props only
         let mockProps = [];
 
         // Authentication (Demo Mode)
@@ -704,14 +651,14 @@
             document.getElementById('dashboard').style.display = 'block';
             document.getElementById('username').textContent = currentUser.username;
             
-            // Load real MLB props first
+            // Load real MLB props
             try {
                 const realProps = await loadRealMLBProps();
-                mockProps = realProps; // Update the props reference
+                mockProps = realProps;
                 console.log('Real MLB props loaded successfully');
             } catch (error) {
-                console.error('Failed to load real props, using demo:', error);
-                mockProps = getDemoProps();
+                console.error('Failed to load real props:', error);
+                mockProps = [];
             }
             
             loadMarketData();
@@ -752,7 +699,7 @@
                     statusElement.innerHTML = `<i class="fas fa-check-circle text-success"></i> ${mockProps.length} real MLB props loaded with actual game times (sorted by start time)<br><button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="refreshProps()"><i class="fas fa-sync-alt"></i> Refresh Props</button>`;
                     statusElement.className = 'mt-3 text-center text-success';
                     } else {
-                    statusElement.innerHTML = `<i class="fas fa-exclamation-triangle text-warning"></i> ${mockProps.length} props loaded (game times may be demo)<br><button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="refreshProps()"><i class="fas fa-sync-alt"></i> Refresh Props</button>`;
+                    statusElement.innerHTML = `<i class="fas fa-exclamation-triangle text-warning"></i> ${mockProps.length} props loaded (game times not available)<br><button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="refreshProps()"><i class="fas fa-sync-alt"></i> Refresh Props</button>`;
                     statusElement.className = 'mt-3 text-center text-warning';
                     }
                 } else {

@@ -439,7 +439,7 @@ class RealisticPropGenerator:
                         # Only try to generate props if we have a valid player ID
                         if player_id:
                             print(f"🎯 Generating props for {player_name} (ID: {player_id}) - {away_team}")
-                            props = self.analyzer.generate_realistic_props(player_id, player_name, away_team, position, synthetic_game_id)
+                            props = self.analyzer.generate_realistic_props(player_id, player_name, away_team, position, synthetic_game_id, card.get('time_et'))
                             
                             if props:
                                 for prop in props:
@@ -465,7 +465,7 @@ class RealisticPropGenerator:
                         # Only try to generate props if we have a valid player ID
                         if player_id:
                             print(f"🎯 Generating props for {player_name} (ID: {player_id}) - {home_team}")
-                            props = self.analyzer.generate_realistic_props(player_id, player_name, home_team, position, synthetic_game_id)
+                            props = self.analyzer.generate_realistic_props(player_id, player_name, home_team, position, synthetic_game_id, card.get('time_et'))
                             
                             if props:
                                 for prop in props:
@@ -491,7 +491,7 @@ class RealisticPropGenerator:
                         
                         if player_id:
                             print(f"🎯 Generating props for pitcher {pitcher_name} (ID: {player_id}) - {away_team}")
-                            props = self.analyzer.generate_realistic_props(player_id, pitcher_name, away_team, 'P', synthetic_game_id)
+                            props = self.analyzer.generate_realistic_props(player_id, pitcher_name, away_team, 'P', synthetic_game_id, card.get('time_et'))
                             
                             if props:
                                 for prop in props:
@@ -516,7 +516,7 @@ class RealisticPropGenerator:
                         
                         if player_id:
                             print(f"🎯 Generating props for pitcher {pitcher_name} (ID: {player_id}) - {home_team}")
-                            props = self.analyzer.generate_realistic_props(player_id, pitcher_name, home_team, 'P', synthetic_game_id)
+                            props = self.analyzer.generate_realistic_props(player_id, pitcher_name, home_team, 'P', synthetic_game_id, card.get('time_et'))
                             
                             if props:
                                 for prop in props:

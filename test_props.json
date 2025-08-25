@@ -1,0 +1,627 @@
+{
+  "games": [
+    {
+      "away_label": "Boston Red Sox",
+      "home_label": "Baltimore Orioles",
+      "time_et": "06:35 PM ET",
+      "away_hitters": [
+        "Roman Anthony",
+        "Alex Bregman",
+        "Jarren Duran",
+        "Trevor Story",
+        "Nathaniel Lowe",
+        "Masataka Yoshida",
+        "Ceddanne Rafaela",
+        "David Hamilton",
+        "Connor Wong"
+      ],
+      "home_hitters": [
+        "Jackson Holliday",
+        "Jeremiah Jackson",
+        "Gunnar Henderson",
+        "Ryan Mountcastle",
+        "Coby Mayo",
+        "Colton Cowser",
+        "Samuel Basallo",
+        "Dylan Carlson",
+        "Luis Vazquez"
+      ],
+      "away_pitcher": "Brennan Bernardino",
+      "home_pitcher": "Tomoyuki Sugano"
+    }
+  ],
+  "props": {
+    "away_Roman Anthony": {
+      "player_info": {
+        "name": "Roman Anthony",
+        "position": "RF",
+        "team": "Boston Red Sox"
+      },
+      "props": [
+        {
+          "stat": "Total Bases",
+          "line": 3.0,
+          "type": "EASY",
+          "price": 78.08146864472137,
+          "direction": "over",
+          "implied_prob": 78.08146864472137,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Hits",
+          "line": 1.0,
+          "type": "MEDIUM",
+          "price": 54.0603638562933,
+          "direction": "under",
+          "implied_prob": 54.0603638562933,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Runs",
+          "line": 1.0,
+          "type": "MEDIUM",
+          "price": 54.27051219983767,
+          "direction": "over",
+          "implied_prob": 54.27051219983767,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Rbis",
+          "line": 0.5,
+          "type": "MEDIUM",
+          "price": 56.758954748361774,
+          "direction": "under",
+          "implied_prob": 56.758954748361774,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Total Bases",
+          "line": 2.5,
+          "type": "MEDIUM",
+          "price": 49.39699420870173,
+          "direction": "over",
+          "implied_prob": 49.39699420870173,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Rbis",
+          "line": 1.0,
+          "type": "HARD",
+          "price": 22.511616857587143,
+          "direction": "over",
+          "implied_prob": 22.511616857587143,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Total Bases",
+          "line": 4.0,
+          "type": "HARD",
+          "price": 20.136723206039463,
+          "direction": "over",
+          "implied_prob": 20.136723206039463,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        }
+      ]
+    },
+    "away_Alex Bregman": {
+      "player_info": {
+        "name": "Alex Bregman",
+        "position": "RF",
+        "team": "Boston Red Sox"
+      },
+      "props": [
+        {
+          "stat": "Runs",
+          "line": 0.5,
+          "type": "EASY",
+          "price": 75.76748550169171,
+          "direction": "over",
+          "implied_prob": 75.76748550169171,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Hits",
+          "line": 1.0,
+          "type": "MEDIUM",
+          "price": 40.514585004258706,
+          "direction": "over",
+          "implied_prob": 40.514585004258706,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Runs",
+          "line": 0.5,
+          "type": "MEDIUM",
+          "price": 46.03822741483294,
+          "direction": "over",
+          "implied_prob": 46.03822741483294,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Rbis",
+          "line": 1.5,
+          "type": "MEDIUM",
+          "price": 49.81958271611361,
+          "direction": "over",
+          "implied_prob": 49.81958271611361,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Total Bases",
+          "line": 2.5,
+          "type": "MEDIUM",
+          "price": 45.12498627757808,
+          "direction": "over",
+          "implied_prob": 45.12498627757808,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Total Bases",
+          "line": 3.0,
+          "type": "HARD",
+          "price": 16.412925621227576,
+          "direction": "over",
+          "implied_prob": 16.412925621227576,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Runs",
+          "line": 2.0,
+          "type": "HARD",
+          "price": 13.245156860752523,
+          "direction": "over",
+          "implied_prob": 13.245156860752523,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        }
+      ]
+    },
+    "away_Jarren Duran": {
+      "player_info": {
+        "name": "Jarren Duran",
+        "position": "RF",
+        "team": "Boston Red Sox"
+      },
+      "props": [
+        {
+          "stat": "Total Bases",
+          "line": 1.0,
+          "type": "EASY",
+          "price": 79.2702156353508,
+          "direction": "over",
+          "implied_prob": 79.2702156353508,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Hits",
+          "line": 1.0,
+          "type": "MEDIUM",
+          "price": 41.440208101992596,
+          "direction": "over",
+          "implied_prob": 41.440208101992596,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Runs",
+          "line": 1.0,
+          "type": "MEDIUM",
+          "price": 52.46301257913066,
+          "direction": "under",
+          "implied_prob": 52.46301257913066,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Rbis",
+          "line": 1.0,
+          "type": "MEDIUM",
+          "price": 45.017132766288285,
+          "direction": "over",
+          "implied_prob": 45.017132766288285,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Total Bases",
+          "line": 3.0,
+          "type": "MEDIUM",
+          "price": 47.10122666203449,
+          "direction": "under",
+          "implied_prob": 47.10122666203449,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Runs",
+          "line": 2.0,
+          "type": "HARD",
+          "price": 24.78898260746545,
+          "direction": "over",
+          "implied_prob": 24.78898260746545,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Rbis",
+          "line": 2.0,
+          "type": "HARD",
+          "price": 20.9397884230907,
+          "direction": "over",
+          "implied_prob": 20.9397884230907,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        }
+      ]
+    },
+    "home_Jackson Holliday": {
+      "player_info": {
+        "name": "Jackson Holliday",
+        "position": "LF",
+        "team": "Baltimore Orioles"
+      },
+      "props": [
+        {
+          "stat": "Hits",
+          "line": 0.5,
+          "type": "EASY",
+          "price": 70.75545865849055,
+          "direction": "over",
+          "implied_prob": 70.75545865849055,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Hits",
+          "line": 1.0,
+          "type": "MEDIUM",
+          "price": 59.71595531205791,
+          "direction": "under",
+          "implied_prob": 59.71595531205791,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Runs",
+          "line": 1.0,
+          "type": "MEDIUM",
+          "price": 59.27653655977352,
+          "direction": "under",
+          "implied_prob": 59.27653655977352,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Rbis",
+          "line": 0.5,
+          "type": "MEDIUM",
+          "price": 58.661688519975606,
+          "direction": "under",
+          "implied_prob": 58.661688519975606,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Total Bases",
+          "line": 1.5,
+          "type": "MEDIUM",
+          "price": 53.99219858043714,
+          "direction": "over",
+          "implied_prob": 53.99219858043714,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Hits",
+          "line": 1.0,
+          "type": "HARD",
+          "price": 17.434829054120215,
+          "direction": "over",
+          "implied_prob": 17.434829054120215,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Rbis",
+          "line": 1.0,
+          "type": "HARD",
+          "price": 21.440969971318836,
+          "direction": "over",
+          "implied_prob": 21.440969971318836,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        }
+      ]
+    },
+    "home_Jeremiah Jackson": {
+      "player_info": {
+        "name": "Jeremiah Jackson",
+        "position": "LF",
+        "team": "Baltimore Orioles"
+      },
+      "props": [
+        {
+          "stat": "Hits",
+          "line": 0.5,
+          "type": "EASY",
+          "price": 72.83118292124993,
+          "direction": "over",
+          "implied_prob": 72.83118292124993,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Hits",
+          "line": 1.0,
+          "type": "MEDIUM",
+          "price": 49.86850134666189,
+          "direction": "over",
+          "implied_prob": 49.86850134666189,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Runs",
+          "line": 1.0,
+          "type": "MEDIUM",
+          "price": 48.19816470794931,
+          "direction": "under",
+          "implied_prob": 48.19816470794931,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Rbis",
+          "line": 0.5,
+          "type": "MEDIUM",
+          "price": 58.1685969202446,
+          "direction": "under",
+          "implied_prob": 58.1685969202446,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Total Bases",
+          "line": 2.0,
+          "type": "MEDIUM",
+          "price": 57.5325317045879,
+          "direction": "under",
+          "implied_prob": 57.5325317045879,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Runs",
+          "line": 1.0,
+          "type": "HARD",
+          "price": 11.243156639346095,
+          "direction": "over",
+          "implied_prob": 11.243156639346095,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Total Bases",
+          "line": 3.0,
+          "type": "HARD",
+          "price": 20.748888919906744,
+          "direction": "over",
+          "implied_prob": 20.748888919906744,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        }
+      ]
+    },
+    "home_Gunnar Henderson": {
+      "player_info": {
+        "name": "Gunnar Henderson",
+        "position": "LF",
+        "team": "Baltimore Orioles"
+      },
+      "props": [
+        {
+          "stat": "Hits",
+          "line": 0.5,
+          "type": "EASY",
+          "price": 70.24071687764479,
+          "direction": "over",
+          "implied_prob": 70.24071687764479,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Hits",
+          "line": 1.0,
+          "type": "MEDIUM",
+          "price": 44.35127736048099,
+          "direction": "over",
+          "implied_prob": 44.35127736048099,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Runs",
+          "line": 0.5,
+          "type": "MEDIUM",
+          "price": 44.7769795383714,
+          "direction": "over",
+          "implied_prob": 44.7769795383714,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Rbis",
+          "line": 0.5,
+          "type": "MEDIUM",
+          "price": 40.17469008102034,
+          "direction": "over",
+          "implied_prob": 40.17469008102034,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Total Bases",
+          "line": 3.0,
+          "type": "MEDIUM",
+          "price": 56.39522521125645,
+          "direction": "under",
+          "implied_prob": 56.39522521125645,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Hits",
+          "line": 2.0,
+          "type": "HARD",
+          "price": 17.59520078919492,
+          "direction": "over",
+          "implied_prob": 17.59520078919492,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Total Bases",
+          "line": 2.0,
+          "type": "HARD",
+          "price": 12.728194731842072,
+          "direction": "over",
+          "implied_prob": 12.728194731842072,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        }
+      ]
+    },
+    "away_pitcher_Brennan Bernardino": {
+      "player_info": {
+        "name": "Brennan Bernardino",
+        "position": "P",
+        "team": "Boston Red Sox"
+      },
+      "props": [
+        {
+          "stat": "Strikeouts",
+          "line": 5.0,
+          "type": "EASY",
+          "price": 73.68872050564491,
+          "direction": "over",
+          "implied_prob": 73.68872050564491,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Strikeouts",
+          "line": 5.0,
+          "type": "MEDIUM",
+          "price": 43.0992730414135,
+          "direction": "over",
+          "implied_prob": 43.0992730414135,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Pitches",
+          "line": 94.0,
+          "type": "MEDIUM",
+          "price": 42.99672820775889,
+          "direction": "under",
+          "implied_prob": 42.99672820775889,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Era",
+          "line": 3.5,
+          "type": "MEDIUM",
+          "price": 52.93108465776899,
+          "direction": "over",
+          "implied_prob": 52.93108465776899,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Era",
+          "line": 4.5,
+          "type": "HARD",
+          "price": 24.51542793656483,
+          "direction": "under",
+          "implied_prob": 24.51542793656483,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        }
+      ]
+    },
+    "home_pitcher_Tomoyuki Sugano": {
+      "player_info": {
+        "name": "Tomoyuki Sugano",
+        "position": "P",
+        "team": "Baltimore Orioles"
+      },
+      "props": [
+        {
+          "stat": "Strikeouts",
+          "line": 6.0,
+          "type": "EASY",
+          "price": 70.5748359424563,
+          "direction": "over",
+          "implied_prob": 70.5748359424563,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Strikeouts",
+          "line": 4.5,
+          "type": "MEDIUM",
+          "price": 40.95531550467693,
+          "direction": "under",
+          "implied_prob": 40.95531550467693,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Pitches",
+          "line": 91.5,
+          "type": "MEDIUM",
+          "price": 56.82501359880822,
+          "direction": "over",
+          "implied_prob": 56.82501359880822,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Era",
+          "line": 4.0,
+          "type": "MEDIUM",
+          "price": 59.57351990136813,
+          "direction": "over",
+          "implied_prob": 59.57351990136813,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        },
+        {
+          "stat": "Era",
+          "line": 4.0,
+          "type": "HARD",
+          "price": 18.062972460988444,
+          "direction": "under",
+          "implied_prob": 18.062972460988444,
+          "opponent": "vs Opponent",
+          "game_time": "7:05 PM ET"
+        }
+      ]
+    }
+  }
+}

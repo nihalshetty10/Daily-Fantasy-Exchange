@@ -336,7 +336,7 @@ class MLBModel:
             print(f"Error calculating prop line: {e}")
             return 0.0, 0.0
     
-    def generate_realistic_props(self, player_id: str, player_name: str, team_name: str, position: str, game_id: str) -> List[Dict]:
+    def generate_realistic_props(self, player_id: str, player_name: str, team_name: str, position: str, game_id: str, game_time: str = None) -> List[Dict]:
         """Generate realistic props for a player based on their actual performance data"""
         try:
             props = []
@@ -367,7 +367,7 @@ class MLBModel:
                 
                 prop_line, implied_prob = self._generate_easy_prop(player_id, stat_type)
                 if prop_line > 0:
-                    prop = self._create_prop(stat_type, prop_line, 'EASY', implied_prob, team_name, game_id)
+                    prop = self._create_prop(stat_type, prop_line, 'EASY', implied_prob, team_name, game_id, game_time)
                     props.append(prop)
             
             # Generate MEDIUM props
@@ -379,7 +379,7 @@ class MLBModel:
                 
                 prop_line, implied_prob = self._generate_medium_prop(player_id, stat_type)
                 if prop_line > 0:
-                    prop = self._create_prop(stat_type, prop_line, 'MEDIUM', implied_prob, team_name, game_id)
+                    prop = self._create_prop(stat_type, prop_line, 'MEDIUM', implied_prob, team_name, game_id, game_time)
                     props.append(prop)
             
             # Generate HARD props
@@ -388,7 +388,7 @@ class MLBModel:
                 stat_type = np.random.choice(stat_types)
                 prop_line, implied_prob = self._generate_hard_prop(player_id, stat_type)
                 if prop_line > 0:
-                    prop = self._create_prop(stat_type, prop_line, 'HARD', implied_prob, team_name, game_id)
+                    prop = self._create_prop(stat_type, prop_line, 'HARD', implied_prob, team_name, game_id, game_time)
                     props.append(prop)
             else:
                 # Batters: random 2 of the 4 stats for HARD
@@ -396,7 +396,7 @@ class MLBModel:
                 for stat_type in selected_stats:
                     prop_line, implied_prob = self._generate_hard_prop(player_id, stat_type)
                     if prop_line > 0:
-                        prop = self._create_prop(stat_type, prop_line, 'HARD', implied_prob, team_name, game_id)
+                        prop = self._create_prop(stat_type, prop_line, 'HARD', implied_prob, team_name, game_id, game_time)
                         props.append(prop)
             
             return props
@@ -459,7 +459,7 @@ class MLBModel:
         # Non-ERA stats: ensure at least 0.5 so we don't drop a prop due to 0
         return max(0.5, rounded)
     
-    def _create_prop(self, stat_type: str, prop_line: float, difficulty: str, implied_prob: float, team_name: str, game_id: str) -> Dict:
+    def _create_prop(self, stat_type: str, prop_line: float, difficulty: str, implied_prob: float, team_name: str, game_id: str, game_time: str = None) -> Dict:
         """Create a prop object with all required fields"""
         # Determine prop direction based on difficulty and stat type
         if difficulty in ['EASY', 'HARD']:
@@ -480,7 +480,7 @@ class MLBModel:
             'direction': direction,
             'implied_prob': implied_prob,
             'opponent': self._get_opponent_info(team_name, game_id),
-            'game_time': '7:05 PM ET'  # Default game time
+            'game_time': game_time or 'TBD'  # Use real game time if provided
         }
     
     def _get_opponent_info(self, team_name: str, game_id: str) -> str:

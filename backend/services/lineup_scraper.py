@@ -656,6 +656,45 @@ class LineupScraper:
 			if parts:
 				keys.add(parts[-1])
 				keys.add(parts[-1].upper())
+			
+			# Add team abbreviation mappings for Rotowire vs MLB.com matching
+			team_abbrevs = {
+				'TOR': 'Toronto Blue Jays', 'TORONTO': 'Toronto Blue Jays',
+				'PIT': 'Pittsburgh Pirates', 'PITTSBURGH': 'Pittsburgh Pirates',
+				'SEA': 'Seattle Mariners', 'SEATTLE': 'Seattle Mariners',
+				'PHI': 'Philadelphia Phillies', 'PHILADELPHIA': 'Philadelphia Phillies',
+				'HOU': 'Houston Astros', 'HOUSTON': 'Houston Astros',
+				'DET': 'Detroit Tigers', 'DETROIT': 'Detroit Tigers',
+				'CLE': 'Cleveland Guardians', 'CLEVELAND': 'Cleveland Guardians',
+				'ARI': 'Arizona Diamondbacks', 'ARIZONA': 'Arizona Diamondbacks',
+				'STL': 'St. Louis Cardinals', 'ST. LOUIS': 'St. Louis Cardinals',
+				'MIA': 'Miami Marlins', 'MIAMI': 'Miami Marlins',
+				'NYM': 'New York Mets', 'NEW YORK METS': 'New York Mets',
+				'WAS': 'Washington Nationals', 'WASHINGTON': 'Washington Nationals',
+				'CWS': 'Chicago White Sox', 'CHICAGO WHITE SOX': 'Chicago White Sox',
+				'ATL': 'Atlanta Braves', 'ATLANTA': 'Atlanta Braves',
+				'NYY': 'New York Yankees', 'NEW YORK YANKEES': 'New York Yankees',
+				'TB': 'Tampa Bay Rays', 'TAMPA BAY': 'Tampa Bay Rays',
+				'TEX': 'Texas Rangers', 'TEXAS': 'Texas Rangers',
+				'KC': 'Kansas City Royals', 'KANSAS CITY': 'Kansas City Royals',
+				'OAK': 'Athletics', 'ATHLETICS': 'Athletics',
+				'MIN': 'Minnesota Twins', 'MINNESOTA': 'Minnesota Twins',
+				'MIL': 'Milwaukee Brewers', 'MILWAUKEE': 'Milwaukee Brewers',
+				'CHC': 'Chicago Cubs', 'CHICAGO CUBS': 'Chicago Cubs',
+				'LAD': 'Los Angeles Dodgers', 'LOS ANGELES DODGERS': 'Los Angeles Dodgers',
+				'COL': 'Colorado Rockies', 'COLORADO': 'Colorado Rockies',
+				'CIN': 'Cincinnati Reds', 'CINCINNATI': 'Cincinnati Reds',
+				'LAA': 'Los Angeles Angels', 'LOS ANGELES ANGELS': 'Los Angeles Angels',
+				'SF': 'San Francisco Giants', 'SAN FRANCISCO': 'San Francisco Giants',
+				'SD': 'San Diego Padres', 'SAN DIEGO': 'San Diego Padres'
+			}
+			
+			# Add abbreviation mappings
+			for abbrev, full_name in team_abbrevs.items():
+				if base.upper() == abbrev or base.upper() == full_name.upper():
+					keys.add(full_name)
+					keys.add(abbrev)
+			
 			return keys
 		
 		rot_index = []
@@ -670,16 +709,28 @@ class LineupScraper:
 				'home_hitters': rc.get('home_hitters',[]),
 			})
 		
-		# Build a team -> hitters fallback map aggregating across all Rotowire cards
-		rot_team_hitters: Dict[str, set] = {}
-		def add_team_hitters(label: str, hitters: List[str]):
-			base = self._clean_team_label(label)
-			keys = team_keys(base)
-			for k in keys:
-				rot_team_hitters.setdefault(k, set()).update(hitters or [])
+		# Build a team -> hitters map from the best matching Rotowire cards
+		rot_team_hitters: Dict[str, List[str]] = {}
 		for rc in rot:
-			add_team_hitters(rc.get('away_label',''), rc.get('away_hitters',[]))
-			add_team_hitters(rc.get('home_label',''), rc.get('home_hitters',[]))
+			away_team = self._clean_team_label(rc.get('away_label',''))
+			home_team = self._clean_team_label(rc.get('home_label',''))
+			if away_team and rc.get('away_hitters'):
+				rot_team_hitters[away_team] = rc.get('away_hitters', [])
+			if home_team and rc.get('home_hitters'):
+				rot_team_hitters[home_team] = rc.get('home_hitters', [])
+		
+		# Also create a fuzzy team name mapping for better matching
+		fuzzy_team_map = {}
+		for team_name in rot_team_hitters.keys():
+			# Create multiple variations of the team name for fuzzy matching
+			variations = [team_name]
+			parts = team_name.split()
+			if len(parts) > 1:
+				variations.append(parts[-1])  # Last word (e.g., "Jays", "Pirates")
+				variations.append(parts[-1].upper())  # Uppercase last word
+				variations.append(' '.join(parts[:-1]))  # Everything except last word
+			for variation in variations:
+				fuzzy_team_map[variation] = team_name
 		
 		processed_games = set()
 		out: List[Dict] = []
@@ -711,8 +762,8 @@ class LineupScraper:
 					best = rc
 			
 			# Prefer hitters from the best Rotowire card if we found one; otherwise fall back to team-based hitters
-			away_hitters = (best['away_hitters'] if best else []) or list(rot_team_hitters.get(next(iter(away_k)), set()))
-			home_hitters = (best['home_hitters'] if best else []) or list(rot_team_hitters.get(next(iter(home_k)), set()))
+			away_hitters = (best['away_hitters'] if best else []) or rot_team_hitters.get(away_team, []) or rot_team_hitters.get(fuzzy_team_map.get(away_team, ''), [])
+			home_hitters = (best['home_hitters'] if best else []) or rot_team_hitters.get(home_team, []) or rot_team_hitters.get(fuzzy_team_map.get(home_team, ''), [])
 			
 			out.append({
 				'away_label': away_team,

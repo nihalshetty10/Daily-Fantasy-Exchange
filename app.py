@@ -5,10 +5,11 @@ Integrates ML prop generation with live trading platform
 """
 
 import os
-from flask import Flask, render_template, redirect, jsonify, request
+from flask import Flask, render_template, redirect, jsonify, request, session
 from backend.services.live_tracker import LiveGameTracker
 from backend.db import Base, engine, SessionLocal
 from backend.models.user import User
+from backend.api.auth_routes import auth_bp
 
 
 def create_app():
@@ -16,6 +17,9 @@ def create_app():
 
     # Basic configuration
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-here')
+    
+    # Register blueprints
+    app.register_blueprint(auth_bp)
 
     # Ensure tables exist (safe to call repeatedly)
     try:
@@ -96,7 +100,7 @@ if __name__ == '__main__':
     live_tracker.start_tracking()
     
     # Production settings for AWS
-    port = int(os.environ.get('PORT', 8000))
+    port = int(os.environ.get('PORT', 8007))
     debug = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
     
     # Start the Flask web app

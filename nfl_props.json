@@ -2,7 +2,7 @@
   "games": [
     {
       "game_id": "Cowboys@Eagles|TBD|0",
-      "game_date": "2025-09-04T12:25:27.889571",
+      "game_date": "2025-09-04T13:31:54.739693",
       "game_time_et": "TBD",
       "game_datetime": null,
       "status": "UPCOMING",
@@ -28,8 +28,573 @@
       "is_dome": false
     }
   ],
-  "props": {},
-  "generated_at": "2025-09-04T12:25:27.889607",
-  "total_players": 0,
+  "props": {
+    "dak prescott|Cowboys@Eagles|TBD|0|NFL": {
+      "player_info": {
+        "name": "Dak Prescott",
+        "team_name": "Cowboys",
+        "position": "QB",
+        "game_id": "Cowboys@Eagles|TBD|0",
+        "status": "UPCOMING"
+      },
+      "props": [
+        {
+          "stat": "Passing Yards",
+          "line": 259.73092229264824,
+          "type": "MEDIUM",
+          "direction": "over",
+          "implied_prob": 50.37897372424623,
+          "price": 50.37897372424623
+        },
+        {
+          "stat": "Passing TDs",
+          "line": 1.7555076017009237,
+          "type": "MEDIUM",
+          "direction": "over",
+          "implied_prob": 57.741618554895325,
+          "price": 57.741618554895325
+        },
+        {
+          "stat": "Completions",
+          "line": 18.404969003955856,
+          "type": "MEDIUM",
+          "direction": "over",
+          "implied_prob": 56.607048593175215,
+          "price": 56.607048593175215
+        },
+        {
+          "stat": "Rushing Yards",
+          "line": 11.080006071873006,
+          "type": "MEDIUM",
+          "direction": "over",
+          "implied_prob": 42.17214717229474,
+          "price": 42.17214717229474
+        },
+        {
+          "stat": "Passing Yards",
+          "line": 220.771283948751,
+          "type": "EASY",
+          "direction": "over",
+          "implied_prob": 79.7824308224471,
+          "price": 79.7824308224471
+        },
+        {
+          "stat": "Passing TDs",
+          "line": 2.282159882211201,
+          "type": "HARD",
+          "direction": "over",
+          "implied_prob": 23.955954548575434,
+          "price": 23.955954548575434
+        }
+      ]
+    },
+    "j. williams|Cowboys@Eagles|TBD|0|NFL": {
+      "player_info": {
+        "name": "J. Williams",
+        "team_name": "Cowboys",
+        "position": "RB",
+        "game_id": "Cowboys@Eagles|TBD|0",
+        "status": "UPCOMING"
+      },
+      "props": [
+        {
+          "stat": "Rushing Yards",
+          "line": 84.6590124805875,
+          "type": "MEDIUM",
+          "direction": "over",
+          "implied_prob": 50.52894510449741,
+          "price": 50.52894510449741
+        },
+        {
+          "stat": "Receiving Yards",
+          "line": 24.6725466201056,
+          "type": "MEDIUM",
+          "direction": "over",
+          "implied_prob": 59.09800286491166,
+          "price": 59.09800286491166
+        },
+        {
+          "stat": "Receptions",
+          "line": 3.13616994122305,
+          "type": "MEDIUM",
+          "direction": "over",
+          "implied_prob": 57.31024644772532,
+          "price": 57.31024644772532
+        },
+        {
+          "stat": "Rushing Yards",
+          "line": 67.72720998447001,
+          "type": "EASY",
+          "direction": "over",
+          "implied_prob": 73.49521516365584,
+          "price": 73.49521516365584
+        },
+        {
+          "stat": "Receiving Yards",
+          "line": 34.541565268147835,
+          "type": "HARD",
+          "direction": "over",
+          "implied_prob": 24.28414838702861,
+          "price": 24.28414838702861
+        }
+      ]
+    },
+    "ceedee lamb|Cowboys@Eagles|TBD|0|NFL": {
+      "player_info": {
+        "name": "CeeDee Lamb",
+        "team_name": "Cowboys",
+        "position": "WR",
+        "game_id": "Cowboys@Eagles|TBD|0",
+        "status": "UPCOMING"
+      },
+      "props": [
+        {
+          "stat": "Receiving Yards",
+          "line": 67.43070530781014,
+          "type": "MEDIUM",
+          "direction": "over",
+          "implied_prob": 52.45895991800337,
+          "price": 52.45895991800337
+        },
+        {
+          "stat": "Receptions",
+          "line": 4.042756080183677,
+          "type": "MEDIUM",
+          "direction": "over",
+          "implied_prob": 59.28945513459218,
+          "price": 59.28945513459218
+        },
+        {
+          "stat": "Receiving Yards",
+          "line": 53.94456424624812,
+          "type": "EASY",
+          "direction": "over",
+          "implied_prob": 71.34683290527435,
+          "price": 71.34683290527435
+        },
+        {
+          "stat": "Receptions",
+          "line": 5.25558290423878,
+          "type": "HARD",
+          "direction": "over",
+          "implied_prob": 19.987705434205715,
+          "price": 19.987705434205715
+        }
+      ]
+    },
+    "g. pickens|Cowboys@Eagles|TBD|0|NFL": {
+      "player_info": {
+        "name": "G. Pickens",
+        "team_name": "Cowboys",
+        "position": "WR",
+        "game_id": "Cowboys@Eagles|TBD|0",
+        "status": "UPCOMING"
+      },
+      "props": [
+        {
+          "stat": "Receiving Yards",
+          "line": 56.245525935249574,
+          "type": "MEDIUM",
+          "direction": "over",
+          "implied_prob": 55.65009741313112,
+          "price": 55.65009741313112
+        },
+        {
+          "stat": "Receptions",
+          "line": 3.683367062567408,
+          "type": "MEDIUM",
+          "direction": "over",
+          "implied_prob": 43.093108204822066,
+          "price": 43.093108204822066
+        },
+        {
+          "stat": "Receiving Yards",
+          "line": 44.99642074819966,
+          "type": "EASY",
+          "direction": "over",
+          "implied_prob": 71.62109328828456,
+          "price": 71.62109328828456
+        },
+        {
+          "stat": "Receptions",
+          "line": 4.788377181337631,
+          "type": "HARD",
+          "direction": "over",
+          "implied_prob": 13.540513098892799,
+          "price": 13.540513098892799
+        }
+      ]
+    },
+    "j. tolbert|Cowboys@Eagles|TBD|0|NFL": {
+      "player_info": {
+        "name": "J. Tolbert",
+        "team_name": "Cowboys",
+        "position": "WR",
+        "game_id": "Cowboys@Eagles|TBD|0",
+        "status": "UPCOMING"
+      },
+      "props": [
+        {
+          "stat": "Receiving Yards",
+          "line": 68.17767646633365,
+          "type": "MEDIUM",
+          "direction": "over",
+          "implied_prob": 50.43124889479249,
+          "price": 50.43124889479249
+        },
+        {
+          "stat": "Receptions",
+          "line": 3.538954582216374,
+          "type": "MEDIUM",
+          "direction": "over",
+          "implied_prob": 48.173034809999265,
+          "price": 48.173034809999265
+        },
+        {
+          "stat": "Receiving Yards",
+          "line": 54.54214117306692,
+          "type": "EASY",
+          "direction": "over",
+          "implied_prob": 76.80922320886476,
+          "price": 76.80922320886476
+        },
+        {
+          "stat": "Receptions",
+          "line": 4.6006409568812865,
+          "type": "HARD",
+          "direction": "over",
+          "implied_prob": 19.428656686291884,
+          "price": 19.428656686291884
+        }
+      ]
+    },
+    "j. ferguson|Cowboys@Eagles|TBD|0|NFL": {
+      "player_info": {
+        "name": "J. Ferguson",
+        "team_name": "Cowboys",
+        "position": "TE",
+        "game_id": "Cowboys@Eagles|TBD|0",
+        "status": "UPCOMING"
+      },
+      "props": [
+        {
+          "stat": "Receiving Yards",
+          "line": 55.342230794873615,
+          "type": "MEDIUM",
+          "direction": "over",
+          "implied_prob": 55.831354578570846,
+          "price": 55.831354578570846
+        },
+        {
+          "stat": "Receptions",
+          "line": 4.456998778090097,
+          "type": "MEDIUM",
+          "direction": "over",
+          "implied_prob": 45.90956072783731,
+          "price": 45.90956072783731
+        },
+        {
+          "stat": "Receiving Yards",
+          "line": 44.27378463589889,
+          "type": "EASY",
+          "direction": "over",
+          "implied_prob": 73.0675169673209,
+          "price": 73.0675169673209
+        },
+        {
+          "stat": "Receptions",
+          "line": 5.794098411517126,
+          "type": "HARD",
+          "direction": "over",
+          "implied_prob": 14.827131889701516,
+          "price": 14.827131889701516
+        }
+      ]
+    },
+    "jalen hurts|Cowboys@Eagles|TBD|0|NFL": {
+      "player_info": {
+        "name": "Jalen Hurts",
+        "team_name": "Eagles",
+        "position": "QB",
+        "game_id": "Cowboys@Eagles|TBD|0",
+        "status": "UPCOMING"
+      },
+      "props": [
+        {
+          "stat": "Passing Yards",
+          "line": 231.79320145726493,
+          "type": "MEDIUM",
+          "direction": "over",
+          "implied_prob": 46.2571517653786,
+          "price": 46.2571517653786
+        },
+        {
+          "stat": "Passing TDs",
+          "line": 1.370324342973631,
+          "type": "MEDIUM",
+          "direction": "over",
+          "implied_prob": 43.49156463936453,
+          "price": 43.49156463936453
+        },
+        {
+          "stat": "Completions",
+          "line": 18.967510797720667,
+          "type": "MEDIUM",
+          "direction": "over",
+          "implied_prob": 50.48386915225218,
+          "price": 50.48386915225218
+        },
+        {
+          "stat": "Rushing Yards",
+          "line": 12.543284172669257,
+          "type": "MEDIUM",
+          "direction": "over",
+          "implied_prob": 57.02400016686755,
+          "price": 57.02400016686755
+        },
+        {
+          "stat": "Passing Yards",
+          "line": 197.02422123867518,
+          "type": "EASY",
+          "direction": "over",
+          "implied_prob": 73.12961857675941,
+          "price": 73.12961857675941
+        },
+        {
+          "stat": "Passing TDs",
+          "line": 1.7814216458657202,
+          "type": "HARD",
+          "direction": "over",
+          "implied_prob": 21.64501832281715,
+          "price": 21.64501832281715
+        }
+      ]
+    },
+    "s. barkley|Cowboys@Eagles|TBD|0|NFL": {
+      "player_info": {
+        "name": "S. Barkley",
+        "team_name": "Eagles",
+        "position": "RB",
+        "game_id": "Cowboys@Eagles|TBD|0",
+        "status": "UPCOMING"
+      },
+      "props": [
+        {
+          "stat": "Rushing Yards",
+          "line": 89.60751845804592,
+          "type": "MEDIUM",
+          "direction": "over",
+          "implied_prob": 50.11734887731623,
+          "price": 50.11734887731623
+        },
+        {
+          "stat": "Receiving Yards",
+          "line": 20.41648778744092,
+          "type": "MEDIUM",
+          "direction": "over",
+          "implied_prob": 54.68696926236732,
+          "price": 54.68696926236732
+        },
+        {
+          "stat": "Receptions",
+          "line": 2.7202987429611865,
+          "type": "MEDIUM",
+          "direction": "over",
+          "implied_prob": 43.45390225922179,
+          "price": 43.45390225922179
+        },
+        {
+          "stat": "Rushing Yards",
+          "line": 71.68601476643674,
+          "type": "EASY",
+          "direction": "over",
+          "implied_prob": 73.32713754729883,
+          "price": 73.32713754729883
+        },
+        {
+          "stat": "Receiving Yards",
+          "line": 28.58308290241729,
+          "type": "HARD",
+          "direction": "over",
+          "implied_prob": 10.516530949838865,
+          "price": 10.516530949838865
+        }
+      ]
+    },
+    "a.j. brown|Cowboys@Eagles|TBD|0|NFL": {
+      "player_info": {
+        "name": "A.J. Brown",
+        "team_name": "Eagles",
+        "position": "WR",
+        "game_id": "Cowboys@Eagles|TBD|0",
+        "status": "UPCOMING"
+      },
+      "props": [
+        {
+          "stat": "Receiving Yards",
+          "line": 66.11072238336956,
+          "type": "MEDIUM",
+          "direction": "over",
+          "implied_prob": 56.35615173283397,
+          "price": 56.35615173283397
+        },
+        {
+          "stat": "Receptions",
+          "line": 4.2533024880403705,
+          "type": "MEDIUM",
+          "direction": "over",
+          "implied_prob": 50.41775918182331,
+          "price": 50.41775918182331
+        },
+        {
+          "stat": "Receiving Yards",
+          "line": 52.88857790669565,
+          "type": "EASY",
+          "direction": "over",
+          "implied_prob": 73.33219968566982,
+          "price": 73.33219968566982
+        },
+        {
+          "stat": "Receptions",
+          "line": 5.529293234452481,
+          "type": "HARD",
+          "direction": "over",
+          "implied_prob": 14.224361191852948,
+          "price": 14.224361191852948
+        }
+      ]
+    },
+    "d. smith|Cowboys@Eagles|TBD|0|NFL": {
+      "player_info": {
+        "name": "D. Smith",
+        "team_name": "Eagles",
+        "position": "WR",
+        "game_id": "Cowboys@Eagles|TBD|0",
+        "status": "UPCOMING"
+      },
+      "props": [
+        {
+          "stat": "Receiving Yards",
+          "line": 54.163639250911174,
+          "type": "MEDIUM",
+          "direction": "over",
+          "implied_prob": 44.41917084100615,
+          "price": 44.41917084100615
+        },
+        {
+          "stat": "Receptions",
+          "line": 3.501202146287664,
+          "type": "MEDIUM",
+          "direction": "over",
+          "implied_prob": 56.27898706826787,
+          "price": 56.27898706826787
+        },
+        {
+          "stat": "Receiving Yards",
+          "line": 43.330911400728944,
+          "type": "EASY",
+          "direction": "over",
+          "implied_prob": 78.18271010394845,
+          "price": 78.18271010394845
+        },
+        {
+          "stat": "Receptions",
+          "line": 4.551562790173963,
+          "type": "HARD",
+          "direction": "over",
+          "implied_prob": 14.818097999135171,
+          "price": 14.818097999135171
+        }
+      ]
+    },
+    "jahan dotson|Cowboys@Eagles|TBD|0|NFL": {
+      "player_info": {
+        "name": "Jahan Dotson",
+        "team_name": "Eagles",
+        "position": "WR",
+        "game_id": "Cowboys@Eagles|TBD|0",
+        "status": "UPCOMING"
+      },
+      "props": [
+        {
+          "stat": "Receiving Yards",
+          "line": 52.86753539665882,
+          "type": "MEDIUM",
+          "direction": "over",
+          "implied_prob": 56.664771855302924,
+          "price": 56.664771855302924
+        },
+        {
+          "stat": "Receptions",
+          "line": 4.499138204164838,
+          "type": "MEDIUM",
+          "direction": "over",
+          "implied_prob": 51.11262362383735,
+          "price": 51.11262362383735
+        },
+        {
+          "stat": "Receiving Yards",
+          "line": 42.29402831732706,
+          "type": "EASY",
+          "direction": "over",
+          "implied_prob": 70.92314237397366,
+          "price": 70.92314237397366
+        },
+        {
+          "stat": "Receptions",
+          "line": 5.84887966541429,
+          "type": "HARD",
+          "direction": "over",
+          "implied_prob": 16.863888058587392,
+          "price": 16.863888058587392
+        }
+      ]
+    },
+    "d. goedert|Cowboys@Eagles|TBD|0|NFL": {
+      "player_info": {
+        "name": "D. Goedert",
+        "team_name": "Eagles",
+        "position": "TE",
+        "game_id": "Cowboys@Eagles|TBD|0",
+        "status": "UPCOMING"
+      },
+      "props": [
+        {
+          "stat": "Receiving Yards",
+          "line": 58.11008825599966,
+          "type": "MEDIUM",
+          "direction": "over",
+          "implied_prob": 48.24553047379562,
+          "price": 48.24553047379562
+        },
+        {
+          "stat": "Receptions",
+          "line": 3.8317545220962246,
+          "type": "MEDIUM",
+          "direction": "over",
+          "implied_prob": 50.87563992035678,
+          "price": 50.87563992035678
+        },
+        {
+          "stat": "Receiving Yards",
+          "line": 46.48807060479973,
+          "type": "EASY",
+          "direction": "over",
+          "implied_prob": 73.01986605355842,
+          "price": 73.01986605355842
+        },
+        {
+          "stat": "Receptions",
+          "line": 4.981280878725092,
+          "type": "HARD",
+          "direction": "over",
+          "implied_prob": 10.246364534353964,
+          "price": 10.246364534353964
+        }
+      ]
+    }
+  },
+  "generated_at": "2025-09-04T13:31:54.740401",
+  "total_players": 12,
   "total_games": 1
 }

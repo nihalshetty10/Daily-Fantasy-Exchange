@@ -313,19 +313,76 @@
                             </div>
                             <div class="tab-pane fade" id="register">
                                 <form id="register-form" class="mt-3">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="register-first-name" class="form-label">First Name</label>
+                                                <input type="text" class="form-control" id="register-first-name">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="register-last-name" class="form-label">Last Name</label>
+                                                <input type="text" class="form-control" id="register-last-name">
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="mb-3">
-                                        <label for="register-username" class="form-label">Username</label>
+                                        <label for="register-username" class="form-label">Username *</label>
                                         <input type="text" class="form-control" id="register-username" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="register-email" class="form-label">Email</label>
+                                        <label for="register-email" class="form-label">Email *</label>
                                         <input type="email" class="form-control" id="register-email" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="register-password" class="form-label">Password</label>
-                                        <input type="password" class="form-control" id="register-password" required>
+                                        <label for="register-password" class="form-label">Password *</label>
+                                        <input type="password" class="form-control" id="register-password" required minlength="8">
+                                        <div class="form-text">Password must be at least 8 characters long</div>
                                     </div>
-                                    <button type="submit" class="btn btn-success w-100">Register (Demo)</button>
+                                    <div class="mb-3">
+                                        <label for="register-date-of-birth" class="form-label">Date of Birth</label>
+                                        <input type="date" class="form-control" id="register-date-of-birth">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="register-phone" class="form-label">Phone Number</label>
+                                        <input type="tel" class="form-control" id="register-phone">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="register-address" class="form-label">Address</label>
+                                        <textarea class="form-control" id="register-address" rows="2"></textarea>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="register-city" class="form-label">City</label>
+                                                <input type="text" class="form-control" id="register-city">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="mb-3">
+                                                <label for="register-state" class="form-label">State</label>
+                                                <input type="text" class="form-control" id="register-state">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="mb-3">
+                                                <label for="register-zip" class="form-label">ZIP Code</label>
+                                                <input type="text" class="form-control" id="register-zip">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="register-country" class="form-label">Country</label>
+                                        <select class="form-control" id="register-country">
+                                            <option value="US">United States</option>
+                                            <option value="CA">Canada</option>
+                                            <option value="UK">United Kingdom</option>
+                                            <option value="AU">Australia</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-success w-100">Register</button>
                                 </form>
                             </div>
                         </div>
@@ -599,7 +656,16 @@
                 console.log('🔄 Loading real MLB props...');
                 // Add cache-busting parameter to force refresh
                 const timestamp = new Date().getTime();
-                const response = await fetch(`/mlb_props.json?t=${timestamp}`);
+                
+                // Add timeout to prevent hanging
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+                
+                const response = await fetch(`/mlb_props.json?t=${timestamp}`, {
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+                
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -700,8 +766,8 @@
                 return realProps;
                 
             } catch (error) {
-                console.error('❌ Error loading real MLB props:', error);
-                console.log('❌ No fallback available - real MLB data required');
+                console.error('Error loading real MLB props:', error);
+                console.log('No fallback available - real MLB data required');
                 return [];
             }
         }
@@ -711,7 +777,16 @@
             try {
                 console.log('🔄 Loading real NFL props...');
                 const timestamp = new Date().getTime();
-                const response = await fetch(`/nfl_props.json?t=${timestamp}`);
+                
+                // Add timeout to prevent hanging
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+                
+                const response = await fetch(`/nfl_props.json?t=${timestamp}`, {
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+                
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -738,17 +813,17 @@
                             player_team: p.team_name,
                             player_position: p.position,
                             sport: 'NFL',
-                            prop_type: (prop.prop_type || '').toLowerCase(),
-                            difficulty: prop.difficulty || 'MEDIUM',
-                            line_value: prop.line_value,
-                            live_contract_price: 50,
+                            prop_type: (prop.stat || prop.prop_type || '').toLowerCase(),
+                            difficulty: prop.type || prop.difficulty || 'MEDIUM',
+                            line_value: prop.line || prop.line_value,
+                            live_contract_price: prop.price || 50,
                             available_contracts: 10,
                             total_contracts: 10,
                             status_badge: gameStatuses[p.game_id] || 'UPCOMING',
                             is_tradeable: (gameStatuses[p.game_id] || 'UPCOMING') !== 'FINAL',
                             formatted_game_time: data.games.find(g=>g.game_id===p.game_id)?.game_time_et || 'TBD',
-                            direction: 'N/A',
-                            implied_probability: prop.implied_probability || 52.0,
+                            direction: prop.direction || 'N/A',
+                            implied_probability: prop.implied_prob || prop.implied_probability || 52.0,
                             game_id: p.game_id,
                             opponent: null,
                             player_status: p.status || 'ACTIVE',
@@ -770,37 +845,147 @@
         // Authentication (Demo Mode)
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            showDashboard();
+            await handleLogin();
         });
 
         document.getElementById('register-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const username = document.getElementById('register-username').value;
-            currentUser.username = username || 'Demo User';
-            showDashboard();
+            await handleRegister();
         });
+
+        async function handleLogin() {
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    currentUser = data.user;
+                    showDashboard();
+                    showToast('Login successful!', 'success');
+                } else {
+                    showToast(data.error || 'Login failed', 'error');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showToast('Login failed. Please try again.', 'error');
+            }
+        }
+
+        async function handleRegister() {
+            const formData = {
+                username: document.getElementById('register-username').value,
+                email: document.getElementById('register-email').value,
+                password: document.getElementById('register-password').value,
+                first_name: document.getElementById('register-first-name').value,
+                last_name: document.getElementById('register-last-name').value,
+                date_of_birth: document.getElementById('register-date-of-birth').value,
+                phone_number: document.getElementById('register-phone').value,
+                address: document.getElementById('register-address').value,
+                city: document.getElementById('register-city').value,
+                state: document.getElementById('register-state').value,
+                zip_code: document.getElementById('register-zip').value,
+                country: document.getElementById('register-country').value
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    currentUser = data.user;
+                    showDashboard();
+                    showToast('Registration successful!', 'success');
+                } else {
+                    showToast(data.error || 'Registration failed', 'error');
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                showToast('Registration failed. Please try again.', 'error');
+            }
+        }
 
         async function showDashboard() {
             document.getElementById('auth-forms').style.display = 'none';
             document.getElementById('dashboard').style.display = 'block';
             document.getElementById('username').textContent = currentUser.username;
             
-            // Load real MLB props
+            // Load real props with better error handling
             try {
-                const [mlb, nfl] = await Promise.all([
-                    loadRealMLBProps(),
-                    loadRealNFLProps()
-                ]);
+                console.log('🔄 Starting to load props...');
+                
+                // Show loading indicator
+                const loadingDiv = document.createElement('div');
+                loadingDiv.id = 'loading-indicator';
+                loadingDiv.className = 'alert alert-info';
+                loadingDiv.innerHTML = '🔄 Loading props...';
+                document.querySelector('.container').prepend(loadingDiv);
+                
+                // Load props separately to avoid blocking
+                let mlb = [];
+                let nfl = [];
+                
+                try {
+                    mlb = await loadRealMLBProps();
+                    console.log('✅ MLB props loaded:', mlb.length);
+                } catch (error) {
+                    console.error('❌ Error loading MLB props:', error);
+                    mlb = [];
+                }
+                
+                try {
+                    nfl = await loadRealNFLProps();
+                    console.log('✅ NFL props loaded:', nfl.length);
+                } catch (error) {
+                    console.error('❌ Error loading NFL props:', error);
+                    nfl = [];
+                }
+                
                 const realProps = [...mlb, ...nfl];
-                 console.log('✅ Loaded real props:', realProps.length);
-                 // Use the real props for the interface
-                 window.REAL_PROPS = realProps;
-                 renderProps(realProps);
-                 startLiveUpdates();
-             } catch (error) {
-                 console.error('Error loading real props:', error);
-                 document.getElementById('error-alert').style.display = 'block';
-             }
+                console.log('✅ Total props loaded:', realProps.length);
+                
+                // Remove loading indicator
+                const loadingDiv = document.getElementById('loading-indicator');
+                if (loadingDiv) {
+                    loadingDiv.remove();
+                }
+                
+                // Use the real props for the interface
+                window.REAL_PROPS = realProps;
+                renderProps(realProps);
+                startLiveUpdates();
+                
+            } catch (error) {
+                console.error('❌ Error in prop loading:', error);
+                
+                // Remove loading indicator
+                const loadingDiv = document.getElementById('loading-indicator');
+                if (loadingDiv) {
+                    loadingDiv.remove();
+                }
+                
+                // Show error message to user
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'alert alert-danger';
+                errorDiv.innerHTML = 'Error loading props. Please refresh the page.';
+                document.querySelector('.container').prepend(errorDiv);
+            }
          }
 
         function logout() {

@@ -1778,7 +1778,8 @@
         }
 
 
-        function recordTrade(action, prop, price, orderType) {
+        async function recordTrade(action, prop, price, orderType) {
+            // Add to local trade history
             tradeHistory.unshift({
                 player_name: prop.player_name,
                 prop_type: prop.prop_type,
@@ -1794,6 +1795,37 @@
             // Keep only last 50 trades
             if (tradeHistory.length > 50) {
                 tradeHistory = tradeHistory.slice(0, 50);
+            }
+            
+            // Record transaction in backend database
+            try {
+                const transactionData = {
+                    transaction_type: action.toLowerCase(),
+                    amount: action === 'BUY' ? -price : price, // Negative for buy (money out), positive for sell (money in)
+                    prop_id: prop.id,
+                    player_name: prop.player_name,
+                    sport: prop.sport,
+                    description: `${action} ${prop.player_name} ${prop.prop_type} prop at $${price}`
+                };
+                
+                const response = await fetch(`${API_BASE}/transaction/record`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(transactionData)
+                });
+                
+                if (response.ok) {
+                    console.log('✅ Transaction recorded in database');
+                    // Update leaderboard immediately after recording transaction
+                    loadLeaderboard();
+                    loadPlatformStats();
+                } else {
+                    console.error('❌ Failed to record transaction:', await response.text());
+                }
+            } catch (error) {
+                console.error('❌ Error recording transaction:', error);
             }
         }
 

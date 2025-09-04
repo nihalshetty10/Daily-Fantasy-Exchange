@@ -16,7 +16,7 @@ class Config:
     MAX_CONTRACTS_PER_PROP = 10  # Maximum contracts per prop
     MIN_PORTFOLIO_SIZE = 2
     MAX_PORTFOLIO_SIZE = 10
-    INITIAL_BALANCE = 1000  # Starting balance for new users
+    INITIAL_BALANCE = 10000  # Starting balance for new users
     
     # Sports Configuration
     SPORTS = {

@@ -31,7 +31,7 @@ class User(Base):
     is_verified = Column(Boolean, default=False, nullable=False)
     
     # Trading info
-    balance = Column(Float, default=10000.0, nullable=False)  # Starting balance
+    balance = Column(Float, default=10000.0, nullable=False)  # Starting balance (configurable)
     total_deposits = Column(Float, default=0.0, nullable=False)
     total_withdrawals = Column(Float, default=0.0, nullable=False)
     

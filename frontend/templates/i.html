@@ -2643,7 +2643,10 @@
         function initWebSocket() {
             try {
                 console.log('🔌 Initializing WebSocket connection...');
-                websocket = new WebSocket('ws://localhost:8765');
+                const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                const wsHost = window.location.hostname;
+                const wsPort = window.location.port || (window.location.protocol === 'https:' ? '443' : '80');
+                websocket = new WebSocket(`${wsProtocol}//${wsHost}:8765`);
                 
                 websocket.onopen = function(event) {
                     console.log('✅ WebSocket connected successfully');

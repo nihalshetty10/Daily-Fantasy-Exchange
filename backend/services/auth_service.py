@@ -3,6 +3,7 @@ from typing import Optional, Dict, Any
 from sqlalchemy.orm import Session
 from backend.models.user import User
 from backend.db import get_db_session
+from config import config
 
 
 class AuthService:
@@ -50,7 +51,7 @@ class AuthService:
                                          total_withdrawals, created_at, updated_at)
                         VALUES (:username, :email, :password_hash, :first_name, :last_name,
                                 :date_of_birth, :phone_number, :address, :city, :state, :zip_code,
-                                :country, 1, 0, 0, 10000.0, 0.0, 0.0, :now, :now)
+                                :country, 1, 0, 0, :initial_balance, 0.0, 0.0, :now, :now)
                     """),
                     {
                         "username": username,
@@ -65,6 +66,7 @@ class AuthService:
                         "state": state,
                         "zip_code": zip_code,
                         "country": country,
+                        "initial_balance": config['default'].INITIAL_BALANCE,
                         "now": datetime.datetime.utcnow()
                     }
                 )

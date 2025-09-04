@@ -7,6 +7,7 @@ Integrates ML prop generation with live trading platform
 import os
 from flask import Flask, render_template, redirect, jsonify, request, session
 from backend.services.live_tracker import LiveGameTracker
+from backend.services.platform_monitor import platform_monitor
 from backend.db import Base, engine, SessionLocal
 from backend.models.user import User
 from backend.models.transaction import Transaction
@@ -103,6 +104,10 @@ if __name__ == '__main__':
     print("🚀 Starting Live Game Tracker as background service...")
     live_tracker = LiveGameTracker()
     live_tracker.start_tracking()
+    
+    # Start the platform monitor for internal stats tracking
+    print("📊 Starting Platform Stats Monitor (internal logging only)...")
+    platform_monitor.start_monitoring()
     
     # Production settings for AWS
     port = int(os.environ.get('PORT', 8007))

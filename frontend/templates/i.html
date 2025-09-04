@@ -2367,12 +2367,11 @@
             let html = '';
             leaderboard.forEach((user, index) => {
                 const profitClass = user.net_profit >= 0 ? 'text-success' : 'text-danger';
-                const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
                 
                 html += `
                     <div class="d-flex justify-content-between align-items-center mb-2 p-2 border-bottom">
                         <div class="d-flex align-items-center">
-                            <span class="me-2">${medal}</span>
+                            <span class="me-2 fw-bold text-muted">${user.position}.</span>
                             <div>
                                 <div class="fw-bold">${user.full_name}</div>
                                 <small class="text-muted">@${user.username}</small>

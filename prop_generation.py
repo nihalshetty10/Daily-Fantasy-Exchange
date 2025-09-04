@@ -278,7 +278,7 @@ class RealisticPropGenerator:
             
             print(f"❌ No good MLB match for {player_name}")
             return '', ''
-            
+        
         except Exception as e:
             print(f"❌ Error in direct player resolution for {player_name}: {e}")
             return '', ''

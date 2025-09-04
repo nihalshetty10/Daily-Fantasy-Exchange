@@ -5,14 +5,23 @@ Integrates ML prop generation with live trading platform
 """
 
 import os
-from flask import Flask, render_template, redirect, jsonify
+from flask import Flask, render_template, redirect, jsonify, request
 from backend.services.live_tracker import LiveGameTracker
+from backend.db import Base, engine, SessionLocal
+from backend.models.user import User
+
 
 def create_app():
     app = Flask(__name__, template_folder='frontend/templates')
 
     # Basic configuration
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-here')
+
+    # Ensure tables exist (safe to call repeatedly)
+    try:
+        Base.metadata.create_all(bind=engine)
+    except Exception as e:
+        print(f"DB init error: {e}")
 
     # Routes
     @app.route('/')
@@ -39,6 +48,41 @@ def create_app():
                 return f.read(), 200, {'Content-Type': 'application/json'}
         except FileNotFoundError:
             return jsonify({'error': 'MLB props not found'}), 404
+
+    @app.route('/nfl_props.json')
+    def serve_nfl_props():
+        """Serve the NFL props JSON file"""
+        try:
+            with open('nfl_props.json', 'r') as f:
+                return f.read(), 200, {'Content-Type': 'application/json'}
+        except FileNotFoundError:
+            return jsonify({'error': 'NFL props not found'}), 404
+
+    # Minimal API: create user (POST)
+    @app.route('/api/users', methods=['POST'])
+    def api_create_user():
+        payload = request.get_json(silent=True) or {}
+        username = (payload.get('username') or '').strip()
+        password = payload.get('password') or ''
+        email = (payload.get('email') or '').strip() or None
+        if not username or not password:
+            return jsonify({'error': 'username and password required'}), 400
+        session = SessionLocal()
+        try:
+            # Check duplicates
+            exists = session.query(User).filter(User.username == username).first()
+            if exists:
+                return jsonify({'error': 'username already exists'}), 409
+            user = User(username=username, email=email)
+            user.set_password(password)
+            session.add(user)
+            session.commit()
+            return jsonify({'id': user.id, 'username': user.username}), 201
+        except Exception as e:
+            session.rollback()
+            return jsonify({'error': 'failed to create user', 'details': str(e)}), 500
+        finally:
+            session.close()
 
     return app
 

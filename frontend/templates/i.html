@@ -183,6 +183,80 @@
             margin-bottom: 20px;
             text-align: center;
         }
+        
+        /* WebSocket and Live Updates Styling */
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            min-width: 300px;
+            max-width: 400px;
+            animation: slideInRight 0.3s ease-out;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .toast-header {
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            padding: 10px 15px;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .toast-body {
+            padding: 15px;
+            color: #212529;
+        }
+        
+        .btn-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #6c757d;
+        }
+        
+        .btn-close:hover {
+            color: #dc3545;
+        }
+        
+        .price-update {
+            animation: priceFlash 1s ease-in-out;
+        }
+        
+        @keyframes priceFlash {
+            0% { background-color: transparent; }
+            50% { background-color: #fff3cd; }
+            100% { background-color: transparent; }
+        }
+        
+        .live-indicator {
+            background: #dc3545;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: inline-block;
+            animation: pulse 1s infinite;
+        }
     </style>
 </head>
 <body>
@@ -192,6 +266,10 @@
                 <i class="fas fa-chart-line"></i> PropTrader
             </a>
             <div class="navbar-nav ms-auto">
+                <span class="navbar-text me-3">
+                    <i class="fas fa-wifi"></i> 
+                    <span id="websocket-status" class="badge bg-secondary">🔴 Offline</span>
+                </span>
                 <span class="navbar-text" id="user-info">
                     <i class="fas fa-user"></i> <span id="username">Demo User</span>
                     <button class="btn btn-outline-light btn-sm ms-2" onclick="logout()">Logout</button>
@@ -628,8 +706,64 @@
             }
         }
         
+        // Load real NFL props from scraper (parallel to MLB)
+        async function loadRealNFLProps() {
+            try {
+                console.log('🔄 Loading real NFL props...');
+                const timestamp = new Date().getTime();
+                const response = await fetch(`/nfl_props.json?t=${timestamp}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                if (!data.props) return [];
 
-        
+                const nflProps = [];
+                let propId = 100000; // offset to avoid collision
+
+                const gameStatuses = {};
+                if (data.games) {
+                    data.games.forEach(game => {
+                        gameStatuses[game.game_id] = game.status || 'UPCOMING';
+                    });
+                }
+
+                for (const [playerKey, pd] of Object.entries(data.props)) {
+                    const p = pd.player_info || {};
+                    const plist = pd.props || [];
+                    for (const prop of plist) {
+                        nflProps.push({
+                            id: propId++,
+                            player_name: p.name,
+                            player_team: p.team_name,
+                            player_position: p.position,
+                            sport: 'NFL',
+                            prop_type: (prop.prop_type || '').toLowerCase(),
+                            difficulty: prop.difficulty || 'MEDIUM',
+                            line_value: prop.line_value,
+                            live_contract_price: 50,
+                            available_contracts: 10,
+                            total_contracts: 10,
+                            status_badge: gameStatuses[p.game_id] || 'UPCOMING',
+                            is_tradeable: (gameStatuses[p.game_id] || 'UPCOMING') !== 'FINAL',
+                            formatted_game_time: data.games.find(g=>g.game_id===p.game_id)?.game_time_et || 'TBD',
+                            direction: 'N/A',
+                            implied_probability: prop.implied_probability || 52.0,
+                            game_id: p.game_id,
+                            opponent: null,
+                            player_status: p.status || 'ACTIVE',
+                            over_hit: false
+                        });
+                    }
+                }
+
+                return nflProps;
+            } catch (e) {
+                console.error('Failed to load NFL props', e);
+                return [];
+            }
+        }
+
         // Real MLB props only
         let mockProps = [];
 
@@ -653,20 +787,21 @@
             
             // Load real MLB props
             try {
-                const realProps = await loadRealMLBProps();
-                mockProps = realProps;
-                console.log('Real MLB props loaded successfully');
-            } catch (error) {
-                console.error('Failed to load real props:', error);
-                mockProps = [];
-            }
-            
-            loadMarketData();
-            loadPortfolio();
-            loadPendingOrders();
-            loadTradeHistory();
-            startLiveUpdates();
-        }
+                const [mlb, nfl] = await Promise.all([
+                    loadRealMLBProps(),
+                    loadRealNFLProps()
+                ]);
+                const realProps = [...mlb, ...nfl];
+                 console.log('✅ Loaded real props:', realProps.length);
+                 // Use the real props for the interface
+                 window.REAL_PROPS = realProps;
+                 renderProps(realProps);
+                 startLiveUpdates();
+             } catch (error) {
+                 console.error('Error loading real props:', error);
+                 document.getElementById('error-alert').style.display = 'block';
+             }
+         }
 
         function logout() {
             currentUser = { username: 'Demo User', balance: 10000 };
@@ -2204,6 +2339,398 @@
             const hasPushes = mockProps.some(prop => prop.status_badge === 'PUSH');
             if (hasPushes) handlePushRefunds();
         }
+
+        // ========================================
+        // WEBSOCKET LIVE UPDATES
+        // ========================================
+        
+        let websocket = null;
+        let isWebSocketConnected = false;
+        let reconnectAttempts = 0;
+        const maxReconnectAttempts = 5;
+        
+        // Initialize WebSocket connection
+        function initWebSocket() {
+            try {
+                console.log('🔌 Initializing WebSocket connection...');
+                websocket = new WebSocket('ws://localhost:8765');
+                
+                websocket.onopen = function(event) {
+                    console.log('✅ WebSocket connected successfully');
+                    isWebSocketConnected = true;
+                    reconnectAttempts = 0;
+                    updateConnectionStatus(true);
+                    
+                    // Subscribe to user updates if logged in
+                    if (currentUser && currentUser.id) {
+                        websocket.send(JSON.stringify({
+                            type: 'subscribe_user',
+                            user_id: currentUser.id
+                        }));
+                    }
+                };
+                
+                websocket.onmessage = function(event) {
+                    try {
+                        const data = JSON.parse(event.data);
+                        handleWebSocketMessage(data);
+                    } catch (error) {
+                        console.error('❌ Error parsing WebSocket message:', error);
+                    }
+                };
+                
+                websocket.onclose = function(event) {
+                    console.log('🔌 WebSocket connection closed');
+                    isWebSocketConnected = false;
+                    updateConnectionStatus(false);
+                    
+                    // Attempt to reconnect
+                    if (reconnectAttempts < maxReconnectAttempts) {
+                        reconnectAttempts++;
+                        console.log(`🔄 Attempting to reconnect (${reconnectAttempts}/${maxReconnectAttempts})...`);
+                        setTimeout(initWebSocket, 5000);
+                } else {
+                        console.error('❌ Max reconnection attempts reached');
+                    }
+                };
+                
+                websocket.onerror = function(error) {
+                    console.error('❌ WebSocket error:', error);
+                    isWebSocketConnected = false;
+                    updateConnectionStatus(false);
+                };
+                
+            } catch (error) {
+                console.error('❌ Error initializing WebSocket:', error);
+            }
+        }
+        
+        // Handle incoming WebSocket messages
+        function handleWebSocketMessage(data) {
+            console.log('📨 WebSocket message received:', data);
+            
+            switch (data.type) {
+                case 'game_status_update':
+                    handleGameStatusUpdate(data);
+                    break;
+                case 'prop_result_update':
+                    handlePropResultUpdate(data);
+                    break;
+                case 'balance_update':
+                    if (data.user_id === currentUser?.id) {
+                        handleBalanceUpdate(data);
+                    }
+                    break;
+                case 'initial_state':
+                    handleInitialState(data);
+                    break;
+                case 'subscription_confirmed':
+                    console.log('✅ User subscription confirmed');
+                    break;
+                case 'pong':
+                    // Handle ping/pong for connection health
+                    break;
+                default:
+                    console.log('⚠️ Unknown WebSocket message type:', data.type);
+            }
+        }
+        
+        // Handle game status updates
+        function handleGameStatusUpdate(data) {
+            console.log(`🔄 Game ${data.game_id} status: ${data.old_status} → ${data.new_status}`);
+            
+            // Update props with new game status
+            let hasUpdates = false;
+            mockProps.forEach(prop => {
+                if (prop.game_id === data.game_id) {
+                    const oldStatus = prop.status_badge;
+                    prop.status_badge = data.new_status;
+                    
+                    if (oldStatus !== data.new_status) {
+                        hasUpdates = true;
+                        console.log(`📊 Updated ${prop.player_name} status: ${oldStatus} → ${data.new_status}`);
+                    }
+                }
+            });
+            
+            if (hasUpdates) {
+                // Refresh the display
+                loadMarketData();
+                
+                // Show notification
+                showNotification(`Game status updated: ${data.old_status} → ${data.new_status}`);
+                
+                // Handle automatic actions based on status change
+                if (data.new_status === 'LIVE') {
+                    handleGameStarted(data.game_id);
+                } else if (data.new_status === 'FINAL') {
+                    handleGameFinished(data.game_id);
+                }
+            }
+        }
+        
+        // Handle prop result updates
+        function handlePropResultUpdate(data) {
+            console.log(`🎯 Prop ${data.prop_id} result: ${data.result} (actual: ${data.actual_value})`);
+            
+            // Find and update the prop
+            const prop = mockProps.find(p => p.id === data.prop_id);
+            if (prop) {
+                prop.status_badge = data.result;
+                prop.actual_value = data.actual_value;
+                prop.result_timestamp = data.timestamp;
+                
+                // Refresh the display
+                loadMarketData();
+                
+                // Show result notification
+                const resultText = data.result === 'PUSH' ? 'PUSH!' : `${data.result} HIT!`;
+                showNotification(`Prop ${prop.player_name}: ${resultText} (Actual: ${data.actual_value})`);
+                
+                // Handle automatic actions
+                if (data.result === 'PUSH') {
+                    handlePushRefunds();
+                } else if (data.result === 'OVER_HIT' || data.result === 'UNDER_HIT') {
+                    handlePropHit(data.result, prop);
+                }
+            }
+        }
+        
+        // Handle balance updates
+        function handleBalanceUpdate(data) {
+            console.log(`💰 Balance update: $${data.old_balance} → $${data.new_balance} (${data.change_reason})`);
+            
+            if (currentUser) {
+                currentUser.balance = data.new_balance;
+                
+                // Refresh displays
+                loadPortfolio();
+                loadTradeHistory();
+                
+                // Show balance change notification
+                const changeText = data.change_amount >= 0 ? `+$${data.change_amount.toFixed(2)}` : `-$${Math.abs(data.change_amount).toFixed(2)}`;
+                showNotification(`Balance updated: ${changeText} (${data.change_reason})`);
+            }
+        }
+        
+        // Handle initial state from WebSocket
+        function handleInitialState(data) {
+            console.log('📊 Received initial state from WebSocket');
+            
+            // Update game statuses
+            if (data.game_statuses) {
+                Object.entries(data.game_statuses).forEach(([gameId, status]) => {
+                    mockProps.forEach(prop => {
+                        if (prop.game_id === gameId) {
+                            prop.status_badge = status;
+                        }
+                    });
+                });
+            }
+            
+            // Update prop results
+            if (data.prop_results) {
+                Object.entries(data.prop_results).forEach(([propId, result]) => {
+                    const prop = mockProps.find(p => p.id === propId);
+                    if (prop) {
+                        prop.status_badge = result.result;
+                        prop.actual_value = result.actual_value;
+                    }
+                });
+            }
+            
+            // Refresh display
+            loadMarketData();
+        }
+        
+        // Handle game started (status changed to LIVE)
+        function handleGameStarted(gameId) {
+            console.log(`🚀 Game ${gameId} has started!`);
+            
+            // Start live price updates for this game's props
+            startLivePriceUpdates(gameId);
+            
+            // Show notification
+            showNotification('Game has started! Live updates are now active.');
+        }
+        
+        // Handle game finished (status changed to FINAL)
+        function handleGameFinished(gameId) {
+            console.log(`🏁 Game ${gameId} has finished!`);
+            
+            // Stop live price updates for this game
+            stopLivePriceUpdates(gameId);
+            
+            // Process final results
+            processGameResults(gameId);
+            
+            // Show notification
+            showNotification('Game has finished! Processing final results...');
+        }
+        
+        // Start live price updates for a game
+        function startLivePriceUpdates(gameId) {
+            // This would integrate with live pricing API
+            // For now, simulate price fluctuations
+            const gameProps = mockProps.filter(prop => prop.game_id === gameId);
+            
+            gameProps.forEach(prop => {
+                if (!prop.livePriceInterval) {
+                    prop.livePriceInterval = setInterval(() => {
+                        // Simulate price changes
+                        const change = (Math.random() - 0.5) * 2; // ±$1
+                        prop.live_contract_price = Math.max(0, Math.min(100, (prop.live_contract_price || 50) + change));
+                        
+                        // Update display
+                        updatePropPrice(prop.id, prop.live_contract_price);
+                    }, 5000); // Update every 5 seconds
+                }
+            });
+        }
+        
+        // Stop live price updates for a game
+        function stopLivePriceUpdates(gameId) {
+            const gameProps = mockProps.filter(prop => prop.game_id === gameId);
+            
+            gameProps.forEach(prop => {
+                if (prop.livePriceInterval) {
+                    clearInterval(prop.livePriceInterval);
+                    prop.livePriceInterval = null;
+                }
+            });
+        }
+        
+        // Update prop price in the display
+        function updatePropPrice(propId, newPrice) {
+            const priceElement = document.querySelector(`[data-prop-id="${propId}"] .live-price`);
+            if (priceElement) {
+                priceElement.textContent = `$${newPrice.toFixed(2)}`;
+                priceElement.classList.add('price-update');
+                
+                // Remove animation class after animation
+                setTimeout(() => {
+                    priceElement.classList.remove('price-update');
+                }, 1000);
+            }
+        }
+        
+        // Process final game results
+        function processGameResults(gameId) {
+            const gameProps = mockProps.filter(prop => prop.game_id === gameId);
+            
+            // This would integrate with final stats API
+            // For now, simulate final results
+            gameProps.forEach(prop => {
+                // Simulate final result
+                const finalValue = Math.floor(Math.random() * 10) + 1;
+                prop.actual_value = finalValue;
+                
+                // Determine result
+                if (finalValue > prop.line_value) {
+                    prop.status_badge = 'OVER_HIT';
+                } else if (finalValue < prop.line_value) {
+                    prop.status_badge = 'UNDER_HIT';
+                } else {
+                    prop.status_badge = 'PUSH';
+                }
+            });
+            
+            // Refresh display
+            loadMarketData();
+        }
+        
+        // Handle prop hit (OVER or UNDER)
+        function handlePropHit(result, prop) {
+            const position = userPortfolio.find(p => p.prop_id === prop.id);
+            if (position) {
+                if (result === 'OVER_HIT' && position.direction === 'over') {
+                    // User won
+                    const winnings = position.avg_price * position.quantity * 2; // 2x payout
+                    currentUser.balance += winnings;
+                    
+                    // Remove from portfolio
+                    userPortfolio = userPortfolio.filter(p => p !== position);
+                    
+                    // Record the win
+                    recordTrade('PROP_WIN', prop, winnings, 'prop_hit');
+                    
+                    showNotification(`🎉 You won $${winnings.toFixed(2)} on ${prop.player_name}!`);
+                } else if (result === 'UNDER_HIT' && position.direction === 'under') {
+                    // User won
+                    const winnings = position.avg_price * position.quantity * 2; // 2x payout
+                    currentUser.balance += winnings;
+                    
+                    // Remove from portfolio
+                    userPortfolio = userPortfolio.filter(p => p !== position);
+                    
+                    // Record the win
+                    recordTrade('PROP_WIN', prop, winnings, 'prop_hit');
+                    
+                    showNotification(`🎉 You won $${winnings.toFixed(2)} on ${prop.player_name}!`);
+                } else {
+                    // User lost
+                    showNotification(`😔 You lost on ${prop.player_name} (${result})`);
+                }
+                
+                // Refresh displays
+                loadPortfolio();
+                loadTradeHistory();
+            }
+        }
+        
+        // Show notification
+        function showNotification(message) {
+            // Create toast notification
+            const toast = document.createElement('div');
+            toast.createElement('div');
+            toast.className = 'toast-notification';
+            toast.innerHTML = `
+                <div class="toast-header">
+                    <strong>Live Update</strong>
+                    <button type="button" class="btn-close" onclick="this.parentElement.parentElement.remove()"></button>
+                </div>
+                <div class="toast-body">
+                    ${message}
+                </div>
+            `;
+            
+            // Add to page
+            document.body.appendChild(toast);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.remove();
+                }
+            }, 5000);
+        }
+        
+        // Update connection status display
+        function updateConnectionStatus(connected) {
+            const statusElement = document.getElementById('websocket-status');
+            if (statusElement) {
+                statusElement.className = `badge ${connected ? 'bg-success' : 'bg-danger'}`;
+                statusElement.textContent = connected ? '🟢 Live' : '🔴 Offline';
+            }
+        }
+        
+        // Send ping to keep connection alive
+        function sendPing() {
+            if (websocket && isWebSocketConnected) {
+                websocket.send(JSON.stringify({ type: 'ping' }));
+            }
+        }
+        
+        // Initialize WebSocket when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize WebSocket after a short delay to ensure page is ready
+            setTimeout(() => {
+                initWebSocket();
+                
+                // Send ping every 30 seconds to keep connection alive
+                setInterval(sendPing, 30000);
+            }, 1000);
+        });
     </script>
 </body>
 </html>

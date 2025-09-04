@@ -1,0 +1,35 @@
+{
+  "games": [
+    {
+      "game_id": "Cowboys@Eagles|TBD|0",
+      "game_date": "2025-09-04T12:25:27.889571",
+      "game_time_et": "TBD",
+      "game_datetime": null,
+      "status": "UPCOMING",
+      "home_team": {
+        "id": 0,
+        "name": "Eagles",
+        "abbreviation": "EAG"
+      },
+      "away_team": {
+        "id": 0,
+        "name": "Cowboys",
+        "abbreviation": "COW"
+      },
+      "weather": {
+        "precipitation": "32%",
+        "wind": "10 mph"
+      },
+      "inactives": {
+        "away": [],
+        "home": []
+      },
+      "kickoff_et": "8:20 PM ET",
+      "is_dome": false
+    }
+  ],
+  "props": {},
+  "generated_at": "2025-09-04T12:25:27.889607",
+  "total_players": 0,
+  "total_games": 1
+}

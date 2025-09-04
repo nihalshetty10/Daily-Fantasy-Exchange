@@ -27,16 +27,15 @@ class MLBModel:
             
         except Exception as e:
             print(f"Error getting player stats for {player_id}: {e}")
-            # Fallback to mock data if API fails
-            return self._generate_mock_player_stats(player_id, stat_type)
+            return None
     
     def _get_real_mlb_player_stats(self, player_id: str, stat_type: str, season: int) -> Dict:
         """Get real player stats from MLB API"""
         try:
             # Validate player_id is a valid MLB player ID (numeric)
             if not player_id or not str(player_id).isdigit():
-                print(f"⚠️ Invalid player ID '{player_id}' - using mock data")
-                return self._generate_mock_player_stats(player_id, stat_type)
+                print(f"⚠️ Invalid player ID '{player_id}'")
+                return None
             
             # Try different MLB API approaches
             # First, try the standard stats endpoint
@@ -52,8 +51,8 @@ class MLBModel:
             
             response = requests.get(url, headers=self.headers, params=params, timeout=30)
             if response.status_code != 200:
-                print(f"❌ MLB API error {response.status_code} for player {player_id} - using mock data")
-                return self._generate_mock_player_stats(player_id, stat_type)
+                print(f"❌ MLB API error {response.status_code} for player {player_id}")
+                return None
             
             data = response.json()
             
@@ -61,8 +60,8 @@ class MLBModel:
             recent_values = self._parse_mlb_game_log(data, stat_type)
             
             if not recent_values or len(recent_values) < 5:
-                print(f"⚠️ Insufficient data for player {player_id}, using mock data")
-                return self._generate_mock_player_stats(player_id, stat_type)
+                print(f"⚠️ Insufficient data for player {player_id}")
+                return None
             
             # Calculate performance metrics from real data
             mean_value = np.mean(recent_values)
@@ -163,77 +162,6 @@ class MLBModel:
             print(f"❌ Error parsing MLB game log: {e}")
             return []
     
-    def _generate_mock_player_stats(self, player_id: str, stat_type: str) -> Dict:
-        """Generate realistic mock stats based on position and stat type"""
-        try:
-            # Generate realistic performance data based on stat type and position
-            if stat_type == 'hits':
-                # Hitters typically get 0-4 hits per game
-                recent_values = np.random.poisson(1.2, 10)  # Average 1.2 hits per game
-            elif stat_type == 'runs':
-                # Hitters typically get 0-2 runs per game
-                recent_values = np.random.poisson(0.8, 10)  # Average 0.8 runs per game
-            elif stat_type == 'rbis':
-                # Hitters typically get 0-3 RBIs per game
-                recent_values = np.random.poisson(1.0, 10)  # Average 1.0 RBIs per game
-            elif stat_type == 'total_bases':
-                # Total bases = singles + 2*doubles + 3*triples + 4*home_runs
-                recent_values = np.random.poisson(2.5, 10)  # Average 2.5 total bases per game
-            elif stat_type == 'strikeouts':
-                # Pitchers typically get 3-12 strikeouts per game
-                recent_values = np.random.poisson(6.5, 10)  # Average 6.5 strikeouts per game
-            elif stat_type == 'pitches':
-                # Pitchers typically throw 80-120 pitches per game
-                # Generate more realistic distribution with better scaling
-                recent_values = np.random.normal(95, 12, 10)  # Average 95 pitches, std 12
-                # Ensure realistic range and better difficulty separation
-                recent_values = np.clip(recent_values, 75, 115)
-            elif stat_type == 'era':
-                # ERA is typically 2.0-6.0 per game
-                recent_values = np.random.normal(4.0, 1.5, 10)  # Average 4.0 ERA, std 1.5
-            else:
-                recent_values = np.random.poisson(2.0, 10)
-            
-            # Ensure values are realistic (non-negative, reasonable ranges)
-            recent_values = np.maximum(recent_values, 0)
-            if stat_type == 'era':
-                recent_values = np.clip(recent_values, 0.5, 10.0)
-            elif stat_type == 'pitches':
-                recent_values = np.clip(recent_values, 50, 150)
-            
-            # Calculate performance metrics
-            mean_value = np.mean(recent_values)
-            std_value = np.std(recent_values)
-            median_value = np.median(recent_values)
-            
-            # Calculate percentiles for different difficulty levels
-            # For ERA: higher values = easier (worse pitching), lower values = harder (better pitching)
-            # For other stats: lower values = easier, higher values = harder
-            if stat_type == 'era':
-                percentiles = {
-                    'EASY': np.percentile(recent_values, 75),  # 75th percentile (higher ERA = easier)
-                    'MEDIUM': np.percentile(recent_values, 50),  # 50th percentile (median)
-                    'HARD': np.percentile(recent_values, 25)   # 25th percentile (lower ERA = harder)
-                }
-            else:
-                percentiles = {
-                    'EASY': np.percentile(recent_values, 25),  # 25th percentile (lower values = easier)
-                    'MEDIUM': np.percentile(recent_values, 50),  # 50th percentile (median)
-                    'HARD': np.percentile(recent_values, 75)   # 75th percentile (higher values = harder)
-                }
-            
-            return {
-                'mean': mean_value,
-                'std': std_value,
-                'median': median_value,
-                'percentiles': percentiles,
-                'recent_values': np.array(recent_values).tolist(),
-                'total_games': len(recent_values)
-            }
-            
-        except Exception as e:
-            print(f"Error generating mock stats: {e}")
-            return {}
     
     def calculate_realistic_prop_line(self, player_stats: Dict, stat_type: str, difficulty: str) -> Tuple[float, float]:
         """Calculate realistic prop line and implied probability based on player performance"""

@@ -16,23 +16,31 @@ Usage:
 """
 
 import requests
-from bs4 import BeautifulSoup
+try:
+    from bs4 import BeautifulSoup  # optional, not required by NFLModel
+except Exception:  # pragma: no cover
+    BeautifulSoup = None
 import time
 import logging
 import os
 import re
-import schedule
-import pandas as pd
-import numpy as np
+try:
+    import schedule  # optional
+except Exception:  # pragma: no cover
+    schedule = None
+try:
+    import pandas as pd  # optional
+except Exception:  # pragma: no cover
+    pd = None
+try:
+    import numpy as np  # optional
+except Exception:  # pragma: no cover
+    np = None
 from datetime import datetime, timedelta
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from webdriver_manager.chrome import ChromeDriverManager
+webdriver = None  # selenium not used
 import json
+from datetime import datetime
+import requests as _requests
 
 # ============================================================================
 # CONFIGURATION SECTION
@@ -102,6 +110,50 @@ DATA_DIR = "data"
 LOGS_DIR = "logs"
 EXCEL_OUTPUT = "nfl_props_adjusted.xlsx"
 
+# Basic team -> city mapping for Weather.com queries (home city names)
+TEAM_TO_CITY: dict[str, str] = {
+    # NFC East
+    'dallas': 'Arlington, TX',
+    'philadelphia': 'Philadelphia, PA',
+    'new york giants': 'East Rutherford, NJ',
+    'washington': 'Landover, MD',
+    # NFC North
+    'green bay': 'Green Bay, WI',
+    'chicago': 'Chicago, IL',
+    'minnesota': 'Minneapolis, MN',
+    'detroit': 'Detroit, MI',
+    # NFC South
+    'tampa bay': 'Tampa, FL',
+    'atlanta': 'Atlanta, GA',
+    'new orleans': 'New Orleans, LA',
+    'carolina': 'Charlotte, NC',
+    # NFC West
+    'san francisco': 'Santa Clara, CA',
+    'los angeles rams': 'Inglewood, CA',
+    'seattle': 'Seattle, WA',
+    'arizona': 'Glendale, AZ',
+    # AFC East
+    'buffalo': 'Orchard Park, NY',
+    'miami': 'Miami Gardens, FL',
+    'new england': 'Foxborough, MA',
+    'new york jets': 'East Rutherford, NJ',
+    # AFC North
+    'cincinnati': 'Cincinnati, OH',
+    'baltimore': 'Baltimore, MD',
+    'pittsburgh': 'Pittsburgh, PA',
+    'cleveland': 'Cleveland, OH',
+    # AFC South
+    'houston': 'Houston, TX',
+    'indianapolis': 'Indianapolis, IN',
+    'jacksonville': 'Jacksonville, FL',
+    'tennessee': 'Nashville, TN',
+    # AFC West
+    'kansas city': 'Kansas City, MO',
+    'los angeles chargers': 'Inglewood, CA',
+    'denver': 'Denver, CO',
+    'las vegas': 'Paradise, NV',
+}
+
 # ============================================================================
 # NFL SCRAPER CLASS
 # ============================================================================
@@ -133,6 +185,13 @@ class NFLScraper:
     def setup_selenium(self):
         """Setup Selenium WebDriver for dynamic content"""
         if not self.driver:
+            from selenium.webdriver.chrome.options import Options
+            from selenium.webdriver.chrome.service import Service
+            from webdriver_manager.chrome import ChromeDriverManager
+            from selenium.webdriver.support.ui import WebDriverWait
+            from selenium.webdriver.common.by import By
+            from selenium.webdriver.support import expected_conditions as EC
+            
             chrome_options = Options()
             chrome_options.add_argument("--headless")
             chrome_options.add_argument("--no-sandbox")
@@ -142,57 +201,90 @@ class NFLScraper:
             self.driver = webdriver.Chrome(service=service, options=chrome_options)
             
     def get_todays_games(self):
-        """Scrape today's NFL games from NFL.com"""
+        """Scrape today's NFL games from nfl.com by parsing the schedule page HTML."""
         try:
             self.logger.info("Scraping today's games from NFL.com")
             
-            # Check if it's game day (after 1:30 AM)
+            # Get current day of week (0=Monday, 6=Sunday)
             now = datetime.now()
-            game_day_start = now.replace(hour=GAME_DAY_START_HOUR, minute=GAME_DAY_START_MINUTE, second=0, microsecond=0)
+            current_weekday = now.weekday()
+            current_day_name = now.strftime('%A').upper()  # THURSDAY, FRIDAY, etc.
             
-            if now < game_day_start:
-                self.logger.info("Not yet game day, waiting...")
+            self.logger.info(f"Current day: {current_day_name} (weekday {current_weekday})")
+            
+            resp = self.session.get(NFL_SCORES_URL, timeout=15)
+            resp.raise_for_status()
+
+            if not BeautifulSoup:
+                self.logger.warning("BeautifulSoup not available for HTML parsing")
                 return []
+
+            soup = BeautifulSoup(resp.text, 'html.parser')
+            games_out = []
             
-            response = self.session.get(NFL_SCORES_URL)
-            response.raise_for_status()
+            # Look for game containers - try multiple selectors
+            game_selectors = [
+                '.nfl-c-schedule__game',
+                '.schedule-game',
+                '.game-card',
+                '[data-testid*="game"]',
+                '.game'
+            ]
             
-            soup = BeautifulSoup(response.content, 'html.parser')
-            games = []
+            game_containers = []
+            for selector in game_selectors:
+                containers = soup.select(selector)
+                if containers:
+                    self.logger.info(f"Found {len(containers)} games using selector: {selector}")
+                    game_containers = containers
+                    break
             
-            # Look for game containers
-            game_containers = soup.find_all('div', class_='game-center')
+            if not game_containers:
+                # Fallback: look for any div containing team names and times
+                all_divs = soup.find_all('div')
+                for div in all_divs:
+                    text = div.get_text(strip=True)
+                    # Look for patterns like "Cowboys vs Eagles" or "8:20 PM"
+                    if re.search(r'\b(Cowboys|Eagles|Chiefs|Chargers|Patriots|Bills|Dolphins|Jets|Ravens|Bengals|Browns|Steelers|Texans|Colts|Jaguars|Titans|Broncos|Raiders|Giants|Redskins|Commanders|Bears|Lions|Packers|Vikings|Falcons|Panthers|Saints|Buccaneers|Cardinals|Rams|49ers|Seahawks)\b', text, re.IGNORECASE) and re.search(r'\d{1,2}:\d{2}\s*[AP]M', text):
+                        game_containers.append(div)
+                        self.logger.info(f"Found potential game container: {text[:100]}...")
             
             for container in game_containers:
                 try:
-                    # Extract game information
-                    teams = container.find_all('div', class_='team-name')
+                    text = container.get_text(strip=True)
+                    
+                    # Extract team names using regex
+                    team_pattern = r'\b(Cowboys|Eagles|Chiefs|Chargers|Patriots|Bills|Dolphins|Jets|Ravens|Bengals|Browns|Steelers|Texans|Colts|Jaguars|Titans|Broncos|Raiders|Giants|Redskins|Commanders|Bears|Lions|Packers|Vikings|Falcons|Panthers|Saints|Buccaneers|Cardinals|Rams|49ers|Seahawks)\b'
+                    teams = re.findall(team_pattern, text, re.IGNORECASE)
+                    
                     if len(teams) >= 2:
-                        away_team = teams[0].get_text(strip=True)
-                        home_team = teams[1].get_text(strip=True)
+                        away_team = teams[0]
+                        home_team = teams[1]
                         
-                        # Get game time
-                        time_element = container.find('div', class_='game-time')
-                        game_time = time_element.get_text(strip=True) if time_element else "TBD"
+                        # Extract game time
+                        time_match = re.search(r'(\d{1,2}:\d{2}\s*[AP]M)\s*(ET|EDT|EST)?', text, re.IGNORECASE)
+                        game_time = time_match.group(1) + " ET" if time_match else "TBD"
                         
-                        # Get game link
-                        game_link = container.find('a')
-                        game_url = NFL_BASE_URL + game_link['href'] if game_link else None
+                        # Check if this game is for today
+                        day_match = re.search(r'\b(MONDAY|TUESDAY|WEDNESDAY|THURSDAY|FRIDAY|SATURDAY|SUNDAY)\b', text, re.IGNORECASE)
+                        game_day = day_match.group(1).upper() if day_match else None
                         
-                        games.append({
-                            'away_team': away_team,
-                            'home_team': home_team,
+                        if game_day == current_day_name or not game_day:  # Include if day matches or no day specified
+                        games_out.append({
+                                'away_team': away_team,
+                                'home_team': home_team,
                             'game_time': game_time,
-                            'game_url': game_url,
-                            'status': 'scheduled'
+                            'game_url': None,
+                                'status': 'scheduled'
                         })
-                        
+                            self.logger.info(f"Found game: {away_team} @ {home_team} at {game_time}")
+                
                 except Exception as e:
-                    self.logger.error(f"Error parsing game container: {e}")
-                    continue
+                    self.logger.warning(f"Error parsing game container: {e}")
+                        continue
             
-            self.logger.info(f"Found {len(games)} games for today")
-            return games
+            self.logger.info(f"Found {len(games_out)} games for today from nfl.com")
+            return games_out
             
         except Exception as e:
             self.logger.error(f"Error scraping today's games: {e}")
@@ -1142,10 +1234,749 @@ def test_system():
     
     return passed == total
 
-# ============================================================================
-# MAIN ENTRY POINT
-# ============================================================================
 
+class NFLModel:
+    """
+    Minimal facade to generate NFL props in a shape similar to MLB output.
+    Attempts a lightweight scrape via NFLScraper but safely falls back
+    to a placeholder single game with generic props if scraping fails.
+    """
+
+    def __init__(self, logger=None):
+        import logging as _logging
+        self.logger = logger or _logging.getLogger(__name__)
+        
+        # Initialize headers for API requests (similar to MLB model)
+        self.headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        }
+        
+        try:
+            self.scraper = NFLScraper()
+        except Exception as e:
+            self.logger.warning(f"NFLScraper init failed: {e}")
+            self.scraper = None
+
+    
+    def _fetch_json(self, url: str):
+        try:
+            r = _requests.get(url, timeout=15)
+            if r.status_code == 200:
+                return r.json()
+            self.logger.warning(f"GET {url} -> {r.status_code}")
+            return None
+        except Exception as e:
+            self.logger.warning(f"GET {url} failed: {e}")
+            return None
+
+    def _compute_lines_from_stats(self, position: str, stats: dict):
+        # Attempt to find season totals to compute per-game averages
+        def find_stat(name_candidates):
+            try:
+                cats = stats.get('splits', {}).get('categories', [])
+                for cat in cats:
+                    for st in cat.get('stats', []):
+                        n = (st.get('name') or '').lower()
+                        if any(n == c for c in name_candidates):
+                            try:
+                                return float(st.get('value'))
+                            except Exception:
+                                pass
+            except Exception:
+                return None
+            return None
+
+        def add(prop_type: str, line_value: float, implied: float) -> dict:
+            return {
+                'sport': 'NFL',
+                'prop_type': prop_type,
+                'line_value': float(line_value),
+                'difficulty': 'MEDIUM',
+                'implied_probability': float(max(5.0, min(95.0, implied))),
+            }
+
+        position = (position or '').upper()
+        out = []
+        games_played = find_stat(['gamesplayed', 'games']) or 0.0
+        if games_played <= 0:
+            return out
+
+    def generate_todays_props(self):
+        # Scrape Rotowire lineups page for players per matchup (primary source)
+        players_by_matchup = self._rotowire_lineups()
+        # Build games list from Rotowire matchups (primary source)
+        games = []
+        idx = 0
+        for key, matchup in players_by_matchup.items():
+            away_team = matchup.get('away_team_name') or key.split('@')[0].strip()
+            home_team = matchup.get('home_team_name') or key.split('@')[-1].strip()
+            synthetic_game_id = f"{away_team}@{home_team}|TBD|{idx}"
+            games.append({
+                'game_id': synthetic_game_id,
+                'game_date': datetime.now().isoformat(),
+                'game_time_et': 'TBD',
+                'game_datetime': None,
+                'status': 'UPCOMING',
+                'home_team': {'id': 0, 'name': home_team, 'abbreviation': (home_team[:3] or '').upper()},
+                'away_team': {'id': 0, 'name': away_team, 'abbreviation': (away_team[:3] or '').upper()},
+                'weather': matchup.get('weather') or None,
+                'inactives': matchup.get('inactives') or {'away': [], 'home': []},
+                'kickoff_et': matchup.get('kickoff_et') or None,
+                'is_dome': bool(matchup.get('is_dome')),
+            })
+            idx += 1
+
+        props_map: dict[str, dict] = {}
+        import random
+
+        # Helper: apply difficulty rules
+        def apply_difficulty_rules(medium_list: list[dict]) -> list[dict]:
+            out: list[dict] = []
+            # Add mediums
+            for m in medium_list:
+                out.append({**m, 'difficulty': 'MEDIUM', 'implied_probability': 52.0})
+            # Choose easy and hard per rules
+            if len(medium_list) >= 2:
+                easy_idx = random.randrange(len(medium_list))
+                hard_idx = random.randrange(len(medium_list))
+                while hard_idx == easy_idx:
+                    hard_idx = random.randrange(len(medium_list))
+                # Easy copy
+                out.append({**medium_list[easy_idx], 'difficulty': 'EASY', 'implied_probability': 58.0})
+                # Hard copy
+                out.append({**medium_list[hard_idx], 'difficulty': 'HARD', 'implied_probability': 46.0})
+            elif len(medium_list) == 1:
+                out.append({**medium_list[0], 'difficulty': 'EASY', 'implied_probability': 58.0})
+                out.append({**medium_list[0], 'difficulty': 'HARD', 'implied_probability': 46.0})
+            return out
+
+        # Index games by team names to align with rotowire text
+        def norm(s: str) -> str:
+            return (s or '').strip().lower()
+
+        for g in games:
+            game_id = str(g['game_id'])
+            home_name = g['home_team']['name']
+            away_name = g['away_team']['name']
+            # If not dome and missing weather, try Weather.com fallback by home city
+            if not g.get('weather') and not g.get('is_dome'):
+                try:
+                    home_city = TEAM_TO_CITY.get(home_name.lower()) or TEAM_TO_CITY.get((home_name.split()[-1] if ' ' in home_name else home_name).lower())
+                    if home_city:
+                        # Parse kickoff hour if available
+                        kickoff = g.get('kickoff_et') or g.get('game_time_et')
+                        wx_data = WeatherScraper().search_city_weather(home_city, kickoff)
+                        if wx_data and wx_data.get('game_time_weather'):
+                            g['weather'] = {
+                                'precipitation': wx_data['game_time_weather'].get('precipitation'),
+                                'wind': wx_data['game_time_weather'].get('wind'),
+                                'description': wx_data['game_time_weather'].get('description'),
+                                'snow': any(word in (wx_data['game_time_weather'].get('description','').lower()) for word in ['snow','sleet','blizzard'])
+                            }
+                except Exception as _wx_e:
+                    self.logger.warning(f"Weather.com fallback failed for {home_name}: {_wx_e}")
+            # Direct key from construction
+            matched_key = f"{away_name} @ {home_name}"
+            matchup = players_by_matchup.get(matched_key)
+            if not matchup:
+                # Try alternate spacing
+                matched_key = f"{away_name}@{home_name}"
+                matchup = players_by_matchup.get(matched_key)
+                if not matchup:
+                    continue
+            for side in ('away','home'):
+                team_players = matchup.get(side, [])
+                for p in team_players:
+                    name = p['name']
+                    pos = p['position']
+                    # No default lines: require precomputed stat lines attached to player
+                    mediums = p.get('stat_props', []) or []
+                    if not mediums:
+                        # Skip players without scraped/stat-derived lines
+                        continue
+                    pl_props = apply_difficulty_rules(mediums)
+                    key = f"{norm(name)}|{game_id}|NFL"
+                    props_map[key] = {
+                        'player_info': {
+                            'name': name,
+                            'team_name': matchup.get(f'{side}_team_name') or (away_name if side=='away' else home_name),
+                            'position': pos,
+                            'game_id': game_id,
+                            'status': g.get('status','UPCOMING')
+                        },
+                        'props': pl_props
+                    }
+
+        out = {
+            'games': games,
+            'props': props_map,
+            'generated_at': datetime.now().isoformat(),
+            'total_players': len(props_map),
+            'total_games': len(games)
+        }
+        with open('nfl_props.json', 'w') as f:
+            json.dump(out, f, indent=2)
+        return out
+
+    def _rotowire_lineups(self) -> dict:
+        """Scrape Rotowire NFL lineups page for today's starters per matchup.
+        Returns mapping: "Away Team @ Home Team" -> { away:[{name,position}], home:[...], away_team_name, home_team_name }
+        """
+        url = "https://www.rotowire.com/football/lineups.php"
+        try:
+            r = _requests.get(url, timeout=20, headers={'User-Agent':'Mozilla/5.0'})
+            if r.status_code != 200:
+                self.logger.warning(f"Rotowire lineups returned {r.status_code}")
+                return {}
+            html = r.text
+            if not BeautifulSoup:
+                self.logger.warning("BeautifulSoup not available for Rotowire parsing")
+                return {}
+            soup = BeautifulSoup(html, 'html.parser')
+            result: dict = {}
+            
+            # Debug: log what we found
+            self.logger.info(f"Rotowire page loaded, length: {len(html)}")
+            
+            # Heuristic parsing: blocks with two teams and positional lists
+            # Rotowire uses data-matchup or lineup-card classes; attempt common selectors
+            cards = soup.select('[data-event-id], .lineup.is-nfl, .lineup, .lineup__teams')
+            self.logger.info(f"Found {len(cards)} cards with primary selectors")
+            
+            if not cards:
+                # Look for divs containing team names and times
+                cards = soup.find_all('div', class_=re.compile(r'lineup'))
+                self.logger.info(f"Found {len(cards)} cards with lineup class")
+            if not cards:
+                cards = soup.find_all('section')
+                self.logger.info(f"Found {len(cards)} section cards")
+            
+            # Also try to find any div containing team names
+            import re
+            team_divs = soup.find_all('div', text=re.compile(r'\b(Cowboys|Eagles|Chiefs|Chargers)\b', re.IGNORECASE))
+            self.logger.info(f"Found {len(team_divs)} divs containing team names")
+            for i, card in enumerate(cards[:5]):  # Debug first 5 cards
+                text = card.get_text(" ", strip=True)
+                if not text:
+                    continue
+                self.logger.info(f"Card {i}: {text[:200]}...")
+                
+                # Check if this card contains team names
+                if re.search(r'\b(Cowboys|Eagles|Chiefs|Chargers)\b', text, re.IGNORECASE):
+                    self.logger.info(f"Card {i} contains team names!")
+                # Attempt to extract team names present in card using known labels near QB/RB/WR/TE
+                # Collect players by scanning for position tags followed by names
+                players = { 'away': [], 'home': [] }
+                team_names = { 'away_team_name': None, 'home_team_name': None }
+                weather_info = {}
+                inactives_map = { 'away': [], 'home': [] }
+                kickoff_time_et = None
+                is_dome = False
+                # Try structured lists first
+                for side_key, side_sel in (('away','.lineup__list--away'), ('home','.lineup__list--home')):
+                    side = card.select_one(side_sel)
+                    if side:
+                        # find position rows
+                        for row in side.select('.lineup__player'):  # generic
+                            role = (row.select_one('.lineup__pos') or row.select_one('.pos') or row.find('span')).get_text(strip=True) if (row.select_one('.lineup__pos') or row.select_one('.pos') or row.find('span')) else ''
+                            name = (row.select_one('.lineup__player-name') or row.find('a') or row.find('span')).get_text(strip=True) if (row.select_one('.lineup__player-name') or row.find('a') or row.find('span')) else ''
+                            role_u = role.upper()
+                            if role_u in ('QB','RB','WR','TE') and name:
+                                players[side_key].append({'name': name, 'position': role_u})
+                
+                # If structured parsing failed, try regex parsing of the full text
+                if not players['away'] and not players['home']:
+                    # Parse the text directly - look for "QB Player Name" patterns
+                    # The text shows: "QB Dak Prescott RB J. Williams WR CeeDee Lamb..."
+                    current_side = 'away'  # Start with away team
+                    
+                    # Find all position + player patterns in the text
+                    pos_pattern = r'\b(QB|RB|WR|TE|K)\s+([A-Za-z\.\s]+?)(?=\s+(?:QB|RB|WR|TE|K|$))'
+                    matches = re.findall(pos_pattern, text)
+                    
+                    for pos, name in matches:
+                        name = name.strip()
+                        if name and len(name) > 1:  # Valid player name
+                            # Clean the name - remove any extra text after the name
+                            clean_name = re.sub(r'\s+[A-Z]\s*$', '', name)  # Remove single letters at end
+                            clean_name = re.sub(r'\s+Q\s*$', '', clean_name)  # Remove "Q" (questionable status)
+                            clean_name = clean_name.strip()
+                            
+                            # Generate stat props based on position and player stats
+                            stat_props = self._generate_nfl_props_for_position(pos, clean_name)
+                            
+                            players[current_side].append({
+                                'name': clean_name, 
+                                'position': pos,
+                                'stat_props': stat_props
+                            })
+                            self.logger.info(f"Found {current_side} player: {pos} {clean_name} with {len(stat_props)} props")
+                            
+                            # Switch to home team after finding several away players
+                            if len(players[current_side]) >= 6 and current_side == 'away':
+                                current_side = 'home'
+                # If structured failed, try regex over text
+                import re
+                if not players['away'] and not players['home']:
+                    lines = [ln.strip() for ln in text.split('\n') if ln.strip()]
+                    cand = []
+                    for ln in lines:
+                        m = re.match(r"^(QB|RB|WR|TE)\s+(.+)$", ln, re.IGNORECASE)
+                        if m:
+                            cand.append((m.group(1).upper(), m.group(2)))
+                    # Split half by midpoint
+                    mid = len(cand)//2
+                    for idx,(pos,name) in enumerate(cand):
+                        (players['away'] if idx<mid else players['home']).append({'name':name, 'position':pos})
+
+                # Extract team names from card header
+                header = card.select_one('.lineup__teams') or card.find('h3') or card.find('h2')
+                header_text = header.get_text(" ", strip=True) if header else ''
+                
+                # Look for team names in the text - Rotowire shows them as separate elements
+                team_elements = card.find_all(text=re.compile(r'\b(Cowboys|Eagles|Chiefs|Chargers|Patriots|Bills|Dolphins|Jets|Ravens|Bengals|Browns|Steelers|Texans|Colts|Jaguars|Titans|Broncos|Raiders|Giants|Redskins|Commanders|Bears|Lions|Packers|Vikings|Falcons|Panthers|Saints|Buccaneers|Cardinals|Rams|49ers|Seahawks)\b', re.IGNORECASE))
+                if len(team_elements) >= 2:
+                    team_names['away_team_name'] = team_elements[0].strip()
+                    team_names['home_team_name'] = team_elements[1].strip()
+                    self.logger.info(f"Extracted teams: {team_names['away_team_name']} @ {team_names['home_team_name']}")
+                    
+                    # Only process Thursday games (today)
+                    if 'THU' not in text.upper():
+                        self.logger.info(f"Skipping non-Thursday game: {team_names['away_team_name']} @ {team_names['home_team_name']}")
+                        continue
+                
+                # Fallback: search for patterns like "ABC @ DEF" in text
+                if not team_names['away_team_name'] or not team_names['home_team_name']:
+                m2 = re.search(r"([A-Za-z .'-]{2,})\s+@\s+([A-Za-z .'-]{2,})", card.get_text(" ", strip=True))
+                if m2:
+                    team_names['away_team_name'] = m2.group(1)
+                    team_names['home_team_name'] = m2.group(2)
+                key = None
+                if team_names['away_team_name'] and team_names['home_team_name']:
+                    key = f"{team_names['away_team_name']} @ {team_names['home_team_name']}"
+                elif header_text and '@' in header_text:
+                    key = header_text
+                else:
+                    # Skip if we couldn't determine teams
+                    continue
+
+                # Heuristic weather extraction from card text
+                try:
+                    wx_text = card.get_text(" ", strip=True)
+                    # kickoff time like "THU 8:20 PM ET" or "1:00 PM ET" or "8:20 PM EDT"
+                    m_time = re.search(r"(\d{1,2}:\d{2}\s*[AP]M)\s*(ET|EDT|EST)", wx_text, re.IGNORECASE)
+                    if m_time:
+                        kickoff_time_et = m_time.group(1) + " ET"
+                    # precipitation
+                    m_prec = re.search(r"(\d+)%\s*Precipitation|Precipitation\s*(\d+)%", wx_text, re.IGNORECASE)
+                    if m_prec:
+                        pct = m_prec.group(1) or m_prec.group(2)
+                        weather_info['precipitation'] = f"{pct}%"
+                    # wind
+                    m_wind = re.search(r"Wind\s*(\d+)\s*mph|\b(\d+)\s*mph\b.*Wind", wx_text, re.IGNORECASE)
+                    if m_wind:
+                        mph = m_wind.group(1) or m_wind.group(2)
+                        weather_info['wind'] = f"{mph} mph"
+                    # dome detection
+                    if re.search(r"\b(Dome|Indoors|In Dome Stadium)\b", wx_text, re.IGNORECASE):
+                        is_dome = True
+                    # snow detection keyword
+                    if re.search(r"\b(snow|flurries|blizzard|sleet)\b", wx_text, re.IGNORECASE):
+                        weather_info['snow'] = True
+                except Exception:
+                    pass
+
+                # Heuristic inactives: look for any list after an 'Inactives' label
+                try:
+                    inactives_blocks = []
+                    # Try structured selector first
+                    inactives_nodes = card.select('.inactives, .lineup__inactives')
+                    for node in inactives_nodes:
+                        inactives_blocks.append(node.get_text(" ", strip=True))
+                    if not inactives_blocks:
+                        # Fallback to text slicing
+                        parts = re.split(r"Inactives", wx_text, flags=re.IGNORECASE)
+                        if len(parts) > 1:
+                            tail = parts[1][:200]  # take a short window
+                            inactives_blocks.append(tail)
+                    # Parse names (simple comma or semicolon separated)
+                    parsed_names: list[str] = []
+                    for blk in inactives_blocks:
+                        # stop words indicating none
+                        if re.search(r"Not Yet Available|TBD", blk, re.IGNORECASE):
+                            continue
+                        for nm in re.split(r",|;|\s{2,}", blk):
+                            nm = nm.strip()
+                            if nm and len(nm.split()) >= 2 and not re.match(r"^(QB|RB|WR|TE|K|DEF)$", nm, re.IGNORECASE):
+                                parsed_names.append(nm)
+                    # Split names roughly half/half between away/home if we found any
+                    if parsed_names:
+                        mid = len(parsed_names)//2
+                        inactives_map['away'] = parsed_names[:mid]
+                        inactives_map['home'] = parsed_names[mid:]
+                except Exception:
+                    pass
+                if players['away'] or players['home']:
+                    result[key] = { **players, **team_names, 'weather': weather_info or None, 'inactives': inactives_map, 'kickoff_et': kickoff_time_et, 'is_dome': is_dome }
+
+            return result
+        except Exception as e:
+            self.logger.warning(f"Failed Rotowire scrape: {e}")
+            return {}
+
+    def _generate_nfl_props_for_position(self, position, player_name):
+        """Generate NFL props based on player position and historical stats"""
+        props = []
+        
+        # Skip kickers
+        if position == 'K':
+            return props
+        
+        # Get player stats from NFL API or database
+        player_stats = self._get_player_historical_stats(player_name, position)
+        
+        # If no stats available, skip this player
+        if not player_stats:
+            self.logger.info(f"Skipping {player_name} - no historical stats available")
+            return []
+        
+        if position == 'QB':
+            # QB: 4 medium, 1 easy, 1 hard (6 total props)
+            passing_yards_avg = player_stats.get('passing_yards_avg')
+            passing_tds_avg = player_stats.get('passing_tds_avg')
+            completions_avg = player_stats.get('completions_avg')
+            rushing_yards_avg = player_stats.get('rushing_yards_avg')
+            
+            if not all([passing_yards_avg, passing_tds_avg, completions_avg, rushing_yards_avg]):
+                self.logger.warning(f"Incomplete QB stats for {player_name}")
+                return []
+            
+            props = [
+                {'prop_type': 'passing_yards', 'line_value': passing_yards_avg, 'difficulty': 'MEDIUM'},
+                {'prop_type': 'passing_tds', 'line_value': passing_tds_avg, 'difficulty': 'MEDIUM'},
+                {'prop_type': 'completions', 'line_value': completions_avg, 'difficulty': 'MEDIUM'},
+                {'prop_type': 'rushing_yards', 'line_value': rushing_yards_avg, 'difficulty': 'MEDIUM'},
+                # Easy prop (lower line)
+                {'prop_type': 'passing_yards', 'line_value': passing_yards_avg * 0.85, 'difficulty': 'EASY'},
+                # Hard prop (higher line)
+                {'prop_type': 'passing_tds', 'line_value': passing_tds_avg * 1.3, 'difficulty': 'HARD'}
+            ]
+        elif position == 'RB':
+            # RB: 3 medium, 1 easy, 1 hard (5 total props)
+            rushing_yards_avg = player_stats.get('rushing_yards_avg')
+            receiving_yards_avg = player_stats.get('receiving_yards_avg')
+            receptions_avg = player_stats.get('receptions_avg')
+            
+            if not all([rushing_yards_avg, receiving_yards_avg, receptions_avg]):
+                self.logger.warning(f"Incomplete RB stats for {player_name}")
+                return []
+            
+            props = [
+                {'prop_type': 'rushing_yards', 'line_value': rushing_yards_avg, 'difficulty': 'MEDIUM'},
+                {'prop_type': 'receiving_yards', 'line_value': receiving_yards_avg, 'difficulty': 'MEDIUM'},
+                {'prop_type': 'receptions', 'line_value': receptions_avg, 'difficulty': 'MEDIUM'},
+                # Easy prop (lower line)
+                {'prop_type': 'rushing_yards', 'line_value': rushing_yards_avg * 0.8, 'difficulty': 'EASY'},
+                # Hard prop (higher line)
+                {'prop_type': 'receiving_yards', 'line_value': receiving_yards_avg * 1.4, 'difficulty': 'HARD'}
+            ]
+        elif position == 'WR':
+            # WR: 2 medium, 1 easy, 1 hard (4 total props)
+            receiving_yards_avg = player_stats.get('receiving_yards_avg')
+            receptions_avg = player_stats.get('receptions_avg')
+            
+            if not all([receiving_yards_avg, receptions_avg]):
+                self.logger.warning(f"Incomplete WR stats for {player_name}")
+                return []
+            
+            props = [
+                {'prop_type': 'receiving_yards', 'line_value': receiving_yards_avg, 'difficulty': 'MEDIUM'},
+                {'prop_type': 'receptions', 'line_value': receptions_avg, 'difficulty': 'MEDIUM'},
+                # Easy prop (lower line)
+                {'prop_type': 'receiving_yards', 'line_value': receiving_yards_avg * 0.8, 'difficulty': 'EASY'},
+                # Hard prop (higher line)
+                {'prop_type': 'receptions', 'line_value': receptions_avg * 1.3, 'difficulty': 'HARD'}
+            ]
+        elif position == 'TE':
+            # TE: 2 medium, 1 easy, 1 hard (4 total props)
+            receiving_yards_avg = player_stats.get('receiving_yards_avg')
+            receptions_avg = player_stats.get('receptions_avg')
+            
+            if not all([receiving_yards_avg, receptions_avg]):
+                self.logger.warning(f"Incomplete TE stats for {player_name}")
+                return []
+            
+            props = [
+                {'prop_type': 'receiving_yards', 'line_value': receiving_yards_avg, 'difficulty': 'MEDIUM'},
+                {'prop_type': 'receptions', 'line_value': receptions_avg, 'difficulty': 'MEDIUM'},
+                # Easy prop (lower line)
+                {'prop_type': 'receiving_yards', 'line_value': receiving_yards_avg * 0.8, 'difficulty': 'EASY'},
+                # Hard prop (higher line)
+                {'prop_type': 'receptions', 'line_value': receptions_avg * 1.3, 'difficulty': 'HARD'}
+            ]
+        
+        # Add implied probabilities based on historical performance
+        for prop in props:
+            prop['implied_probability'] = 52.0  # Would calculate based on historical hit rate
+            
+        return props
+
+    def _get_player_historical_stats(self, player_name, position):
+        """Get player's historical stats from NFL API or database"""
+        try:
+            # Try to fetch from NFL stats API first
+            stats = self._fetch_nfl_player_stats(player_name, position)
+            if stats:
+                return stats
+            
+            # If API fails, try local database
+            stats = self._fetch_local_player_stats(player_name, position)
+            if stats:
+                return stats
+                
+            # If no data available, return None to skip this player
+            self.logger.warning(f"No historical stats found for {player_name} ({position})")
+            return None
+            
+        except Exception as e:
+            self.logger.error(f"Error fetching stats for {player_name}: {e}")
+            return None
+
+    def _fetch_nfl_player_stats(self, player_name, position):
+        """Fetch player stats from NFL API"""
+        try:
+            # Use ESPN API for NFL stats (similar to how MLB model works)
+            return self._get_real_nfl_player_stats(player_name, position)
+            
+        except Exception as e:
+            self.logger.error(f"NFL API fetch failed for {player_name}: {e}")
+            return None
+
+    def _get_real_nfl_player_stats(self, player_name, position):
+        """Get real player stats from NFL Stats API (similar to MLB model)"""
+        try:
+            # NFL Stats API (similar to MLB's statsapi.mlb.com)
+            nfl_base_url = "https://api.nfl.com/v1"
+            
+            # Search for player first
+            player_id = self._find_nfl_player_id(player_name, position)
+            if not player_id:
+                self.logger.warning(f"Could not find NFL player ID for {player_name}")
+                return None
+            
+            # Get stats from last 2 seasons (similar to MLB model)
+            current_year = datetime.now().year
+            seasons = [current_year - 1, current_year - 2] if datetime.now().month < 9 else [current_year, current_year - 1]
+            
+            all_game_logs = []
+            
+            for season in seasons:
+                # NFL API call for player game logs
+                url = f"{nfl_base_url}/players/{player_id}/stats"
+                params = {
+                    'season': season,
+                    'seasonType': 'REG',  # Regular season
+                    'statType': 'game'
+                }
+                
+                response = requests.get(url, params=params, headers=self.headers, timeout=15)
+                if response.status_code == 200:
+                    data = response.json()
+                    season_logs = self._parse_nfl_game_logs(data, position)
+                    if season_logs:
+                        all_game_logs.extend(season_logs)
+                else:
+                    self.logger.warning(f"NFL API returned {response.status_code} for {player_name} season {season}")
+            
+            if not all_game_logs:
+                self.logger.warning(f"No game logs found for {player_name}")
+                return None
+            
+            # Calculate weighted averages (recent games weighted more heavily)
+            return self._calculate_weighted_nfl_averages(all_game_logs, position)
+                
+        except Exception as e:
+            self.logger.error(f"Error fetching NFL stats for {player_name}: {e}")
+            return None
+
+    def _find_nfl_player_id(self, player_name, position):
+        """Find NFL player ID by searching (similar to MLB model)"""
+        try:
+            # NFL Stats API search
+            nfl_base_url = "https://api.nfl.com/v1"
+            search_url = f"{nfl_base_url}/players/search"
+            params = {
+                'search': player_name,
+                'active': 'true',
+                'position': position
+            }
+            
+            response = requests.get(search_url, params=params, headers=self.headers, timeout=10)
+            if response.status_code == 200:
+                data = response.json()
+                players = data.get('players', [])
+                
+                # Find best match by name and position
+                for player in players:
+                    full_name = f"{player.get('firstName', '')} {player.get('lastName', '')}".strip()
+                    if (full_name.lower() == player_name.lower() or 
+                        player_name.lower() in full_name.lower()):
+                        return player.get('playerId')
+                
+                # If no exact match, return first result
+                if players:
+                    return players[0].get('playerId')
+                    
+            return None
+            
+        except Exception as e:
+            self.logger.error(f"Error finding NFL player ID for {player_name}: {e}")
+            return None
+
+    def _parse_nfl_game_logs(self, data, position):
+        """Parse NFL game logs from API response (similar to MLB model)"""
+        try:
+            games = data.get('games', [])
+            if not games:
+                return []
+            
+            game_logs = []
+            for game in games:
+                stats = game.get('stats', {})
+                if position == 'QB':
+                    game_logs.append({
+                        'passing_yards': stats.get('passingYards', 0),
+                        'passing_tds': stats.get('passingTouchdowns', 0),
+                        'completions': stats.get('passingCompletions', 0),
+                        'rushing_yards': stats.get('rushingYards', 0),
+                        'game_date': game.get('gameDate', '')
+                    })
+                elif position == 'RB':
+                    game_logs.append({
+                        'rushing_yards': stats.get('rushingYards', 0),
+                        'receiving_yards': stats.get('receivingYards', 0),
+                        'receptions': stats.get('receptions', 0),
+                        'game_date': game.get('gameDate', '')
+                    })
+                elif position in ['WR', 'TE']:
+                    game_logs.append({
+                        'receiving_yards': stats.get('receivingYards', 0),
+                        'receptions': stats.get('receptions', 0),
+                        'game_date': game.get('gameDate', '')
+                    })
+            
+            return game_logs
+            
+        except Exception as e:
+            self.logger.error(f"Error parsing NFL game logs: {e}")
+            return []
+
+    def _calculate_weighted_nfl_averages(self, game_logs, position):
+        """Calculate weighted averages with recent games weighted more heavily (similar to MLB model)"""
+        try:
+            if not game_logs:
+                return None
+            
+            # Sort games by date (most recent first)
+            game_logs.sort(key=lambda x: x.get('game_date', ''), reverse=True)
+            
+            # Weight recent games more heavily (similar to MLB model)
+            weights = []
+            for i in range(len(game_logs)):
+                # Recent games get higher weights (exponential decay)
+                weight = 1.0 / (1.0 + i * 0.1)  # 1.0, 0.91, 0.83, 0.77, etc.
+                weights.append(weight)
+            
+            if position == 'QB':
+                return self._calculate_weighted_qb_averages(game_logs, weights)
+            elif position == 'RB':
+                return self._calculate_weighted_rb_averages(game_logs, weights)
+            elif position in ['WR', 'TE']:
+                return self._calculate_weighted_receiver_averages(game_logs, weights)
+            
+            return None
+            
+        except Exception as e:
+            self.logger.error(f"Error calculating weighted NFL averages: {e}")
+            return None
+
+    def _calculate_weighted_qb_averages(self, game_logs, weights):
+        """Calculate weighted QB averages"""
+        try:
+            passing_yards = [g.get('passing_yards', 0) for g in game_logs]
+            passing_tds = [g.get('passing_tds', 0) for g in game_logs]
+            completions = [g.get('completions', 0) for g in game_logs]
+            rushing_yards = [g.get('rushing_yards', 0) for g in game_logs]
+            
+            # Calculate weighted averages
+            weighted_passing_yards = sum(y * w for y, w in zip(passing_yards, weights)) / sum(weights)
+            weighted_passing_tds = sum(t * w for t, w in zip(passing_tds, weights)) / sum(weights)
+            weighted_completions = sum(c * w for c, w in zip(completions, weights)) / sum(weights)
+            weighted_rushing_yards = sum(r * w for r, w in zip(rushing_yards, weights)) / sum(weights)
+            
+            return {
+                'passing_yards_avg': round(weighted_passing_yards, 1),
+                'passing_tds_avg': round(weighted_passing_tds, 1),
+                'completions_avg': round(weighted_completions, 1),
+                'rushing_yards_avg': round(weighted_rushing_yards, 1)
+            }
+            
+        except Exception as e:
+            self.logger.error(f"Error calculating weighted QB averages: {e}")
+            return None
+
+    def _calculate_weighted_rb_averages(self, game_logs, weights):
+        """Calculate weighted RB averages"""
+        try:
+            rushing_yards = [g.get('rushing_yards', 0) for g in game_logs]
+            receiving_yards = [g.get('receiving_yards', 0) for g in game_logs]
+            receptions = [g.get('receptions', 0) for g in game_logs]
+            
+            # Calculate weighted averages
+            weighted_rushing_yards = sum(y * w for y, w in zip(rushing_yards, weights)) / sum(weights)
+            weighted_receiving_yards = sum(y * w for y, w in zip(receiving_yards, weights)) / sum(weights)
+            weighted_receptions = sum(r * w for r, w in zip(receptions, weights)) / sum(weights)
+            
+            return {
+                'rushing_yards_avg': round(weighted_rushing_yards, 1),
+                'receiving_yards_avg': round(weighted_receiving_yards, 1),
+                'receptions_avg': round(weighted_receptions, 1)
+            }
+            
+        except Exception as e:
+            self.logger.error(f"Error calculating weighted RB averages: {e}")
+            return None
+
+    def _calculate_weighted_receiver_averages(self, game_logs, weights):
+        """Calculate weighted WR/TE averages"""
+        try:
+            receiving_yards = [g.get('receiving_yards', 0) for g in game_logs]
+            receptions = [g.get('receptions', 0) for g in game_logs]
+            
+            # Calculate weighted averages
+            weighted_receiving_yards = sum(y * w for y, w in zip(receiving_yards, weights)) / sum(weights)
+            weighted_receptions = sum(r * w for r, w in zip(receptions, weights)) / sum(weights)
+            
+            return {
+                'receiving_yards_avg': round(weighted_receiving_yards, 1),
+                'receptions_avg': round(weighted_receptions, 1)
+            }
+            
+        except Exception as e:
+            self.logger.error(f"Error calculating weighted receiver averages: {e}")
+            return None
+
+
+    def _fetch_local_player_stats(self, player_name, position):
+        """Fetch player stats from local database"""
+        try:
+            # This would query a local database with historical NFL stats
+            # For now, return None to indicate no local database
+            return None
+            
+        except Exception as e:
+            self.logger.error(f"Local database fetch failed for {player_name}: {e}")
+            return None
 def main():
     """Main entry point"""
     import sys

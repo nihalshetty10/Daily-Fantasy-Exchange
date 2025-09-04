@@ -1,8 +1,8 @@
-# Daily Fantasy Exchange 🏈⚾🏀
+# Daily Fantasy Exchange 
 
 A real-time sports betting platform for daily fantasy sports with machine learning-powered prop generation and live trading capabilities.
 
-## 🚀 Features
+## Features
 
 - **MLB Prop Generation**: AI-powered player prop creation using historical data
 - **Live Trading Platform**: Real-time contract buying/selling with order book
@@ -10,7 +10,7 @@ A real-time sports betting platform for daily fantasy sports with machine learni
 - **Portfolio Management**: Track your contracts and manage risk
 - **Responsive Web Interface**: Modern, mobile-friendly trading dashboard
 
-## 🏗️ Architecture
+## Architecture
 
 - **Frontend**: HTML/CSS/JavaScript with Bootstrap
 - **Backend**: Flask (Python) with SQLAlchemy ORM
@@ -18,7 +18,7 @@ A real-time sports betting platform for daily fantasy sports with machine learni
 - **ML Engine**: Custom algorithms for prop generation
 - **Live Tracker**: Background service for game status updates
 
-## 🛠️ Installation
+## Installation
 
 1. **Clone the repository**
    ```bash
@@ -51,7 +51,7 @@ A real-time sports betting platform for daily fantasy sports with machine learni
    - Main Dashboard: http://127.0.0.1:8002/i
    - Login Page: http://127.0.0.1:8002/i8
 
-## 📊 How It Works
+## How It Works
 
 ### Prop Generation
 - Scrapes MLB game data and player statistics
@@ -69,12 +69,7 @@ A real-time sports betting platform for daily fantasy sports with machine learni
 - **UPCOMING**: Full trading available
 - **LIVE**: Can only buy previously sold contracts, sell owned contracts
 - **FINAL**: Cash out winning contracts
-
-
-
-
-- [ ] Real-time notifications
-- [ ] Advanced analytics dashboard
+advanced analytics dashboard
 
 ---
 

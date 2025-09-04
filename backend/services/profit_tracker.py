@@ -101,16 +101,27 @@ class ProfitTracker:
                 ).fetchall()
                 
                 leaderboard = []
-                for i, row in enumerate(result, 1):
+                current_position = 1
+                previous_profit = None
+                
+                for i, row in enumerate(result):
+                    net_profit = float(row.net_profit)
+                    
+                    # If this user's profit is different from the previous user, update position
+                    if previous_profit is not None and net_profit != previous_profit:
+                        current_position = i + 1
+                    
                     full_name = f"{row.first_name} {row.last_name}" if row.first_name and row.last_name else row.username
                     leaderboard.append({
-                        'position': i,
+                        'position': current_position,
                         'user_id': row.id,
                         'username': row.username,
                         'full_name': full_name,
-                        'net_profit': float(row.net_profit),
+                        'net_profit': net_profit,
                         'balance': float(row.balance)
                     })
+                    
+                    previous_profit = net_profit
                 
                 return leaderboard
         except Exception as e:

@@ -2011,6 +2011,10 @@
                 
                 loadMarketData();
                 loadPortfolio();
+                
+                // Update leaderboard and platform stats
+                loadLeaderboard();
+                loadPlatformStats();
             }, 10000); // Update every 10 seconds
             
             // Add separate interval for game status updates (more frequent)

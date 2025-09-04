@@ -9,7 +9,9 @@ from flask import Flask, render_template, redirect, jsonify, request, session
 from backend.services.live_tracker import LiveGameTracker
 from backend.db import Base, engine, SessionLocal
 from backend.models.user import User
+from backend.models.transaction import Transaction
 from backend.api.auth_routes import auth_bp
+from backend.api.leaderboard_routes import leaderboard_bp
 
 
 def create_app():
@@ -20,6 +22,7 @@ def create_app():
     
     # Register blueprints
     app.register_blueprint(auth_bp)
+    app.register_blueprint(leaderboard_bp)
 
     # Ensure tables exist (safe to call repeatedly)
     try:

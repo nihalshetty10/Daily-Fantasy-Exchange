@@ -260,12 +260,51 @@ class LiveGameMonitor:
             elif prop_type == 'rbis':
                 # Simulate RBIs (0-4 range)
                 return random.randint(0, 4)
-            elif prop_type == 'walks':
-                # Simulate walks (0-4 range)
-                return random.randint(0, 4)
+            elif prop_type == 'total_bases':
+                # Simulate total bases (0-12 range)
+                return random.randint(0, 12)
+            elif prop_type == 'pitches':
+                # Simulate pitches (50-120 range)
+                return random.randint(50, 120)
             elif prop_type == 'era':
                 # Simulate ERA (0.0-10.0 range)
                 return round(random.uniform(0.0, 10.0), 2)
+            elif prop_type == 'passing_yards':
+                # Simulate passing yards (100-400 range)
+                return random.randint(100, 400)
+            elif prop_type == 'passing_tds':
+                # Simulate passing TDs (0-5 range)
+                return random.randint(0, 5)
+            elif prop_type == 'completions':
+                # Simulate completions (10-35 range)
+                return random.randint(10, 35)
+            elif prop_type == 'rushing_yards':
+                # Simulate rushing yards (0-150 range)
+                return random.randint(0, 150)
+            elif prop_type == 'receiving_yards':
+                # Simulate receiving yards (0-200 range)
+                return random.randint(0, 200)
+            elif prop_type == 'receptions':
+                # Simulate receptions (0-15 range)
+                return random.randint(0, 15)
+            elif prop_type == 'points':
+                # Simulate points (0-50 range)
+                return random.randint(0, 50)
+            elif prop_type == 'rebounds':
+                # Simulate rebounds (0-20 range)
+                return random.randint(0, 20)
+            elif prop_type == 'assists':
+                # Simulate assists (0-15 range)
+                return random.randint(0, 15)
+            elif prop_type == 'steals':
+                # Simulate steals (0-5 range)
+                return random.randint(0, 5)
+            elif prop_type == 'blocks':
+                # Simulate blocks (0-8 range)
+                return random.randint(0, 8)
+            elif prop_type == 'threes_made':
+                # Simulate threes made (0-10 range)
+                return random.randint(0, 10)
             else:
                 # Default simulation
                 return random.randint(0, 10)

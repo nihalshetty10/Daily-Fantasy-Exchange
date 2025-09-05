@@ -30,7 +30,7 @@ class Config:
             }
         },
         'MLB': {
-            'prop_types': ['HITS', 'TOTAL_BASES', 'RUNS', 'RBIS', 'WALKS'],
+            'prop_types': ['hits', 'runs', 'rbis', 'total_bases', 'strikeouts', 'pitches', 'era'],
             'difficulty_levels': {
                 'EASY': {'min_prob': 0.75, 'max_prob': 0.85},
                 'MEDIUM': {'min_prob': 0.40, 'max_prob': 0.50},
@@ -38,7 +38,7 @@ class Config:
             }
         },
         'NFL': {
-            'prop_types': ['PASSING_YARDS', 'RUSHING_YARDS', 'RECEIVING_YARDS', 'TOUCHDOWNS'],
+            'prop_types': ['Passing Yards', 'Passing TDs', 'Completions', 'Rushing Yards', 'Receiving Yards', 'Receptions'],
             'difficulty_levels': {
                 'EASY': {'min_prob': 0.75, 'max_prob': 0.85},
                 'MEDIUM': {'min_prob': 0.40, 'max_prob': 0.50},

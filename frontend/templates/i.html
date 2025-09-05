@@ -1429,6 +1429,42 @@
             }
         }
         
+        // Check for status changes during live updates
+        function checkForStatusChanges() {
+            // This would typically check against a live API or WebSocket for real status changes
+            // For now, we'll simulate this by checking if any props should transition based on time
+            const now = new Date();
+            
+            realProps.forEach(prop => {
+                const oldStatus = prop.status_badge;
+                let newStatus = oldStatus;
+                
+                // Simple time-based status transition (in a real app, this would come from live data)
+                if (prop.status_badge === 'UPCOMING' && prop.formatted_game_time !== 'TBD') {
+                    // Parse game time and check if it should be LIVE
+                    // This is a simplified check - in reality, you'd have more sophisticated logic
+                    const gameTime = new Date(prop.formatted_game_time);
+                    if (now >= gameTime) {
+                        newStatus = 'LIVE';
+                    }
+                }
+                
+                if (newStatus !== oldStatus) {
+                    prop.status_badge = newStatus;
+                    handleGameStatusChange(prop);
+                    
+                    // Handle specific status transitions
+                    if (newStatus === 'LIVE' && oldStatus === 'UPCOMING') {
+                        const gameId = prop.game_id;
+                        handleGameStarted(gameId);
+                    } else if (newStatus === 'FINAL' && oldStatus === 'LIVE') {
+                        const gameId = prop.game_id;
+                        handleGameFinished(gameId);
+                    }
+                }
+            });
+        }
+
         // Handle live game transitions
         function handleGameStatusChange(prop) {
             if (prop.status_badge === 'LIVE') {
@@ -2065,6 +2101,9 @@
                         position.live_price = prop.live_contract_price;
                     }
                 });
+                
+                // Check for status changes (UPCOMING -> LIVE -> FINAL)
+                checkForStatusChanges();
                 
                 // Check for cancelled games and process refunds
                 checkForCancelledGames();
@@ -2928,11 +2967,18 @@
         function handleGameStarted(gameId) {
             console.log(`🚀 Game ${gameId} has started!`);
             
+            // Handle contract expiration for all props of this game
+            const gameProps = realProps.filter(prop => prop.game_id === gameId);
+            gameProps.forEach(prop => {
+                prop.status_badge = 'LIVE';
+                handleGameStatusChange(prop);
+            });
+            
             // Start live price updates for this game's props
             startLivePriceUpdates(gameId);
             
             // Show notification
-            showNotification('Game has started! Live updates are now active.');
+            showNotification('Game has started! Unsold contracts have expired. Live updates are now active.');
         }
         
         // Handle game finished (status changed to FINAL)

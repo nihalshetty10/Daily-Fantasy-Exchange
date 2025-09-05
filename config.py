@@ -22,7 +22,7 @@ class Config:
     # Sports Configuration
     SPORTS = {
         'NBA': {
-            'prop_types': ['POINTS', 'REBOUNDS', 'ASSISTS', 'STEALS', 'BLOCKS'],
+            'prop_types': ['points', 'rebounds', 'assists', 'steals', 'blocks', 'threes_made'],
             'difficulty_levels': {
                 'EASY': {'min_prob': 0.75, 'max_prob': 0.85},
                 'MEDIUM': {'min_prob': 0.40, 'max_prob': 0.50},

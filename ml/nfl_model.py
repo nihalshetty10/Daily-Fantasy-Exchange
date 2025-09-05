@@ -270,7 +270,7 @@ class NFLScraper:
                         game_day = day_match.group(1).upper() if day_match else None
                         
                         if game_day == current_day_name or not game_day:  # Include if day matches or no day specified
-                        games_out.append({
+                            games_out.append({
                                 'away_team': away_team,
                                 'home_team': home_team,
                             'game_time': game_time,
@@ -281,7 +281,7 @@ class NFLScraper:
                 
                 except Exception as e:
                     self.logger.warning(f"Error parsing game container: {e}")
-                        continue
+                    continue
             
             self.logger.info(f"Found {len(games_out)} games for today from nfl.com")
             return games_out
@@ -1553,10 +1553,10 @@ class NFLModel:
                 
                 # Fallback: search for patterns like "ABC @ DEF" in tex
                 if not team_names['away_team_name'] or not team_names['home_team_name']:
-                m2 = re.search(r"([A-Za-z .'-]{2,})\s+@\s+([A-Za-z .'-]{2,})", card.get_text(" ", strip=True))
-                if m2:
-                    team_names['away_team_name'] = m2.group(1)
-                    team_names['home_team_name'] = m2.group(2)
+                    m2 = re.search(r"([A-Za-z .'-]{2,})\s+@\s+([A-Za-z .'-]{2,})", card.get_text(" ", strip=True))
+                    if m2:
+                        team_names['away_team_name'] = m2.group(1)
+                        team_names['home_team_name'] = m2.group(2)
                 key = None
                 if team_names['away_team_name'] and team_names['home_team_name']:
                     key = f"{team_names['away_team_name']} @ {team_names['home_team_name']}"

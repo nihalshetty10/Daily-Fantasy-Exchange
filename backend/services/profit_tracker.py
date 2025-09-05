@@ -166,6 +166,29 @@ class ProfitTracker:
             return []
     
     @staticmethod
+    def get_daily_transaction_count(user_id: int) -> int:
+        """Get count of transactions for a user today"""
+        try:
+            from sqlalchemy import text
+            
+            with next(get_db_session()) as db:
+                result = db.execute(
+                    text("""
+                        SELECT COUNT(*) as count
+                        FROM transactions 
+                        WHERE user_id = :user_id 
+                        AND DATE(created_at) = CURDATE()
+                        AND transaction_type IN ('BUY', 'SELL')
+                    """),
+                    {'user_id': user_id}
+                ).fetchone()
+                
+                return result.count if result else 0
+        except Exception as e:
+            print(f"Error getting daily transaction count: {e}")
+            return 0
+    
+    @staticmethod
     def record_prop_bet(user_id: int, prop_id: str, player_name: str, sport: str, bet_amount: float) -> bool:
         """Record a prop bet transaction"""
         return ProfitTracker.record_transaction(

@@ -315,7 +315,7 @@
                                 <form id="register-form" class="mt-3">
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <div class="mb-3">
+                                    <div class="mb-3">
                                                 <label for="register-first-name" class="form-label">First Name</label>
                                                 <input type="text" class="form-control" id="register-first-name">
                                             </div>
@@ -485,6 +485,12 @@
                                 <span>Balance:</span>
                                 <span class="fw-bold" id="user-balance">$10,000.00</span>
                             </div>
+                            <div class="mt-2">
+                                <small class="text-muted">
+                                    <div id="daily-transaction-limit">0/15 daily transactions</div>
+                                    <div id="portfolio-limit">0/10 contracts</div>
+                                </small>
+                            </div>
                             <div id="portfolio-items">
                                 <!-- Portfolio items will be loaded here -->
                             </div>
@@ -513,7 +519,7 @@
                                 <!-- Trade history will be loaded here -->
                             </div>
                         </div>
-                    </div>
+                        </div>
 
                     <!-- Leaderboard -->
                     <div class="card mb-3">
@@ -522,7 +528,7 @@
                             <button class="btn btn-sm btn-outline-primary" onclick="refreshLeaderboard()">
                                 <i class="fas fa-sync-alt"></i>
                             </button>
-                        </div>
+                    </div>
                         <div class="card-body">
                             <div id="leaderboard-content">
                                 <!-- Leaderboard will be loaded here -->
@@ -660,6 +666,7 @@
         let userPortfolio = [];
         let tradeHistory = [];
         let pendingOrders = [];
+        let userLimits = { daily_transactions: { current: 0, limit: 15, remaining: 15 }, portfolio: { limit: 10 } };
         let orderBook = {}; // Store order book data for each prop
 
         // Real MLB props loaded from scraper
@@ -853,7 +860,7 @@
                 return [];
             }
         }
-
+        
         // Real MLB props only
         let mockProps = [];
 
@@ -885,7 +892,7 @@
                 
                 if (response.ok) {
                     currentUser = data.user;
-                    showDashboard();
+            showDashboard();
                     showToast('Login successful!', 'success');
                 } else {
                     showToast(data.error || 'Login failed', 'error');
@@ -959,7 +966,7 @@
                 try {
                     mlb = await loadRealMLBProps();
                     console.log('✅ MLB props loaded:', mlb.length);
-                } catch (error) {
+            } catch (error) {
                     console.error('❌ Error loading MLB props:', error);
                     mlb = [];
                 }
@@ -976,26 +983,29 @@
                 console.log('✅ Total props loaded:', realProps.length);
                 
                 // Remove loading indicator
-                const loadingDiv = document.getElementById('loading-indicator');
-                if (loadingDiv) {
-                    loadingDiv.remove();
+                const loadingIndicator = document.getElementById('loading-indicator');
+                if (loadingIndicator) {
+                    loadingIndicator.remove();
                 }
                 
                 // Use the real props for the interface
                 window.REAL_PROPS = realProps;
                 renderProps(realProps);
-                startLiveUpdates();
+            startLiveUpdates();
                 
                 // Load leaderboard
                 loadLeaderboard();
+                
+                // Load user limits
+                loadUserLimits();
                 
             } catch (error) {
                 console.error('❌ Error in prop loading:', error);
                 
                 // Remove loading indicator
-                const loadingDiv = document.getElementById('loading-indicator');
-                if (loadingDiv) {
-                    loadingDiv.remove();
+                const loadingIndicator = document.getElementById('loading-indicator');
+                if (loadingIndicator) {
+                    loadingIndicator.remove();
                 }
                 
                 // Show error message to user
@@ -1004,7 +1014,7 @@
                 errorDiv.innerHTML = 'Error loading props. Please refresh the page.';
                 document.querySelector('.container').prepend(errorDiv);
             }
-         }
+        }
 
         function logout() {
             currentUser = { username: 'Demo User', balance: 10000 };
@@ -1135,13 +1145,13 @@
                             </div>
                                 <span class="status-badge ${statusClass}">${prop.status_badge}</span>
                             </div>
-                            <p class="text-muted mb-2">${prop.sport} • ${formatPropType(prop.prop_type)} • ${prop.difficulty}</p>
+                            <p class="text-muted mb-2">${prop.sport} • ${formatPropType(prop.prop_type)} Contest Points • ${prop.difficulty}</p>
                             
                             ${prop.status_badge === 'LIVE' ? `
                                 <div class="game-info">
-                                    <small><strong>Game Status:</strong> <span class="text-danger">LIVE - Trading Closed</span></small><br>
-                                    <small><strong>Note:</strong> Game is in progress, contracts can be cashed out when final</small>
-                        </div>
+                                    <small><strong>Game Status:</strong> <span class="text-danger">LIVE - New Contracts Unavailable</span></small><br>
+                                    <small><strong>Note:</strong> Game in progress - only existing contracts can be traded</small>
+                                </div>
                             ` : ''}
                             
                             ${prop.status_badge === 'FINAL' ? `
@@ -1182,7 +1192,7 @@
                                 <strong>Line:</strong> ${prop.line_value} | 
                                 <strong>Current Price:</strong> <span class="live-price">${prop.live_contract_price.toFixed(2)}</span>
                                 <br><small class="${prop.available_contracts <= 5 ? 'text-danger' : prop.available_contracts <= 15 ? 'text-warning' : 'text-muted'}">
-                                    Contracts: ${prop.available_contracts}/${prop.total_contracts} available
+                                    Available: ${prop.available_contracts}/${prop.total_contracts} contracts
                                     ${prop.available_contracts <= 5 ? ' ⚠️ LOW' : prop.available_contracts <= 15 ? ' ⚡ FEW LEFT' : ''}
                                 </small>
                             </div>
@@ -1287,12 +1297,12 @@
                     <div class="row">
                         <div class="col-md-6">
                             <p><strong>Player:</strong> ${prop.player_name} (${prop.player_team})</p>
-                            <p><strong>Prop:</strong> ${prop.prop_type.replace(/_/g, ' ').toUpperCase()} ${type.toUpperCase()} ${prop.line_value}</p>
+                            <p><strong>Contest Points:</strong> ${prop.prop_type.replace(/_/g, ' ').toUpperCase()} ${type.toUpperCase()} ${prop.line_value}</p>
                             <p><strong>Sport:</strong> ${prop.sport} • <strong>Difficulty:</strong> ${prop.difficulty}</p>
                         </div>
                         <div class="col-md-6">
                             <p><strong>Available Contracts:</strong> ${prop.available_contracts}/${prop.total_contracts}</p>
-                            <p><strong>Current Portfolio:</strong> ${userPortfolio.length}/10 contracts</p>
+                            <p><strong>Portfolio Size:</strong> ${userPortfolio.length}/10 contracts</p>
                             <p><strong>Available Balance:</strong> $${currentUser.balance.toFixed(2)}</p>
                             <p><strong>Game Status:</strong> <span class="badge bg-${getStatusColor(prop.status_badge)}">${prop.status_badge}</span></p>
                         </div>
@@ -1341,40 +1351,58 @@
             const sellButtonColor = isTradingAvailable ? 'btn-danger' : 'btn-secondary';
 
             // Add Buy Options
+            const canBuy = prop.status_badge === 'UPCOMING';
+            const buyButtonFinalColor = canBuy ? buyButtonColor : 'btn-secondary';
+            const buyButtonFinalText = canBuy ? buyButtonText : 'New Contracts Unavailable';
+            
             buyOptions.innerHTML = `
                 <div class="mb-3">
                     <label class="form-label">Buy Now (Market Price)</label>
-                    <button type="button" class="btn ${buyButtonColor} w-100" onclick="executeTrade('buy', 'market')">
-                        ${buyButtonText}
+                    <button type="button" class="btn ${buyButtonFinalColor} w-100" onclick="executeTrade('buy', 'market')" 
+                            ${!canBuy ? 'disabled' : ''}>
+                        ${buyButtonFinalText}
                     </button>
+                    ${!canBuy ? '<small class="text-muted">Cannot buy new contracts after game starts</small>' : ''}
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Limit Buy Order</label>
                     <div class="input-group">
                         <span class="input-group-text">$</span>
-                        <input type="number" class="form-control" id="buy-limit-price" placeholder="0.00" step="0.01" min="0.01" max="99.99">
+                        <input type="number" class="form-control" id="buy-limit-price" placeholder="0.00" step="0.01" min="0.01" max="99.99" 
+                               ${!canBuy ? 'disabled' : ''}>
                     </div>
-                    <button type="button" class="btn btn-outline-success w-100 mt-2" onclick="executeTrade('buy', 'limit')">
+                    <button type="button" class="btn btn-outline-success w-100 mt-2" onclick="executeTrade('buy', 'limit')" 
+                            ${!canBuy ? 'disabled' : ''}>
                         Place Buy Order
                     </button>
                 </div>
             `;
 
             // Add Sell Options
+            const hasPosition = userPortfolio.some(p => p.prop_id === prop.id);
+            const canSell = hasPosition && (prop.status_badge === 'UPCOMING' || prop.status_badge === 'LIVE');
+            const sellButtonFinalColor = canSell ? sellButtonColor : 'btn-secondary';
+            const sellButtonFinalText = canSell ? sellButtonText : (hasPosition ? 'Game Final - Cash Out Available' : 'No Contracts Owned');
+            
             sellOptions.innerHTML = `
                 <div class="mb-3">
                     <label class="form-label">Sell Now (Market Price)</label>
-                    <button type="button" class="btn ${sellButtonColor} w-100" onclick="executeTrade('sell', 'market')">
-                        ${sellButtonText}
+                    <button type="button" class="btn ${sellButtonFinalColor} w-100" onclick="executeTrade('sell', 'market')" 
+                            ${!canSell ? 'disabled' : ''}>
+                        ${sellButtonFinalText}
                     </button>
+                    ${!canSell && hasPosition ? '<small class="text-muted">Game is final - use cash out instead</small>' : 
+                      !canSell && !hasPosition ? '<small class="text-muted">You do not own any contracts for this player</small>' : ''}
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Limit Sell Order</label>
                     <div class="input-group">
                         <span class="input-group-text">$</span>
-                        <input type="number" class="form-control" id="sell-limit-price" placeholder="0.00" step="0.01" min="0.01" max="99.99">
+                        <input type="number" class="form-control" id="sell-limit-price" placeholder="0.00" step="0.01" min="0.01" max="99.99" 
+                               ${!canSell ? 'disabled' : ''}>
                     </div>
-                    <button type="button" class="btn btn-outline-danger w-100 mt-2" onclick="executeTrade('sell', 'limit')">
+                    <button type="button" class="btn btn-outline-danger w-100 mt-2" onclick="executeTrade('sell', 'limit')" 
+                            ${!canSell ? 'disabled' : ''}>
                         Place Sell Order
                     </button>
                 </div>
@@ -1419,12 +1447,36 @@
 
         // New executeTrade function for order book system
         async function executeTrade(action, orderType = 'market') {
+            // Check daily transaction limit
+            if (userLimits.daily_transactions.remaining <= 0) {
+                alert(`Daily transaction limit reached (${userLimits.daily_transactions.limit} transactions). Please wait until tomorrow.`);
+                return;
+            }
+
             const quantity = 1; // Fixed to 1 contract per player
             const tradingProp = window.currentTradingProp;
             
             if (!tradingProp) return;
 
             const prop = tradingProp.prop;
+            
+            // Contract lifecycle rules
+            if (action === 'buy') {
+                // Check if game has started - no new contracts after game start
+                if (prop.status_badge === 'LIVE' || prop.status_badge === 'FINAL') {
+                    alert('Cannot purchase new contracts after game has started. You can only trade existing contracts during live games.');
+                    return;
+                }
+            } else if (action === 'sell') {
+                // For selling, check if user owns the contract
+                const position = userPortfolio.find(p => 
+                    p.prop_id === prop.id && p.trade_type === tradingProp.type
+                );
+                if (!position) {
+                    alert('You do not own any contracts for this player to sell.');
+                    return;
+                }
+            }
             
             if (action === 'buy') {
                 // Check portfolio limit (including pending buy orders)
@@ -1797,6 +1849,12 @@
                 
                 if (response.ok) {
                     console.log('✅ Transaction recorded in database');
+                    // Update daily transaction count
+                    if (userLimits.daily_transactions.current < userLimits.daily_transactions.limit) {
+                        userLimits.daily_transactions.current++;
+                        userLimits.daily_transactions.remaining = userLimits.daily_transactions.limit - userLimits.daily_transactions.current;
+                        updateLimitsDisplay();
+                    }
                     // Update leaderboard immediately after recording transaction
                     loadLeaderboard();
                 } else {
@@ -2140,7 +2198,7 @@
                 <div class="row">
                     <div class="col-md-6">
                         <p><strong>Player:</strong> ${portfolioItem.player_name} (${portfolioItem.team_name})</p>
-                        <p><strong>Prop:</strong> ${portfolioItem.prop_type.replace(/_/g, ' ').toUpperCase()} ${portfolioItem.trade_type.toUpperCase()}</p>
+                        <p><strong>Contest Points:</strong> ${portfolioItem.prop_type.replace(/_/g, ' ').toUpperCase()} ${portfolioItem.trade_type.toUpperCase()}</p>
                         <p><strong>Current Position:</strong> ${portfolioItem.quantity} contract(s)</p>
                     </div>
                     <div class="col-md-6">
@@ -2404,6 +2462,36 @@
 
         function refreshLeaderboard() {
             loadLeaderboard();
+        }
+
+        // Load user limits
+        async function loadUserLimits() {
+            try {
+                if (currentUser.id) {
+                    const response = await fetch(`${API_BASE}/transaction/limits/${currentUser.id}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        userLimits = data.limits;
+                        updateLimitsDisplay();
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading user limits:', error);
+            }
+        }
+
+        // Update limits display
+        function updateLimitsDisplay() {
+            const dailyElement = document.getElementById('daily-transaction-limit');
+            const portfolioElement = document.getElementById('portfolio-limit');
+            
+            if (dailyElement) {
+                dailyElement.textContent = `${userLimits.daily_transactions.current}/${userLimits.daily_transactions.limit} daily transactions`;
+            }
+            
+            if (portfolioElement) {
+                portfolioElement.textContent = `${userPortfolio.length}/${userLimits.portfolio.limit} contracts`;
+            }
         }
 
         // Initialize

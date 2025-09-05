@@ -238,3 +238,40 @@ def get_user_transactions(user_id):
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@transaction_bp.route('/limits/<int:user_id>', methods=['GET'])
+def get_user_limits(user_id):
+    """Get user's current limits (portfolio size, daily transactions)"""
+    try:
+        # Check if user is requesting their own limits or is admin
+        if 'user_id' not in session:
+            return jsonify({'error': 'User not authenticated'}), 401
+        
+        current_user_id = session['user_id']
+        if current_user_id != user_id:
+            # TODO: Add admin check here if needed
+            return jsonify({'error': 'Access denied'}), 403
+        
+        from config import config
+        from backend.services.profit_tracker import ProfitTracker
+        
+        daily_count = ProfitTracker.get_daily_transaction_count(user_id)
+        daily_limit = config['default'].DAILY_TRANSACTION_LIMIT
+        portfolio_limit = config['default'].MAX_PORTFOLIO_SIZE
+        
+        return jsonify({
+            'success': True,
+            'limits': {
+                'daily_transactions': {
+                    'current': daily_count,
+                    'limit': daily_limit,
+                    'remaining': max(0, daily_limit - daily_count)
+                },
+                'portfolio': {
+                    'limit': portfolio_limit
+                }
+            }
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500

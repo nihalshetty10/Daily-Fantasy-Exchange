@@ -17,6 +17,7 @@ class Config:
     MIN_PORTFOLIO_SIZE = 2
     MAX_PORTFOLIO_SIZE = 10
     INITIAL_BALANCE = 10000  # Starting balance for new users
+    DAILY_TRANSACTION_LIMIT = 15  # Maximum daily transactions (buy/sell) per user
     
     # Sports Configuration
     SPORTS = {

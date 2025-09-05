@@ -248,66 +248,44 @@ class LiveGameMonitor:
             # In production, this would fetch from live stats API
             # For now, simulate realistic values based on prop type
             
-            if prop_type == 'strikeouts':
-                # Simulate strikeouts (0-15 range)
-                return random.randint(0, 15)
-            elif prop_type == 'hits':
-                # Simulate hits (0-6 range)
-                return random.randint(0, 6)
-            elif prop_type == 'runs':
-                # Simulate runs (0-5 range)
-                return random.randint(0, 5)
-            elif prop_type == 'rbis':
-                # Simulate RBIs (0-4 range)
-                return random.randint(0, 4)
-            elif prop_type == 'total_bases':
-                # Simulate total bases (0-12 range)
-                return random.randint(0, 12)
-            elif prop_type == 'pitches':
-                # Simulate pitches (50-120 range)
-                return random.randint(50, 120)
-            elif prop_type == 'era':
-                # Simulate ERA (0.0-10.0 range)
-                return round(random.uniform(0.0, 10.0), 2)
-            elif prop_type == 'passing_yards':
-                # Simulate passing yards (100-400 range)
-                return random.randint(100, 400)
-            elif prop_type == 'passing_tds':
-                # Simulate passing TDs (0-5 range)
-                return random.randint(0, 5)
-            elif prop_type == 'completions':
-                # Simulate completions (10-35 range)
-                return random.randint(10, 35)
-            elif prop_type == 'rushing_yards':
-                # Simulate rushing yards (0-150 range)
-                return random.randint(0, 150)
-            elif prop_type == 'receiving_yards':
-                # Simulate receiving yards (0-200 range)
-                return random.randint(0, 200)
-            elif prop_type == 'receptions':
-                # Simulate receptions (0-15 range)
-                return random.randint(0, 15)
-            elif prop_type == 'points':
-                # Simulate points (0-50 range)
-                return random.randint(0, 50)
-            elif prop_type == 'rebounds':
-                # Simulate rebounds (0-20 range)
-                return random.randint(0, 20)
-            elif prop_type == 'assists':
-                # Simulate assists (0-15 range)
-                return random.randint(0, 15)
-            elif prop_type == 'steals':
-                # Simulate steals (0-5 range)
-                return random.randint(0, 5)
-            elif prop_type == 'blocks':
-                # Simulate blocks (0-8 range)
-                return random.randint(0, 8)
-            elif prop_type == 'threes_made':
-                # Simulate threes made (0-10 range)
-                return random.randint(0, 10)
+            # Define realistic ranges for different stat categories
+            stat_ranges = {
+                # MLB stats
+                'hits': (0, 6),
+                'runs': (0, 5), 
+                'rbis': (0, 4),
+                'total_bases': (0, 12),
+                'strikeouts': (0, 15),
+                'pitches': (50, 120),
+                'era': (0.0, 10.0),
+                
+                # NFL stats  
+                'passing_yards': (100, 400),
+                'passing_tds': (0, 5),
+                'completions': (10, 35),
+                'rushing_yards': (0, 150),
+                'receiving_yards': (0, 200),
+                'receptions': (0, 15),
+                
+                # NBA stats
+                'points': (0, 50),
+                'rebounds': (0, 20),
+                'assists': (0, 15),
+                'steals': (0, 5),
+                'blocks': (0, 8),
+                'threes_made': (0, 10)
+            }
+            
+            # Get range for this prop type, or use default
+            min_val, max_val = stat_ranges.get(prop_type, (0, 10))
+            
+            # Generate random value in appropriate range
+            if prop_type == 'era':
+                # ERA is a decimal value
+                return round(random.uniform(min_val, max_val), 2)
             else:
-                # Default simulation
-                return random.randint(0, 10)
+                # All other stats are integers
+                return random.randint(int(min_val), int(max_val))
                 
         except Exception as e:
             logger.error(f"Error getting live prop value: {e}")

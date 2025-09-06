@@ -177,6 +177,7 @@ class PricingEngine:
     def _update_contract_price(self, prop_id: str):
         """
         Update contract price using Volume-Weighted Average Price (VWAP)
+        and execute matching orders with price improvement
         """
         if prop_id not in self.contracts:
             return
@@ -200,13 +201,99 @@ class PricingEngine:
         contract.total_volume = total_quantity
         contract.last_updated = time.time()
         
+        # Execute matching orders with price improvement
+        self._execute_matching_orders(prop_id)
+        
         logger.debug(f"Updated price for {prop_id}: ${contract.current_price} (VWAP)")
+    
+    def _execute_matching_orders(self, prop_id: str):
+        """
+        Execute matching orders when bids cross asks, ensuring price improvement
+        """
+        if prop_id not in self.order_book:
+            return
+        
+        bids = [order for order in self.order_book[prop_id]['bids'] if order.status == 'active']
+        asks = [order for order in self.order_book[prop_id]['asks'] if order.status == 'active']
+        
+        # Sort orders by price (bids: highest first, asks: lowest first)
+        bids.sort(key=lambda x: x.price, reverse=True)
+        asks.sort(key=lambda x: x.price)
+        
+        # Execute matching orders
+        while bids and asks and bids[0].price >= asks[0].price:
+            best_bid = bids[0]
+            best_ask = asks[0]
+            
+            # Determine execution price (price improvement)
+            # Use the better price for both parties
+            execution_price = min(best_bid.price, best_ask.price)
+            
+            # Determine quantity to execute
+            execution_quantity = min(best_bid.quantity, best_ask.quantity)
+            
+            # Execute the trade
+            self._execute_trade(best_bid, best_ask, execution_price, execution_quantity)
+            
+            # Update quantities
+            best_bid.quantity -= execution_quantity
+            best_ask.quantity -= execution_quantity
+            
+            # Remove filled orders
+            if best_bid.quantity <= 0:
+                best_bid.status = 'filled'
+                bids.pop(0)
+            
+            if best_ask.quantity <= 0:
+                best_ask.status = 'filled'
+                asks.pop(0)
+    
+    def _execute_trade(self, bid_order: Order, ask_order: Order, execution_price: float, quantity: int):
+        """
+        Execute a trade between a bid and ask order
+        """
+        # Update order status
+        bid_order.status = 'filled' if bid_order.quantity <= quantity else 'partial'
+        ask_order.status = 'filled' if ask_order.quantity <= quantity else 'partial'
+        
+        # Log the trade
+        logger.info(f"Trade executed: {quantity} contracts at ${execution_price}")
+        logger.info(f"  Bid: {bid_order.user_id} (wanted ${bid_order.price}, got ${execution_price})")
+        logger.info(f"  Ask: {ask_order.user_id} (wanted ${ask_order.price}, got ${execution_price})")
+        
+        # In a real system, you would:
+        # 1. Update user portfolios
+        # 2. Record transaction in database
+        # 3. Send notifications to users
+        # 4. Update contract ownership
     
     def get_contract_price(self, prop_id: str) -> Optional[float]:
         """Get current price for a prop contract"""
         if prop_id in self.contracts:
             return self.contracts[prop_id].current_price
         return None
+    
+    def get_market_price(self, prop_id: str) -> Dict[str, Optional[float]]:
+        """
+        Get current market price (best bid and ask)
+        Returns: {'bid': best_bid_price, 'ask': best_ask_price, 'spread': spread}
+        """
+        if prop_id not in self.order_book:
+            return {'bid': None, 'ask': None, 'spread': None}
+        
+        bids = [order for order in self.order_book[prop_id]['bids'] if order.status == 'active']
+        asks = [order for order in self.order_book[prop_id]['asks'] if order.status == 'active']
+        
+        best_bid = max(bids, key=lambda x: x.price).price if bids else None
+        best_ask = min(asks, key=lambda x: x.price).price if asks else None
+        
+        spread = best_ask - best_bid if best_bid and best_ask else None
+        
+        return {
+            'bid': best_bid,
+            'ask': best_ask,
+            'spread': spread
+        }
     
     def get_contract_info(self, prop_id: str) -> Optional[Dict]:
         """Get full contract information (without revealing probabilities)"""

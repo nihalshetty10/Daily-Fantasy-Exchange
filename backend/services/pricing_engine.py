@@ -252,28 +252,29 @@ class PricingEngine:
         """
         Execute a trade between a bid and ask order
         Platform acts as middleman for DFS compliance
+        Users get price improvement, platform makes no profit on spreads
         """
         # Update order status
         bid_order.status = 'filled' if bid_order.quantity <= quantity else 'partial'
         ask_order.status = 'filled' if ask_order.quantity <= quantity else 'partial'
         
-        # Calculate platform profit (spread)
-        platform_profit = (bid_order.price - execution_price) * quantity
+        # Calculate user savings (price improvement)
+        user_savings = (bid_order.price - execution_price) * quantity
         
         # Log the trade with DFS-compliant structure
-        logger.info(f"Trade executed: {quantity} contracts")
+        logger.info(f"Trade executed: {quantity} contracts at ${execution_price}")
         logger.info(f"  DFS Structure:")
-        logger.info(f"    Bidder {bid_order.user_id} pays platform: ${bid_order.price * quantity:.2f}")
-        logger.info(f"    Platform pays asker {ask_order.user_id}: ${execution_price * quantity:.2f}")
-        logger.info(f"    Platform profit: ${platform_profit:.2f}")
+        logger.info(f"    Bidder {bid_order.user_id} pays: ${execution_price * quantity:.2f} (saved ${user_savings:.2f})")
+        logger.info(f"    Asker {ask_order.user_id} receives: ${execution_price * quantity:.2f}")
         logger.info(f"    Contract transferred: {ask_order.user_id} → Platform → {bid_order.user_id}")
+        logger.info(f"    Price improvement: User keeps the ${user_savings:.2f} savings!")
         
         # In a real system, you would:
         # 1. Update user portfolios (bidder gets contract, asker gets cash)
         # 2. Record transaction in database with platform as middleman
         # 3. Send notifications to users
         # 4. Update contract ownership (platform holds temporarily)
-        # 5. Track platform revenue from spreads
+        # 5. Platform makes money from fees/commissions, not spreads
     
     def get_contract_price(self, prop_id: str) -> Optional[float]:
         """Get current price for a prop contract"""

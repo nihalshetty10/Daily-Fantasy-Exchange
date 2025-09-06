@@ -1,0 +1,433 @@
+{
+  "props": [
+    {
+      "player_name": "P. Mahomes",
+      "prop_type": "passing_yards",
+      "line": 235,
+      "difficulty": "easy",
+      "implied_probability": 0.7533253245033703,
+      "game_id": "nfl_friday_sept5_1"
+    },
+    {
+      "player_name": "P. Mahomes",
+      "prop_type": "passing_yards",
+      "line": 269,
+      "difficulty": "medium",
+      "implied_probability": 0.4328389153717118
+    },
+    {
+      "player_name": "P. Mahomes",
+      "prop_type": "passing_yards",
+      "line": 266,
+      "difficulty": "medium",
+      "implied_probability": 0.45834426795234734
+    },
+    {
+      "player_name": "P. Mahomes",
+      "prop_type": "passing_yards",
+      "line": 304,
+      "difficulty": "hard",
+      "implied_probability": 0.11586267016217454,
+      "game_id": "nfl_friday_sept5_1"
+    },
+    {
+      "player_name": "P. Mahomes",
+      "prop_type": "passing_tds",
+      "line": 2,
+      "difficulty": "medium",
+      "implied_probability": 0.5849625965753289
+    },
+    {
+      "player_name": "P. Mahomes",
+      "prop_type": "passing_tds",
+      "line": 2,
+      "difficulty": "medium",
+      "implied_probability": 0.5402249747832277
+    },
+    {
+      "player_name": "I. Pacheco",
+      "prop_type": "rushing_yards",
+      "line": 20,
+      "difficulty": "easy",
+      "implied_probability": 0.768446452753078,
+      "game_id": "nfl_friday_sept5_1"
+    },
+    {
+      "player_name": "I. Pacheco",
+      "prop_type": "rushing_yards",
+      "line": 26,
+      "difficulty": "medium",
+      "implied_probability": 0.48994652238798186
+    },
+    {
+      "player_name": "I. Pacheco",
+      "prop_type": "rushing_yards",
+      "line": 30,
+      "difficulty": "medium",
+      "implied_probability": 0.4049547242892704
+    },
+    {
+      "player_name": "I. Pacheco",
+      "prop_type": "rushing_yards",
+      "line": 40,
+      "difficulty": "hard",
+      "implied_probability": 0.1181252033209053,
+      "game_id": "nfl_friday_sept5_1"
+    },
+    {
+      "player_name": "I. Pacheco",
+      "prop_type": "rushing_tds",
+      "line": 0,
+      "difficulty": "medium",
+      "implied_probability": 0.5034214261703919,
+      "game_id": "nfl_friday_sept5_1"
+    },
+    {
+      "player_name": "J. Smith-Schuster",
+      "prop_type": "receiving_yards",
+      "line": 65,
+      "difficulty": "easy",
+      "implied_probability": 0.7862049283957743,
+      "game_id": "nfl_friday_sept5_1"
+    },
+    {
+      "player_name": "J. Smith-Schuster",
+      "prop_type": "receiving_yards",
+      "line": 95,
+      "difficulty": "medium",
+      "implied_probability": 0.4352951932631274
+    },
+    {
+      "player_name": "J. Smith-Schuster",
+      "prop_type": "receiving_yards",
+      "line": 90,
+      "difficulty": "medium",
+      "implied_probability": 0.5005907492268187
+    },
+    {
+      "player_name": "J. Smith-Schuster",
+      "prop_type": "receiving_yards",
+      "line": 126,
+      "difficulty": "hard",
+      "implied_probability": 0.1730327282075439,
+      "game_id": "nfl_friday_sept5_1"
+    },
+    {
+      "player_name": "Travis",
+      "prop_type": "receiving_yards",
+      "line": 65,
+      "difficulty": "easy",
+      "implied_probability": 0.7822927925910923,
+      "game_id": "nfl_friday_sept5_1"
+    },
+    {
+      "player_name": "Travis",
+      "prop_type": "receiving_yards",
+      "line": 92,
+      "difficulty": "medium",
+      "implied_probability": 0.4777104228479895
+    },
+    {
+      "player_name": "Travis",
+      "prop_type": "receiving_yards",
+      "line": 89,
+      "difficulty": "medium",
+      "implied_probability": 0.5204173094044455
+    },
+    {
+      "player_name": "Travis",
+      "prop_type": "receiving_yards",
+      "line": 129,
+      "difficulty": "hard",
+      "implied_probability": 0.14813844541559293,
+      "game_id": "nfl_friday_sept5_1"
+    },
+    {
+      "player_name": "J. Herbert",
+      "prop_type": "passing_yards",
+      "line": 229,
+      "difficulty": "easy",
+      "implied_probability": 0.7933353661750624,
+      "game_id": "nfl_friday_sept5_1"
+    },
+    {
+      "player_name": "J. Herbert",
+      "prop_type": "passing_yards",
+      "line": 250,
+      "difficulty": "medium",
+      "implied_probability": 0.5917936476034074
+    },
+    {
+      "player_name": "J. Herbert",
+      "prop_type": "passing_yards",
+      "line": 262,
+      "difficulty": "medium",
+      "implied_probability": 0.48760401393350283
+    },
+    {
+      "player_name": "J. Herbert",
+      "prop_type": "passing_yards",
+      "line": 286,
+      "difficulty": "hard",
+      "implied_probability": 0.24188852259974747,
+      "game_id": "nfl_friday_sept5_1"
+    },
+    {
+      "player_name": "J. Herbert",
+      "prop_type": "passing_tds",
+      "line": 2,
+      "difficulty": "medium",
+      "implied_probability": 0.5465994642409603
+    },
+    {
+      "player_name": "J. Herbert",
+      "prop_type": "passing_tds",
+      "line": 2,
+      "difficulty": "medium",
+      "implied_probability": 0.406802336805378
+    },
+    {
+      "player_name": "O. Hampton",
+      "prop_type": "rushing_yards",
+      "line": 20,
+      "difficulty": "easy",
+      "implied_probability": 0.7550929247966297,
+      "game_id": "nfl_friday_sept5_1"
+    },
+    {
+      "player_name": "O. Hampton",
+      "prop_type": "rushing_yards",
+      "line": 30,
+      "difficulty": "medium",
+      "implied_probability": 0.404574311641544
+    },
+    {
+      "player_name": "O. Hampton",
+      "prop_type": "rushing_yards",
+      "line": 27,
+      "difficulty": "medium",
+      "implied_probability": 0.4644892035862306
+    },
+    {
+      "player_name": "O. Hampton",
+      "prop_type": "rushing_yards",
+      "line": 40,
+      "difficulty": "hard",
+      "implied_probability": 0.14351966996701188,
+      "game_id": "nfl_friday_sept5_1"
+    },
+    {
+      "player_name": "O. Hampton",
+      "prop_type": "rushing_tds",
+      "line": 0,
+      "difficulty": "medium",
+      "implied_probability": 0.5721579619579535,
+      "game_id": "nfl_friday_sept5_1"
+    },
+    {
+      "player_name": "L. McConkey",
+      "prop_type": "receiving_yards",
+      "line": 66,
+      "difficulty": "easy",
+      "implied_probability": 0.7648294838924947,
+      "game_id": "nfl_friday_sept5_1"
+    },
+    {
+      "player_name": "L. McConkey",
+      "prop_type": "receiving_yards",
+      "line": 90,
+      "difficulty": "medium",
+      "implied_probability": 0.5054104839487366
+    },
+    {
+      "player_name": "L. McConkey",
+      "prop_type": "receiving_yards",
+      "line": 91,
+      "difficulty": "medium",
+      "implied_probability": 0.4889938487677448
+    },
+    {
+      "player_name": "L. McConkey",
+      "prop_type": "receiving_yards",
+      "line": 132,
+      "difficulty": "hard",
+      "implied_probability": 0.1304712547382823,
+      "game_id": "nfl_friday_sept5_1"
+    },
+    {
+      "player_name": "Will Dissly",
+      "prop_type": "receiving_yards",
+      "line": 64,
+      "difficulty": "easy",
+      "implied_probability": 0.7989467845056875,
+      "game_id": "nfl_friday_sept5_1"
+    },
+    {
+      "player_name": "Will Dissly",
+      "prop_type": "receiving_yards",
+      "line": 90,
+      "difficulty": "medium",
+      "implied_probability": 0.4981167923181501
+    },
+    {
+      "player_name": "Will Dissly",
+      "prop_type": "receiving_yards",
+      "line": 89,
+      "difficulty": "medium",
+      "implied_probability": 0.5204239567014557
+    },
+    {
+      "player_name": "Will Dissly",
+      "prop_type": "receiving_yards",
+      "line": 122,
+      "difficulty": "hard",
+      "implied_probability": 0.201454420364398,
+      "game_id": "nfl_friday_sept5_1"
+    },
+    {
+      "player_name": "B. Mayfield",
+      "prop_type": "passing_yards",
+      "line": 230,
+      "difficulty": "easy",
+      "implied_probability": 0.7834181675861355,
+      "game_id": "nfl_friday_sept5_1"
+    },
+    {
+      "player_name": "B. Mayfield",
+      "prop_type": "passing_yards",
+      "line": 258,
+      "difficulty": "medium",
+      "implied_probability": 0.5137760735643179
+    },
+    {
+      "player_name": "B. Mayfield",
+      "prop_type": "passing_yards",
+      "line": 267,
+      "difficulty": "medium",
+      "implied_probability": 0.44945251217789817
+    },
+    {
+      "player_name": "B. Mayfield",
+      "prop_type": "passing_yards",
+      "line": 289,
+      "difficulty": "hard",
+      "implied_probability": 0.21929472713097375,
+      "game_id": "nfl_friday_sept5_1"
+    },
+    {
+      "player_name": "B. Mayfield",
+      "prop_type": "passing_tds",
+      "line": 2,
+      "difficulty": "medium",
+      "implied_probability": 0.43620645725611895
+    },
+    {
+      "player_name": "B. Mayfield",
+      "prop_type": "passing_tds",
+      "line": 2,
+      "difficulty": "medium",
+      "implied_probability": 0.5640016007715317
+    },
+    {
+      "player_name": "Bucky Irving",
+      "prop_type": "rushing_yards",
+      "line": 19,
+      "difficulty": "easy",
+      "implied_probability": 0.7991580317728351,
+      "game_id": "nfl_friday_sept5_1"
+    },
+    {
+      "player_name": "Bucky Irving",
+      "prop_type": "rushing_yards",
+      "line": 25,
+      "difficulty": "medium",
+      "implied_probability": 0.5275502082670805
+    },
+    {
+      "player_name": "Bucky Irving",
+      "prop_type": "rushing_yards",
+      "line": 28,
+      "difficulty": "medium",
+      "implied_probability": 0.4639086380127035
+    },
+    {
+      "player_name": "Bucky Irving",
+      "prop_type": "rushing_yards",
+      "line": 40,
+      "difficulty": "hard",
+      "implied_probability": 0.11940665903563367,
+      "game_id": "nfl_friday_sept5_1"
+    },
+    {
+      "player_name": "Bucky Irving",
+      "prop_type": "rushing_tds",
+      "line": 0,
+      "difficulty": "medium",
+      "implied_probability": 0.46890996114998207,
+      "game_id": "nfl_friday_sept5_1"
+    },
+    {
+      "player_name": "Tez Johnson",
+      "prop_type": "receiving_yards",
+      "line": 65,
+      "difficulty": "easy",
+      "implied_probability": 0.7838866172523321,
+      "game_id": "nfl_friday_sept5_1"
+    },
+    {
+      "player_name": "Tez Johnson",
+      "prop_type": "receiving_yards",
+      "line": 91,
+      "difficulty": "medium",
+      "implied_probability": 0.48757292800891366
+    },
+    {
+      "player_name": "Tez Johnson",
+      "prop_type": "receiving_yards",
+      "line": 91,
+      "difficulty": "medium",
+      "implied_probability": 0.49234071670424906
+    },
+    {
+      "player_name": "Tez Johnson",
+      "prop_type": "receiving_yards",
+      "line": 115,
+      "difficulty": "hard",
+      "implied_probability": 0.24941947532864553,
+      "game_id": "nfl_friday_sept5_1"
+    },
+    {
+      "player_name": "Cade Otton",
+      "prop_type": "receiving_yards",
+      "line": 64,
+      "difficulty": "easy",
+      "implied_probability": 0.7967547540764415,
+      "game_id": "nfl_friday_sept5_1"
+    },
+    {
+      "player_name": "Cade Otton",
+      "prop_type": "receiving_yards",
+      "line": 94,
+      "difficulty": "medium",
+      "implied_probability": 0.447934713412338
+    },
+    {
+      "player_name": "Cade Otton",
+      "prop_type": "receiving_yards",
+      "line": 92,
+      "difficulty": "medium",
+      "implied_probability": 0.4643726576162426
+    },
+    {
+      "player_name": "Cade Otton",
+      "prop_type": "receiving_yards",
+      "line": 136,
+      "difficulty": "hard",
+      "implied_probability": 0.1005097284986229,
+      "game_id": "nfl_friday_sept5_1"
+    }
+  ],
+  "total_players": 12,
+  "total_games": 1,
+  "generated_at": "2025-09-05T13:03:16.221062"
+}

@@ -14,6 +14,7 @@ from backend.models.transaction import Transaction
 from backend.api.auth_routes import auth_bp
 from backend.api.leaderboard_routes import leaderboard_bp
 from backend.api.transaction_routes import transaction_bp
+from backend.routes.pricing_api import pricing_bp
 
 
 def create_app():
@@ -26,6 +27,7 @@ def create_app():
     app.register_blueprint(auth_bp)
     app.register_blueprint(leaderboard_bp)
     app.register_blueprint(transaction_bp)
+    app.register_blueprint(pricing_bp)
 
     # Ensure tables exist (safe to call repeatedly)
     try:
@@ -67,6 +69,11 @@ def create_app():
                 return f.read(), 200, {'Content-Type': 'application/json'}
         except FileNotFoundError:
             return jsonify({'error': 'NFL props not found'}), 404
+
+    @app.route('/pricing')
+    def pricing_page():
+        """Dynamic pricing interface"""
+        return render_template('pricing.html')
 
     # Minimal API: create user (POST)
     @app.route('/api/users', methods=['POST'])

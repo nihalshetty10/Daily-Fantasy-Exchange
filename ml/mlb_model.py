@@ -29,13 +29,46 @@ class MLBModel:
             print(f"Error getting player stats for {player_id}: {e}")
             return None
     
+    def _lookup_player_id_by_name(self, player_name: str) -> Optional[str]:
+        """Look up MLB player ID by name"""
+        try:
+            # Search for player by name
+            search_url = f"{self.mlb_base_url}/people/search"
+            params = {
+                'names': player_name,
+                'sportId': 1,  # MLB
+                'active': True
+            }
+            
+            response = self.session.get(search_url, params=params, headers=self.headers, timeout=10)
+            if response.status_code == 200:
+                data = response.json()
+                people = data.get('people', [])
+                if people:
+                    # Return the first match's ID
+                    player_id = people[0].get('id')
+                    if player_id:
+                        print(f"✅ Found player ID {player_id} for '{player_name}'")
+                        return str(player_id)
+            
+            print(f"❌ No MLB player found for '{player_name}'")
+            return None
+            
+        except Exception as e:
+            print(f"Error looking up player '{player_name}': {e}")
+            return None
+    
     def _get_real_mlb_player_stats(self, player_id: str, stat_type: str, season: int) -> Dict:
         """Get real player stats from MLB API"""
         try:
-            # Validate player_id is a valid MLB player ID (numeric)
+            # If player_id is not numeric, try to look it up by name
             if not player_id or not str(player_id).isdigit():
-                print(f"⚠️ Invalid player ID '{player_id}'")
-                return None
+                print(f"🔍 Looking up player ID for '{player_id}'")
+                numeric_id = self._lookup_player_id_by_name(player_id)
+                if not numeric_id:
+                    print(f"⚠️ Could not find MLB player ID for '{player_id}'")
+                    return None
+                player_id = numeric_id
             
             # Try different MLB API approaches
             # First, try the standard stats endpoint
@@ -81,6 +114,9 @@ class MLBModel:
                     'MEDIUM': np.percentile(recent_values, 50),  # 50th percentile (median)
                     'HARD': np.percentile(recent_values, 75)   # 75th percentile (higher values = harder)
                 }
+            
+            # Store the raw values for dynamic percentile calculation
+            raw_values = recent_values
             
             print(f"📊 Real stats for {player_id} {stat_type}: EASY={percentiles['EASY']:.2f}, MEDIUM={percentiles['MEDIUM']:.2f}, HARD={percentiles['HARD']:.2f}")
             
@@ -155,7 +191,7 @@ class MLBModel:
             
             print(f"📈 Parsed {len(recent_values)} real game values for {stat_type}")
             if recent_values:
-                print(f"📊 Sample values: {recent_values[:5]}")
+                print(f"📊 Sample values: {recent_values[:10]}")
             return recent_values
             
         except Exception as e:
@@ -171,17 +207,20 @@ class MLBModel:
             
             # Special handling for ERA - ONLY UNDER for EASY/HARD, both OVER/UNDER for MEDIUM
             if stat_type == 'era':
+                # First determine the implied probability
                 if difficulty == 'EASY':
-                    # EASY: Use 75th percentile (higher ERA line) - easier to achieve worse pitching
-                    target_value = player_stats['percentiles'].get('EASY', player_stats['median'])
+                    implied_prob = random.uniform(75, 80)
                 elif difficulty == 'MEDIUM':
-                    # MEDIUM: Use 50th percentile (median) - can be OVER or UNDER
-                    target_value = player_stats['percentiles'].get('MEDIUM', player_stats['median'])
+                    implied_prob = random.uniform(40, 60)
                 elif difficulty == 'HARD':
-                    # HARD: Use 25th percentile (lower ERA line) - harder to achieve better pitching
-                    target_value = player_stats['percentiles'].get('HARD', player_stats['median'])
+                    implied_prob = random.uniform(10, 25)
                 else:
-                    target_value = player_stats['median']
+                    implied_prob = 50
+                
+                # Calculate target value based on implied probability percentile
+                # For ERA: higher percentile = easier to achieve (worse pitching)
+                percentile = 100 - implied_prob  # Convert probability to percentile
+                target_value = np.percentile(player_stats['recent_values'], percentile)
                 
                 # Round ERA to nearest 0.5
                 rounded_value = round(target_value * 2) / 2
@@ -189,46 +228,34 @@ class MLBModel:
                 # Adjust probability based on rounding difference
                 rounding_diff = abs(rounded_value - target_value)
                 if rounding_diff > 0.1:  # If we rounded significantly
-                    if difficulty == 'EASY':
-                        # For EASY, if we rounded up, make it slightly harder (lower probability)
-                        # If we rounded down, make it slightly easier (higher probability)
-                        if rounded_value > target_value:
-                            implied_prob = random.uniform(70, 75)  # Slightly lower
-                        else:
-                            implied_prob = random.uniform(75, 80)  # Slightly higher
-                    elif difficulty == 'HARD':
-                        # For HARD, if we rounded up, make it slightly easier (higher probability)
-                        # If we rounded down, make it slightly harder (lower probability)
-                        if rounded_value > target_value:
-                            implied_prob = random.uniform(15, 25)  # Slightly higher
-                        else:
-                            implied_prob = random.uniform(10, 20)  # Slightly lower
-                    else:  # MEDIUM
-                        implied_prob = random.uniform(40, 60)
-                else:
-                    # No significant rounding, use normal probability ranges
-                    if difficulty == 'EASY':
-                        implied_prob = random.uniform(70, 80)
-                    elif difficulty == 'MEDIUM':
-                        implied_prob = random.uniform(40, 60)
-                    elif difficulty == 'HARD':
-                        implied_prob = random.uniform(10, 25)
+                    # Recalculate percentile based on rounded value
+                    if rounded_value > target_value:
+                        # Rounded up - slightly easier (higher probability)
+                        implied_prob = min(100, implied_prob + 5)
+                    else:
+                        # Rounded down - slightly harder (lower probability)
+                        implied_prob = max(0, implied_prob - 5)
                 
                 return rounded_value, implied_prob
             else:
                 # For all other stats (hits, runs, rbis, total_bases, strikeouts, pitches)
                 # Higher values are BETTER (harder to achieve)
+                
+                # First determine the implied probability
                 if difficulty == 'EASY':
-                    # EASY: Use 25th percentile (lower line = easier to achieve)
-                    target_value = player_stats['percentiles'].get('EASY', player_stats['median'])
+                    implied_prob = random.uniform(75, 80)
                 elif difficulty == 'MEDIUM':
-                    # MEDIUM: Use 50th percentile (median)
-                    target_value = player_stats['percentiles'].get('MEDIUM', player_stats['median'])
+                    implied_prob = random.uniform(40, 60)
                 elif difficulty == 'HARD':
-                    # HARD: Use 75th percentile (higher line = harder to achieve)
-                    target_value = player_stats['percentiles'].get('HARD', player_stats['median'])
+                    implied_prob = random.uniform(10, 25)
                 else:
-                    target_value = player_stats['median']
+                    implied_prob = 50
+                
+                # Calculate target value based on implied probability percentile
+                # For non-ERA stats: higher percentile = harder to achieve (better performance)
+                # 83% implied prob = 17th percentile (83% of data above the line)
+                percentile = 100 - implied_prob  # Convert probability to percentile
+                target_value = np.percentile(player_stats['recent_values'], percentile)
             
             # Round to appropriate decimal places
             if stat_type == 'era':
@@ -244,21 +271,18 @@ class MLBModel:
             else:
                 target_value = max(0.5, target_value)
             
-            # Calculate implied probability based on difficulty (for non-ERA stats)
-            if stat_type != 'era':  # Only calculate for non-ERA stats
-                if difficulty == 'EASY':
-                    # EASY: 70-80% probability
-                    implied_prob = random.uniform(0.70, 0.80)
-                elif difficulty == 'MEDIUM':
-                    # MEDIUM: 40-60% probability
-                    implied_prob = random.uniform(0.40, 0.60)
-                elif difficulty == 'HARD':
-                    # HARD: 10-25% probability
-                    implied_prob = random.uniform(0.10, 0.25)
-                else:
-                    implied_prob = 0.50
-                
-                return target_value, implied_prob
+            # Adjust probability based on rounding difference for s the -ERA stats
+            if stat_type != 'era':
+                rounding_diff = abs(target_value - np.percentile(player_stats['recent_values'], percentile))
+                if rounding_diff > 0.1:  # If we rounded significantly
+                    if target_value > np.percentile(player_stats['recent_values'], percentile):
+                        # Rounded up - slightly harder (lower probability)
+                        implied_prob = max(0, implied_prob - 5)
+                    else:
+                        # Rounded down - slightly easier (higher probability)
+                        implied_prob = min(100, implied_prob + 5)
+            
+            return target_value, implied_prob
             
         except Exception as e:
             print(f"Error calculating prop line: {e}")
@@ -339,16 +363,7 @@ class MLBModel:
         if not player_stats:
             return 0.0, 0.0
         
-        # EASY percentile; for ERA, ease means higher numbers: use 75th pct; others use 25th
-        if stat_type == 'era':
-            target_value = player_stats['percentiles'].get('EASY', player_stats['median'])
-        else:
-            target_value = player_stats['percentiles'].get('EASY', player_stats['median'])
-        
-        prop_line = self._round_prop_line(target_value, stat_type)
-        implied_prob = np.random.uniform(70, 80)  # 70-80% probability
-        
-        return prop_line, implied_prob
+        return self.calculate_realistic_prop_line(player_stats, stat_type, 'EASY')
     
     def _generate_medium_prop(self, player_id: str, stat_type: str) -> Tuple[float, float]:
         """Generate a MEDIUM prop (median line, balanced probability)"""
@@ -356,12 +371,7 @@ class MLBModel:
         if not player_stats:
             return 0.0, 0.0
         
-        # MEDIUM: Use 50th percentile (median) for all stats
-        target_value = player_stats['percentiles'].get('MEDIUM', player_stats['median'])
-        prop_line = self._round_prop_line(target_value, stat_type)
-        implied_prob = np.random.uniform(40, 60)  # 40-60% probability
-        
-        return prop_line, implied_prob
+        return self.calculate_realistic_prop_line(player_stats, stat_type, 'MEDIUM')
     
     def _generate_hard_prop(self, player_id: str, stat_type: str) -> Tuple[float, float]:
         """Generate a HARD prop (higher line, lower probability)"""
@@ -369,13 +379,7 @@ class MLBModel:
         if not player_stats:
             return 0.0, 0.0
         
-        # Use HARD percentile for all stats (already calculated correctly in get_player_recent_stats)
-        target_value = player_stats['percentiles'].get('HARD', player_stats['median'])
-        
-        prop_line = self._round_prop_line(target_value, stat_type)
-        implied_prob = np.random.uniform(10, 25)  # 10-25% probability
-        
-        return prop_line, implied_prob
+        return self.calculate_realistic_prop_line(player_stats, stat_type, 'HARD')
     
     def _round_prop_line(self, value: float, stat_type: str) -> float:
         """Round prop line to appropriate decimal places and enforce sensible minimums"""

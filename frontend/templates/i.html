@@ -2089,10 +2089,11 @@
             
             liveUpdateInterval = setInterval(() => {
                 // Simulate price changes
-                mockProps.forEach(prop => {
-                    const change = (Math.random() - 0.5) * 2; // -1 to +1
-                    prop.live_contract_price = Math.max(1, Math.min(99, prop.live_contract_price + change));
-                });
+                // DEPRECATED: Mock price changes removed - use pricing_engine for real pricing
+                // mockProps.forEach(prop => {
+                //     const change = (Math.random() - 0.5) * 2; // -1 to +1
+                //     prop.live_contract_price = Math.max(1, Math.min(99, prop.live_contract_price + change));
+                // });
                 
                 // Update portfolio live prices
                 userPortfolio.forEach(position => {
@@ -3004,9 +3005,9 @@
             gameProps.forEach(prop => {
                 if (!prop.livePriceInterval) {
                     prop.livePriceInterval = setInterval(() => {
-                        // Simulate price changes
-                        const change = (Math.random() - 0.5) * 2; // ±$1
-                        prop.live_contract_price = Math.max(0, Math.min(100, (prop.live_contract_price || 50) + change));
+                        // DEPRECATED: Mock price changes removed - use pricing_engine for real pricing
+                        // const change = (Math.random() - 0.5) * 2; // ±$1
+                        // prop.live_contract_price = Math.max(0, Math.min(100, (prop.live_contract_price || 50) + change));
                         
                         // Update display
                         updatePropPrice(prop.id, prop.live_contract_price);

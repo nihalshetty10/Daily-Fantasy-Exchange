@@ -359,7 +359,8 @@ class TradingEngine:
             return None 
 
     def get_initial_price(self, prop: Prop) -> float:
-        # default initial price from implied prob if no orders yet
+        # DEPRECATED: Use pricing_engine.get_contract_price() instead
+        # This method is kept for backward compatibility only
         base_prob = prop.live_implied_probability or prop.implied_probability or 0.5
         return round(base_prob * 100, 2)
 
@@ -382,6 +383,8 @@ class TradingEngine:
             .order_by(asc(Order.price), asc(Order.created_at)).first()
 
     def get_mid_price(self, prop_id: int) -> float:
+        # DEPRECATED: Use pricing_engine.get_contract_price() instead
+        # This method is kept for backward compatibility only
         prop = Prop.query.get(prop_id)
         bb = self._best_bid(prop_id)
         ba = self._best_ask(prop_id)
@@ -413,6 +416,8 @@ class TradingEngine:
         return {'success': True, 'order': order.to_dict(), 'mid_price': self.get_mid_price(prop_id)}
 
     def _update_mid_price(self, prop_id: int):
+        # DEPRECATED: Use pricing_engine._update_contract_price() instead
+        # This method is kept for backward compatibility only
         prop = Prop.query.get(prop_id)
         if not prop:
             return

@@ -1,217 +1,352 @@
-import numpy as np
-import pandas as pd
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error, mean_absolute_error
-import tensorflow as tf
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout
-from tensorflow.keras.optimizers import Adam
 import requests
-import logging
-from datetime import datetime, timedelta
 import json
+import time
+from datetime import datetime, timedelta
+import pytz
+import numpy as np
+from typing import Dict, List, Tuple, Optional
+import random
 
 class NBAModel:
-    def __init__(self):
-        self.model = None
-        self.scaler = StandardScaler()
-        self.is_trained = False
-        self.prop_types = ['points', 'rebounds', 'assists', 'steals', 'blocks', 'threes_made']
+    def __init__(self, logger=None):
+        self.logger = logger or print
+        self.nba_base_url = "https://stats.nba.com/stats"
+        self.headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'Referer': 'https://www.nba.com/',
+            'Accept': 'application/json, text/plain, */*',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Connection': 'keep-alive',
+            'Sec-Fetch-Dest': 'empty',
+            'Sec-Fetch-Mode': 'cors',
+            'Sec-Fetch-Site': 'same-site'
+        }
+        self.session = requests.Session()
+        self.session.timeout = 10  # 10 second timeout
         
-    def fetch_player_data(self, player_name, days_back=365):
-        """Fetch NBA player data from API"""
+    def get_player_recent_stats(self, player_id: str, stat_type: str) -> Dict:
+        """Get player's recent performance for a specific stat type from NBA API"""
         try:
-            # This would integrate with NBA API or basketball-reference
-            # For now, using mock data structure
-            end_date = datetime.now()
-            start_date = end_date - timedelta(days=days_back)
+            # Get current season stats
+            current_season = datetime.now().year
+            season_str = f"{current_season-1}-{str(current_season)[2:]}"
             
-            # Mock API call - replace with actual NBA API
-            url = f"https://api.nba.com/stats/playergamelog?PlayerID={player_name}&Season=2023-24"
-            # response = requests.get(url)
-            # data = response.json()
-            
-            # Mock data for demonstration
-            mock_data = self._generate_mock_data(player_name, start_date, end_date)
-            return mock_data
+            # Make real NBA API call to get player stats
+            return self._get_real_nba_player_stats(player_id, stat_type, season_str)
             
         except Exception as e:
-            logging.error(f"Error fetching NBA data for {player_name}: {e}")
+            self.logger(f"Error getting player stats for {player_id}: {e}")
             return None
     
-    def _generate_mock_data(self, player_name, start_date, end_date):
-        """Generate mock NBA data for demonstration"""
-        dates = pd.date_range(start=start_date, end=end_date, freq='D')
-        data = []
-        
-        for date in dates:
-            # Skip non-game days (simplified)
-            if date.weekday() < 5:  # Monday-Friday
-                game_data = {
-                    'date': date,
-                    'player': player_name,
-                    'points': np.random.poisson(20),  # Average 20 points
-                    'rebounds': np.random.poisson(5),  # Average 5 rebounds
-                    'assists': np.random.poisson(4),   # Average 4 assists
-                    'steals': np.random.poisson(1),    # Average 1 steal
-                    'blocks': np.random.poisson(0.5),  # Average 0.5 blocks
-                    'threes_made': np.random.poisson(2), # Average 2 threes
-                    'minutes': np.random.normal(30, 5),  # Average 30 minutes
-                    'opponent': np.random.choice(['LAL', 'BOS', 'GSW', 'MIA', 'PHX']),
-                    'home_away': np.random.choice(['home', 'away'])
-                }
-                data.append(game_data)
-        
-        return pd.DataFrame(data)
-    
-    def prepare_features(self, df):
-        """Prepare features for ML model"""
-        features = []
-        
-        for prop_type in self.prop_types:
-            # Rolling averages
-            df[f'{prop_type}_3game_avg'] = df[prop_type].rolling(3, min_periods=1).mean()
-            df[f'{prop_type}_5game_avg'] = df[prop_type].rolling(5, min_periods=1).mean()
-            df[f'{prop_type}_10game_avg'] = df[prop_type].rolling(10, min_periods=1).mean()
-            
-            # Rolling standard deviations
-            df[f'{prop_type}_3game_std'] = df[prop_type].rolling(3, min_periods=1).std()
-            df[f'{prop_type}_5game_std'] = df[prop_type].rolling(5, min_periods=1).std()
-            
-            # Recent form (last 3 games vs last 10 games)
-            df[f'{prop_type}_form'] = df[f'{prop_type}_3game_avg'] / df[f'{prop_type}_10game_avg']
-        
-        # Additional features
-        df['days_rest'] = df['date'].diff().dt.days
-        df['is_home'] = (df['home_away'] == 'home').astype(int)
-        
-        # Create feature matrix
-        feature_columns = []
-        for prop_type in self.prop_types:
-            feature_columns.extend([
-                f'{prop_type}_3game_avg', f'{prop_type}_5game_avg', f'{prop_type}_10game_avg',
-                f'{prop_type}_3game_std', f'{prop_type}_5game_std', f'{prop_type}_form'
-            ])
-        
-        feature_columns.extend(['days_rest', 'is_home'])
-        
-        return df[feature_columns].fillna(0)
-    
-    def build_model(self, input_dim):
-        """Build neural network model"""
-        model = Sequential([
-            Dense(64, activation='relu', input_dim=input_dim),
-            Dropout(0.2),
-            Dense(32, activation='relu'),
-            Dropout(0.2),
-            Dense(16, activation='relu'),
-            Dense(1, activation='linear')
-        ])
-        
-        model.compile(
-            optimizer=Adam(learning_rate=0.001),
-            loss='mse',
-            metrics=['mae']
-        )
-        
-        return model
-    
-    def train(self, player_name, prop_type):
-        """Train model for specific player and prop type"""
-        # Fetch player data
-        df = self.fetch_player_data(player_name)
-        if df is None or df.empty:
-            logging.error(f"No data available for {player_name}")
-            return False
-        
-        # Prepare features
-        X = self.prepare_features(df)
-        y = df[prop_type].values
-        
-        # Remove rows with NaN values
-        valid_indices = ~(X.isna().any(axis=1) | pd.isna(y))
-        X = X[valid_indices]
-        y = y[valid_indices]
-        
-        if len(X) < 10:
-            logging.error(f"Insufficient data for {player_name} {prop_type}")
-            return False
-        
-        # Split data
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.2, random_state=42
-        )
-        
-        # Scale features
-        X_train_scaled = self.scaler.fit_transform(X_train)
-        X_test_scaled = self.scaler.transform(X_test)
-        
-        # Build and train model
-        self.model = self.build_model(X_train.shape[1])
-        
-        history = self.model.fit(
-            X_train_scaled, y_train,
-            validation_data=(X_test_scaled, y_test),
-            epochs=100,
-            batch_size=32,
-            verbose=0
-        )
-        
-        # Evaluate model
-        y_pred = self.model.predict(X_test_scaled)
-        mse = mean_squared_error(y_test, y_pred)
-        mae = mean_absolute_error(y_test, y_pred)
-        
-        logging.info(f"Model trained for {player_name} {prop_type}")
-        logging.info(f"MSE: {mse:.2f}, MAE: {mae:.2f}")
-        
-        self.is_trained = True
-        return True
-    
-    def predict(self, player_name, prop_type, line_value):
-        """Predict probability of going over the line"""
-        if not self.is_trained:
-            if not self.train(player_name, prop_type):
+    def _get_real_nba_player_stats(self, player_id: str, stat_type: str, season: str) -> Dict:
+        """Get real player stats from NBA API"""
+        try:
+            # Validate player_id is a valid NBA player ID (numeric)
+            if not player_id or not str(player_id).isdigit():
+                self.logger(f"⚠️ Invalid player ID '{player_id}'")
                 return None
+            
+            # Try different NBA API approaches
+            # First, try the player game log endpoint
+            url = f"{self.nba_base_url}/playergamelog"
+            
+            params = {
+                'PlayerID': player_id,
+                'Season': season,
+                'SeasonType': 'Regular Season'
+            }
+            
+            self.logger(f"🔍 Fetching real NBA stats for player {player_id}, stat: {stat_type}")
+            
+            response = requests.get(url, headers=self.headers, params=params, timeout=30)
+            if response.status_code != 200:
+                self.logger(f"❌ NBA API error {response.status_code} for player {player_id}")
+                return None
+            
+            data = response.json()
+            
+            # Parse the game log data
+            recent_values = self._parse_nba_game_log(data, stat_type)
+            
+            if not recent_values or len(recent_values) < 5:
+                self.logger(f"⚠️ Insufficient data for player {player_id}")
+                return None
+            
+            # Calculate performance metrics from real data
+            mean_value = np.mean(recent_values)
+            std_value = np.std(recent_values)
+            median_value = np.median(recent_values)
+            
+            # Calculate percentiles for different difficulty levels
+            percentiles = {
+                'EASY': np.percentile(recent_values, 25),  # 25th percentile (lower values = easier)
+                'MEDIUM': np.percentile(recent_values, 50),  # 50th percentile (median)
+                'HARD': np.percentile(recent_values, 75)   # 75th percentile (higher values = harder)
+            }
+            
+            # Store the raw values for dynamic percentile calculation
+            raw_values = recent_values
+            
+            self.logger(f"📊 Real stats for {player_id} {stat_type}: EASY={percentiles['EASY']:.2f}, MEDIUM={percentiles['MEDIUM']:.2f}, HARD={percentiles['HARD']:.2f}")
+            
+            return {
+                'mean': mean_value,
+                'std': std_value,
+                'median': median_value,
+                'percentiles': percentiles,
+                'recent_values': np.array(recent_values).tolist(),
+                'total_games': len(recent_values)
+            }
+            
+        except Exception as e:
+            self.logger(f"❌ Error fetching real NBA stats for {player_id}: {e} - using mock data")
+            return self._generate_mock_player_stats(player_id, stat_type)
+    
+    def _parse_nba_game_log(self, data: Dict, stat_type: str) -> List[float]:
+        """Parse NBA API response to extract stat values from game log"""
+        try:
+            recent_values = []
+            
+            # Navigate through the NBA API response structure
+            if 'resultSets' in data and len(data['resultSets']) > 0:
+                game_log = data['resultSets'][0]
+                if 'rowSet' in game_log:
+                    # Get the last 15 games (most recent)
+                    game_rows = game_log['rowSet'][-15:]  # Last 15 games
+                    
+                    for row in game_rows:
+                        if len(row) >= 30:  # Ensure we have enough columns
+                            # Extract the specific stat value based on the actual API response
+                            if stat_type == 'points':
+                                value = row[26] if len(row) > 26 else 0  # PTS column
+                            elif stat_type == 'rebounds':
+                                value = row[20] if len(row) > 20 else 0  # REB column
+                            elif stat_type == 'assists':
+                                value = row[21] if len(row) > 21 else 0  # AST column
+                            elif stat_type == 'steals':
+                                value = row[22] if len(row) > 22 else 0  # STL column
+                            elif stat_type == 'blocks':
+                                value = row[23] if len(row) > 23 else 0  # BLK column
+                            elif stat_type == 'threes_made':
+                                value = row[11] if len(row) > 11 else 0  # FG3M column
+                            else:
+                                value = 0
+                            
+                            # Ensure value is numeric and non-negative
+                            if isinstance(value, (int, float)) and value >= 0:
+                                recent_values.append(float(value))
+                            elif isinstance(value, str):
+                                try:
+                                    float_val = float(value)
+                                    if float_val >= 0:
+                                        recent_values.append(float_val)
+                                except (ValueError, TypeError):
+                                    continue
+            
+            self.logger(f"📈 Parsed {len(recent_values)} real game values for {stat_type}")
+            if recent_values:
+                self.logger(f"📊 Sample values: {recent_values[:10]}")
+            return recent_values
+            
+        except Exception as e:
+            self.logger(f"❌ Error parsing NBA game log: {e}")
+            return []
+    
+    def _generate_mock_player_stats(self, player_id: str, stat_type: str) -> Dict:
+        """Generate mock player stats when real data is unavailable"""
+        # Mock data based on typical NBA player performance
+        mock_stats = {
+            'points': np.random.normal(15, 5),
+            'rebounds': np.random.normal(6, 2),
+            'assists': np.random.normal(4, 2),
+            'steals': np.random.normal(1, 0.5),
+            'blocks': np.random.normal(0.8, 0.4),
+            'threes_made': np.random.normal(2, 1)
+        }
         
-        # Get recent data for prediction
-        df = self.fetch_player_data(player_name, days_back=30)
-        if df is None or df.empty:
-            return None
-        
-        # Prepare features
-        X = self.prepare_features(df)
-        if X.empty:
-            return None
-        
-        # Use most recent data point
-        X_recent = X.iloc[-1:].values
-        X_recent_scaled = self.scaler.transform(X_recent)
-        
-        # Predict expected value
-        predicted_value = self.model.predict(X_recent_scaled)[0][0]
-        
-        # Calculate probability of going over the line
-        # Using historical standard deviation for uncertainty
-        historical_std = df[prop_type].std()
-        
-        # Calculate probability using normal distribution
-        from scipy.stats import norm
-        probability = 1 - norm.cdf(line_value, predicted_value, historical_std)
+        base_value = mock_stats.get(stat_type, 5)
+        recent_values = [max(0, base_value + np.random.normal(0, base_value * 0.3)) for _ in range(15)]
         
         return {
-            'predicted_value': predicted_value,
-            'probability': probability,
-            'confidence': 1 - historical_std / predicted_value if predicted_value > 0 else 0,
-            'historical_std': historical_std
+            'mean': np.mean(recent_values),
+            'std': np.std(recent_values),
+            'median': np.median(recent_values),
+            'percentiles': {
+                'EASY': np.percentile(recent_values, 25),
+                'MEDIUM': np.percentile(recent_values, 50),
+                'HARD': np.percentile(recent_values, 75)
+            },
+            'recent_values': recent_values,
+            'total_games': len(recent_values)
         }
     
-    def get_difficulty_level(self, probability):
-        """Determine difficulty level based on probability"""
-        if probability >= 0.75:
-            return 'easy'
-        elif probability >= 0.35:
-            return 'medium'
+    def calculate_realistic_prop_line(self, player_stats: Dict, stat_type: str, difficulty: str) -> Tuple[float, float]:
+        """Calculate realistic prop line and implied probability based on player performance"""
+        try:
+            if not player_stats or 'recent_values' not in player_stats:
+                return 0.0, 0.0
+            
+            raw_values = player_stats['recent_values']
+            
+            # First determine the implied probability
+            if difficulty == 'EASY':
+                implied_prob = random.uniform(75, 80)
+            elif difficulty == 'MEDIUM':
+                implied_prob = random.uniform(40, 60)
+            elif difficulty == 'HARD':
+                implied_prob = random.uniform(10, 25)
+            else:
+                implied_prob = 50
+            
+            # Calculate target value based on implied probability percentile
+            # For NBA stats: higher percentile = harder to achieve (better performance)
+            # 83% implied prob = 17th percentile (83% of data above the line)
+            target_percentile = 100 - implied_prob
+            target_value = np.percentile(raw_values, target_percentile)
+            
+            # Round to appropriate decimal places
+            if stat_type in ['points', 'rebounds', 'assists']:
+                # Round to nearest 0.5 for main stats
+                target_value = round(target_value * 2) / 2
+            else:
+                # Round to nearest 0.5 for other stats
+                target_value = round(target_value * 2) / 2
+            
+            # Ensure minimum values
+            target_value = max(0.5, target_value)
+            
+            return target_value, implied_prob
+            
+        except Exception as e:
+            self.logger(f"Error calculating prop line: {e}")
+            return 0.0, 0.0
+    
+    def generate_realistic_props(self, player_id: str, player_name: str, team_name: str, position: str, game_id: str, game_time: str = None) -> List[Dict]:
+        """Generate realistic props for a player based on their actual performance data"""
+        try:
+            props = []
+            
+            # Define stat types based on position
+            if position in ['PG', 'SG', 'SF', 'PF', 'C']:  # All NBA positions
+                stat_types = ['points', 'rebounds', 'assists', 'steals', 'blocks', 'threes_made']
+                # NBA players: 1 EASY, 4 MEDIUM, 2 HARD
+                easy_count = 1
+                medium_count = 4
+                hard_count = 2
+            
+            # Generate EASY props
+            for _ in range(easy_count):
+                # Random stat for EASY
+                stat_type = np.random.choice(stat_types)
+                
+                prop_line, implied_prob = self._generate_easy_prop(player_id, stat_type)
+                if prop_line > 0:
+                    prop = self._create_prop(stat_type, prop_line, 'EASY', implied_prob, team_name, game_id, game_time)
+                    props.append(prop)
+            
+            # Generate MEDIUM props
+            for stat_type in stat_types:
+                if len([p for p in props if p['type'] == 'MEDIUM']) >= medium_count:
+                    break
+                
+                prop_line, implied_prob = self._generate_medium_prop(player_id, stat_type)
+                if prop_line > 0:
+                    prop = self._create_prop(stat_type, prop_line, 'MEDIUM', implied_prob, team_name, game_id, game_time)
+                    props.append(prop)
+            
+            # Generate HARD props
+            # Random 2 of the 6 stats for HARD
+            selected_stats = np.random.choice(stat_types, size=2, replace=False)
+            for stat_type in selected_stats:
+                prop_line, implied_prob = self._generate_hard_prop(player_id, stat_type)
+                if prop_line > 0:
+                    prop = self._create_prop(stat_type, prop_line, 'HARD', implied_prob, team_name, game_id, game_time)
+                    props.append(prop)
+            
+            return props
+            
+        except Exception as e:
+            self.logger(f"Error generating realistic props for {player_name}: {e}")
+            return []
+    
+    def _generate_easy_prop(self, player_id: str, stat_type: str) -> Tuple[float, float]:
+        """Generate an EASY prop (lower line, high probability)"""
+        player_stats = self.get_player_recent_stats(player_id, stat_type)
+        if not player_stats:
+            return 0.0, 0.0
+        
+        return self.calculate_realistic_prop_line(player_stats, stat_type, 'EASY')
+    
+    def _generate_medium_prop(self, player_id: str, stat_type: str) -> Tuple[float, float]:
+        """Generate a MEDIUM prop (median line, balanced probability)"""
+        player_stats = self.get_player_recent_stats(player_id, stat_type)
+        if not player_stats:
+            return 0.0, 0.0
+        
+        return self.calculate_realistic_prop_line(player_stats, stat_type, 'MEDIUM')
+    
+    def _generate_hard_prop(self, player_id: str, stat_type: str) -> Tuple[float, float]:
+        """Generate a HARD prop (higher line, lower probability)"""
+        player_stats = self.get_player_recent_stats(player_id, stat_type)
+        if not player_stats:
+            return 0.0, 0.0
+        
+        return self.calculate_realistic_prop_line(player_stats, stat_type, 'HARD')
+    
+    def _create_prop(self, stat_type: str, prop_line: float, difficulty: str, implied_prob: float, team_name: str, game_id: str, game_time: str = None) -> Dict:
+        """Create a prop object with all required fields"""
+        # Determine prop direction based on difficulty
+        if difficulty in ['EASY', 'HARD']:
+            # Rule: EASY/HARD are always OVER
+            direction = 'over'
         else:
-            return 'hard' 
+            # MEDIUM can be either
+            direction = random.choice(['over', 'under'])
+        
+        return {
+            'stat': stat_type.replace('_', ' ').title(),
+            'line': prop_line,
+            'type': difficulty,
+            'price': implied_prob,
+            'direction': direction,
+            'implied_prob': implied_prob,
+            'opponent': self._get_opponent_info(team_name, game_id),
+            'game_time': game_time or 'TBD'
+        }
+    
+    def _get_opponent_info(self, team_name: str, game_id: str) -> str:
+        """Get opponent information for a game"""
+        try:
+            # This would be implemented based on your existing game data
+            # For now, return a placeholder
+            return "vs Opponent"
+        except Exception as e:
+            self.logger(f"Error getting opponent info: {e}")
+            return "vs Opponent"
+    
+    def generate_todays_props(self):
+        """Generate today's NBA props - placeholder for now"""
+        try:
+            self.logger("🏀 Starting NBA prop generation...")
+            
+            # This would integrate with NBA schedule API
+            # For now, return empty structure matching MLB format
+            return {
+                'props': [],
+                'total_players': 0,
+                'total_games': 0,
+                'generated_at': datetime.now().isoformat()
+            }
+            
+        except Exception as e:
+            self.logger(f"Error generating NBA props: {e}")
+            return {
+                'props': [],
+                'total_players': 0,
+                'total_games': 0,
+                'generated_at': datetime.now().isoformat()
+            }
+
+# Initialize the model
+nba_model = NBAModel()

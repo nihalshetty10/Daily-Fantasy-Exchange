@@ -1,0 +1,407 @@
+/* Dynamic Pricing Interface Styles */
+
+.sport-section {
+    margin-bottom: 2rem;
+}
+
+.sport-title {
+    color: #2c3e50;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #3498db;
+}
+
+.contracts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.contract-card {
+    background: #fff;
+    border: 1px solid #e1e8ed;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.contract-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.contract-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.player-name {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0;
+}
+
+.prop-type {
+    background: #3498db;
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.contract-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.prop-line {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.line-label {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    margin-bottom: 0.2rem;
+}
+
+.line-value {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.difficulty-badge {
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.difficulty-badge.easy {
+    background: #2ecc71;
+    color: white;
+}
+
+.difficulty-badge.medium {
+    background: #f39c12;
+    color: white;
+}
+
+.difficulty-badge.hard {
+    background: #e74c3c;
+    color: white;
+}
+
+.pricing-section {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.current-price {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.price-label {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+}
+
+.price-value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #27ae60;
+}
+
+.volume {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.volume-label {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+}
+
+.volume-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.order-section {
+    border-top: 1px solid #e1e8ed;
+    padding-top: 1rem;
+}
+
+.order-inputs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.quantity-input,
+.price-input {
+    flex: 1;
+    padding: 0.6rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.quantity-input:focus,
+.price-input:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.order-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.buy-btn,
+.sell-btn {
+    flex: 1;
+    padding: 0.8rem 1rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.buy-btn {
+    background: #27ae60;
+    color: white;
+}
+
+.buy-btn:hover {
+    background: #229954;
+    transform: translateY(-1px);
+}
+
+.sell-btn {
+    background: #e74c3c;
+    color: white;
+}
+
+.sell-btn:hover {
+    background: #c0392b;
+    transform: translateY(-1px);
+}
+
+/* User Orders Styles */
+.user-orders-container {
+    background: #fff;
+    border: 1px solid #e1e8ed;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.user-orders-container h3 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e1e8ed;
+}
+
+.order-details {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.order-side {
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.order-side.buy {
+    background: #27ae60;
+    color: white;
+}
+
+.order-side.sell {
+    background: #e74c3c;
+    color: white;
+}
+
+.order-quantity,
+.order-price {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.cancel-order-btn {
+    background: #95a5a6;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cancel-order-btn:hover {
+    background: #7f8c8d;
+    transform: translateY(-1px);
+}
+
+/* Search and Filter Styles */
+.search-filters {
+    background: #fff;
+    border: 1px solid #e1e8ed;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.search-input {
+    flex: 1;
+    min-width: 200px;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.filter-select {
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    background: white;
+    cursor: pointer;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .contracts-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .search-filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-input,
+    .filter-select {
+        width: 100%;
+    }
+    
+    .order-details {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .order-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+}
+
+/* Loading States */
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    color: #7f8c8d;
+}
+
+.loading::after {
+    content: '';
+    width: 20px;
+    height: 20px;
+    border: 2px solid #e1e8ed;
+    border-top: 2px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-left: 0.5rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Price Change Indicators */
+.price-up {
+    color: #27ae60;
+}
+
+.price-down {
+    color: #e74c3c;
+}
+
+.price-unchanged {
+    color: #7f8c8d;
+}
+
+/* Contract Status Indicators */
+.contract-expired {
+    opacity: 0.6;
+    background: #f8f9fa;
+    border-color: #e1e8ed;
+}
+
+.contract-expired::after {
+    content: 'EXPIRED';
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: #e74c3c;
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}

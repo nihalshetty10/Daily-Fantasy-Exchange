@@ -10,14 +10,17 @@ import pytz
 
 class LineupScraper:
 	"""Scrape starting lineups from public websites.
-	- Rotowire daily lineups (primary)
+	- Rotowire daily lineups (primary for MLB)
+	- NFL.com and Rotowire for NFL lineups
 	Returns mappings keyed by team name variants → list[str player full names]
 	Variants include the visible full name (when available) and nickname (last word),
 	and records like "(78-45)" are stripped.
 	Also returns per-team game time in ET when available.
 	"""
 
-	ROTOWIRE_URL = "https://www.rotowire.com/baseball/daily-lineups.php"
+	ROTOWIRE_MLB_URL = "https://www.rotowire.com/baseball/daily-lineups.php"
+	ROTOWIRE_NFL_URL = "https://www.rotowire.com/football/lineups.php"
+	MLB_STARTING_LINEUPS_URL = "https://www.mlb.com/starting-lineups"
 
 	def __init__(self):
 		self.session = requests.Session()
@@ -60,12 +63,12 @@ class LineupScraper:
 			# Try requests_html for JS rendering (optional dependency)
 			from requests_html import HTMLSession
 			hs = HTMLSession()
-			resp = hs.get(self.ROTOWIRE_URL, headers=self.session.headers, timeout=30)
+			resp = hs.get(self.ROTOWIRE_MLB_URL, headers=self.session.headers, timeout=30)
 			resp.html.render(timeout=30, sleep=1)
 			return resp.html.html
 		except Exception:
 			# Fallback to plain requests
-			resp = self.session.get(self.ROTOWIRE_URL, timeout=30)
+			resp = self.session.get(self.ROTOWIRE_MLB_URL, timeout=30)
 			resp.raise_for_status()
 			return resp.text
 
@@ -529,28 +532,59 @@ class LineupScraper:
 			away_pitcher = ''
 			home_pitcher = ''
 			
-			# Try to find game sections that contain our teams
-			game_sections = soup.find_all(['div', 'section'], class_=lambda x: x and any(word in x.lower() for word in ['game', 'lineup', 'team']))
+			# Enhanced parsing for MLB.com structure
+			# Look for game cards/containers
+			game_containers = soup.find_all(['div', 'section'], class_=lambda x: x and any(word in x.lower() for word in ['game', 'lineup', 'card', 'matchup']))
 			
-			for section in game_sections:
-				section_text = section.get_text(' ', strip=True)
+			for container in game_containers:
+				container_text = container.get_text(' ', strip=True)
 				
-				# Check if this section contains both teams
-				if away_team.lower() in section_text.lower() and home_team.lower() in section_text.lower():
-					# Look for pitcher information in this section
-					pitcher_elements = section.find_all(['div', 'span', 'p'], string=lambda x: x and any(word in x.lower() for word in ['sp', 'pitcher', 'starting']))
+				# Check if this container has both teams
+				away_team_lower = away_team.lower()
+				home_team_lower = home_team.lower()
+				
+				# More flexible team matching
+				away_match = any(word in container_text.lower() for word in away_team_lower.split()) or away_team_lower in container_text.lower()
+				home_match = any(word in container_text.lower() for word in home_team_lower.split()) or home_team_lower in container_text.lower()
+				
+				if away_match and home_match:
+					print(f"       🎯 Found game container for {away_team} vs {home_team}")
+					
+					# Look for pitcher names and stats
+					# Pattern: "Jake Irvin R (8-10 5.42 ERA) 102 SO"
+					pitcher_pattern = r'([A-Za-z\s]+)\s+[LR]\s+\([0-9-]+\s+[0-9.]+ ERA\)'
+					pitcher_matches = re.findall(pitcher_pattern, container_text)
+					
+					# Also look for pitcher names in specific elements
+					pitcher_elements = container.find_all(['div', 'span', 'p', 'h3', 'h4'], string=lambda x: x and len(x.strip()) > 2)
 					
 					for element in pitcher_elements:
 						text = element.get_text(' ', strip=True)
-						if text and len(text) > 3:
-							# Try to determine which team this pitcher belongs to
-							if away_team.lower() in text.lower() or any(word in text.lower() for word in away_team.lower().split()):
-								away_pitcher = text
-							elif home_team.lower() in text.lower() or any(word in text.lower() for word in home_team.lower().split()):
-								home_pitcher = text
+						
+						# Look for pitcher name patterns
+						if re.search(r'[A-Z][a-z]+\s+[A-Z][a-z]+', text) and ('ERA' in text or 'SO' in text or 'RHP' in text or 'LHP' in text):
+							# Extract just the name (before stats)
+							name_match = re.match(r'([A-Z][a-z]+\s+[A-Z][a-z]+)', text)
+							if name_match:
+								pitcher_name = name_match.group(1).strip()
+								
+								# Determine which team this pitcher belongs to
+								# Look at surrounding context
+								parent_text = element.parent.get_text(' ', strip=True) if element.parent else text
+								
+								if away_team_lower in parent_text.lower() or any(word in parent_text.lower() for word in away_team_lower.split()):
+									if not away_pitcher:  # Only set if not already found
+										away_pitcher = pitcher_name
+										print(f"       🎯 Found away pitcher: {pitcher_name}")
+								elif home_team_lower in parent_text.lower() or any(word in parent_text.lower() for word in home_team_lower.split()):
+									if not home_pitcher:  # Only set if not already found
+										home_pitcher = pitcher_name
+										print(f"       🎯 Found home pitcher: {pitcher_name}")
 			
 			if away_pitcher or home_pitcher:
-				print(f"       🎯 Scraped pitchers from starting-lineups: {away_pitcher} vs {home_pitcher}")
+				print(f"       ✅ MLB.com pitchers: {away_pitcher} vs {home_pitcher}")
+			else:
+				print(f"       ⚠️ No pitchers found on MLB.com for {away_team} vs {home_team}")
 			
 			return away_pitcher, home_pitcher
 			
@@ -633,8 +667,89 @@ class LineupScraper:
 		return team_ids.get(team_name, 0)
 
 	def get_lineups(self) -> Tuple[Dict[str, List[str]], Dict[str, str]]:
-		"""Return only Rotowire lineups and ET times."""
-		return self.fetch_rotowire()
+		"""Return Rotowire lineups with MLB.com fallback for pitchers."""
+		# Get primary data from Rotowire
+		rotowire_lineups, rotowire_times = self.fetch_rotowire()
+		
+		# Check if we need MLB.com fallback for any missing pitchers
+		teams_needing_pitchers = []
+		for team, players in rotowire_lineups.items():
+			# Check if this team has any pitchers (P position)
+			has_pitcher = any('P' in str(player) for player in players)
+			# Since Rotowire typically only gives hitters, we need pitchers for all teams
+			if not has_pitcher and len(players) > 0:  # Has hitters but no pitcher
+				teams_needing_pitchers.append(team)
+		
+		# If no teams were detected as needing pitchers, add all teams that have players
+		if not teams_needing_pitchers:
+			teams_needing_pitchers = list(rotowire_lineups.keys())
+			print(f"       🔄 Adding pitchers to all {len(teams_needing_pitchers)} teams with lineups")
+		
+		if teams_needing_pitchers:
+			print(f"       🔄 Using MLB.com fallback for pitchers: {teams_needing_pitchers}")
+			
+			# Get today's games to find pitcher matchups
+			mlb_cards = self.get_mlb_lineup_cards()
+			
+			# Team name mapping from full names to abbreviations
+			team_mapping = {
+				'Philadelphia Phillies': 'PHI',
+				'Milwaukee Brewers': 'MIL', 
+				'Los Angeles Dodgers': 'LAD',
+				'Pittsburgh Pirates': 'PIT',
+				'Cleveland Guardians': 'CLE',
+				'Tampa Bay Rays': 'TB',
+				'Los Angeles Angels': 'LAA',
+				'Kansas City Royals': 'KC',
+				'Chicago White Sox': 'CWS',
+				'Minnesota Twins': 'MIN',
+				'New York Yankees': 'NYY',
+				'Houston Astros': 'HOU',
+				'Washington Nationals': 'WSH',
+				'Chicago Cubs': 'CHC',
+				'New York Mets': 'NYM',
+				'Cincinnati Reds': 'CIN',
+				'Detroit Tigers': 'DET',
+				'Baltimore Orioles': 'BAL',
+				'Toronto Blue Jays': 'TOR',
+				'Miami Marlins': 'MIA',
+				'Seattle Mariners': 'SEA',
+				'Atlanta Braves': 'ATL',
+				'San Francisco Giants': 'SF',
+				'St. Louis Cardinals': 'STL',
+				'San Diego Padres': 'SD',
+				'Colorado Rockies': 'COL',
+				'Athletics': 'OAK',
+				'Boston Red Sox': 'BOS',
+				'Arizona Diamondbacks': 'ARI'
+			}
+			
+			for card in mlb_cards:
+				away_team_full = card.get('away_label', '')
+				home_team_full = card.get('home_label', '')
+				away_pitcher = card.get('away_pitcher', '')
+				home_pitcher = card.get('home_pitcher', '')
+				
+				# Convert full names to abbreviations
+				away_team = team_mapping.get(away_team_full, away_team_full)
+				home_team = team_mapping.get(home_team_full, home_team_full)
+				
+				# Add pitchers to lineups if teams match and we have pitcher data
+				if away_team in teams_needing_pitchers and away_pitcher:
+					if away_team not in rotowire_lineups:
+						rotowire_lineups[away_team] = []
+					# Add pitcher to the lineup
+					rotowire_lineups[away_team].append(away_pitcher)
+					print(f"       ✅ Added pitcher {away_pitcher} to {away_team}")
+				
+				if home_team in teams_needing_pitchers and home_pitcher:
+					if home_team not in rotowire_lineups:
+						rotowire_lineups[home_team] = []
+					# Add pitcher to the lineup
+					rotowire_lineups[home_team].append(home_pitcher)
+					print(f"       ✅ Added pitcher {home_pitcher} to {home_team}")
+		
+		return rotowire_lineups, rotowire_times
 
 	def _canon_team(self, name: str) -> str:
 		name = (name or '').strip()
@@ -778,4 +893,496 @@ class LineupScraper:
 		# Sort by game time
 		out.sort(key=lambda x: x.get('time_et',''))
 		print(f"🎯 Combined cards created: {len(out)} unique games")
-		return out 
+		return out
+
+	# ==================== NFL METHODS ====================
+	
+	def get_nfl_lineups(self) -> Tuple[Dict[str, List[Dict]], Dict[str, str]]:
+		"""Get NFL lineups using card-based approach like MLB"""
+		try:
+			response = self.session.get(self.ROTOWIRE_NFL_URL, timeout=20)
+			response.raise_for_status()
+			soup = BeautifulSoup(response.text, 'html.parser')
+			
+			team_to_players: Dict[str, List[Dict]] = {}
+			team_to_time: Dict[str, str] = {}
+			
+			# Look for NFL lineup cards similar to MLB
+			cards = soup.select('div.lineup.is-nfl') or soup.select('.lineup.is-nfl')
+			if not cards:
+				# Fallback to any lineup cards
+				cards = [c for c in soup.select('.lineup') if 'football' in c.get('class', []) or 'nfl' in c.get('class', [])]
+			
+			# If no specific NFL cards, try broader search
+			if not cards:
+				cards = soup.select('.lineup')
+			
+			def extract_team_labels(card) -> List[str]:
+				labels: List[str] = []
+				# Look for team names in various selectors
+				for sel in [".lineup__team .lineup__abbr", ".lineup__team a", ".lineup__team", ".is-home .lineup__team", ".is-visit .lineup__team"]:
+					for el in card.select(sel):
+						txt = el.get_text(" ", strip=True)
+						if txt and 1 <= len(txt) < 50:
+							labels.append(txt)
+				# Dedupe and keep first two
+				labels = list(dict.fromkeys(labels))
+				return labels[:2]
+			
+			def extract_time_et(card) -> str:
+				text = card.get_text(" ", strip=True)
+				m = re.search(r"(\d{1,2}:\d{2}\s*[AP]M\s*ET)", text)
+				return m.group(1).strip() if m else 'TBD'
+			
+			# NFL position patterns
+			POS_RE = re.compile(r"^(QB|RB|WR|TE)\b")
+			NAME_OK_RE = re.compile(r"^[A-Z]\.??\s*[A-Za-z\-'\s.]+$|^[A-Z][a-z\s.]+\s+[A-Z][a-z\-']+$")
+			
+			def extract_col_players(ul) -> List[Dict]:
+				players: List[Dict] = []
+				for li in ul.select('li.lineup__player'):
+					pos_el = li.select_one('.lineup__pos')
+					a = li.select_one('a')
+					if not pos_el or not a:
+						continue
+					
+					pos = pos_el.get_text(strip=True)
+					if pos not in ['QB', 'RB', 'WR', 'TE']:
+						continue
+					
+					full_name = a.get_text(' ', strip=True)
+					if not NAME_OK_RE.match(full_name):
+						continue
+					
+					# Check for injury designation (Q=Questionable, D=Doubtful, O=Out)
+					injury = ''
+					if full_name.endswith(' Q'):
+						full_name = full_name[:-2].strip()
+						injury = 'Q'
+					elif full_name.endswith(' D'):
+						full_name = full_name[:-2].strip()
+						injury = 'D'
+					elif full_name.endswith(' O'):
+						full_name = full_name[:-2].strip()
+						injury = 'O'
+					
+					players.append({
+						'name': full_name,
+						'position': pos,
+						'injury': injury
+					})
+				
+				return players
+			
+			# Process each card
+			for card in cards:
+				team_labels = extract_team_labels(card)
+				if len(team_labels) < 2:
+					continue
+				
+				away_team = team_labels[0]
+				home_team = team_labels[1]
+				game_time = extract_time_et(card)
+				
+				# Extract players from both columns
+				away_ul = card.select_one('ul.lineup__list.is-visit')
+				home_ul = card.select_one('ul.lineup__list.is-home')
+				
+				away_players = extract_col_players(away_ul) if away_ul else []
+				home_players = extract_col_players(home_ul) if home_ul else []
+				
+				# Limit to 6 players per team (1 QB, 1 RB, 3 WR, 1 TE)
+				def limit_players(players):
+					limited = []
+					pos_counts = {'QB': 0, 'RB': 0, 'WR': 0, 'TE': 0}
+					for p in players:
+						pos = p['position']
+						if pos_counts[pos] < (1 if pos in ['QB', 'RB', 'TE'] else 3):
+							limited.append(p)
+							pos_counts[pos] += 1
+					return limited
+				
+				away_players = limit_players(away_players)
+				home_players = limit_players(home_players)
+				
+				team_to_players[away_team] = away_players
+				team_to_players[home_team] = home_players
+				team_to_time[away_team] = game_time
+				team_to_time[home_team] = game_time
+				
+				print(f"✅ NFL {away_team}: {len(away_players)} players, {home_team}: {len(home_players)} players")
+			
+			return team_to_players, team_to_time
+			
+		except Exception as e:
+			print(f"❌ Error getting NFL lineups: {e}")
+			return {}, {}
+	
+	def _get_nfl_games(self) -> List[Dict]:
+		"""Get today's NFL games from Rotowire lineups page"""
+		try:
+			url = self.ROTOWIRE_NFL_URL
+			response = self.session.get(url, timeout=15)
+			response.raise_for_status()
+			
+			soup = BeautifulSoup(response.text, 'html.parser')
+			games = []
+			
+			# Get page text for pattern matching
+			page_text = soup.get_text(' ', strip=True)
+			
+			# Determine today's weekday abbreviation in Eastern Time
+			try:
+				et = pytz.timezone('US/Eastern')
+				today_et = datetime.now(et)
+				weekday = today_et.strftime('%a').upper()  # e.g., 'SUN'
+			except Exception:
+				weekday = datetime.utcnow().strftime('%a').upper()
+			
+			# Define valid NFL team names to filter out false matches
+			valid_teams = [
+				'Chiefs', 'Chargers', 'Buccaneers', 'Falcons', 'Bills', 'Dolphins', 'Patriots', 'Jets',
+				'Ravens', 'Bengals', 'Browns', 'Steelers', 'Texans', 'Colts', 'Jaguars', 'Titans',
+				'Broncos', 'Raiders', 'Rams', '49ers', 'Cardinals', 'Seahawks', 'Bears', 'Lions',
+				'Packers', 'Vikings', 'Cowboys', 'Giants', 'Eagles', 'Commanders', 'Panthers', 'Saints'
+			]
+			
+			# Pattern to match the actual format: "KC LAC Chiefs (0-0) Chargers (0-0)"
+			# This matches: ABBREV1 ABBREV2 Team1 (record) Team2 (record)
+			# More precise pattern to avoid capturing extra text
+			game_pattern = r'([A-Z]{2,4})\s+([A-Z]{2,4})\s+([A-Za-z\s]+?)\s+\([0-9-]+\)\s+([A-Za-z\s]+?)\s+\([0-9-]+\)'
+			
+			matches = re.finditer(game_pattern, page_text)
+			for match in matches:
+				away_abbrev_raw = match.group(1).strip()
+				home_abbrev_raw = match.group(2).strip()
+				away_team = match.group(3).strip()
+				home_team = match.group(4).strip()
+				
+				# Clean abbreviations (remove unwanted text)
+				away_abbrev = re.sub(r'[^A-Z]', '', away_abbrev_raw)
+				home_abbrev = re.sub(r'[^A-Z]', '', home_abbrev_raw)
+				
+				# Clean team names (remove extra spaces and unwanted text)
+				away_team = re.sub(r'\s+', ' ', away_team).strip()
+				home_team = re.sub(r'\s+', ' ', home_team).strip()
+				
+				# Remove common unwanted prefixes/suffixes
+				away_team = re.sub(r'^(Tickets|Alerts|PM|ET)\s+', '', away_team).strip()
+				home_team = re.sub(r'^(Tickets|Alerts|PM|ET)\s+', '', home_team).strip()
+				away_team = re.sub(r'\s+(PM|ET)$', '', away_team).strip()
+				home_team = re.sub(r'\s+(PM|ET)$', '', home_team).strip()
+				
+				# Extract just the team name (last word before any extra text)
+				away_team = away_team.split()[-1] if away_team else ''
+				home_team = home_team.split()[-1] if home_team else ''
+				
+				# Check if these are valid NFL team names
+				away_valid = any(team in away_team for team in valid_teams)
+				home_valid = any(team in home_team for team in valid_teams)
+				
+				if away_valid and home_valid and len(away_team) < 50 and len(home_team) < 50:
+					# Try to find game time near this match
+					start_pos = match.start()
+					context = page_text[max(0, start_pos-200):start_pos+200]
+					time_match = re.search(r'([A-Za-z]{3}\s+\d{1,2}:\d{2}\s+[AP]M\s+ET)', context)
+					game_time = time_match.group(1) if time_match else 'TBD'
+					
+					games.append({
+						'away_team': away_team,
+						'home_team': home_team,
+						'away_abbrev': away_abbrev,
+						'home_abbrev': home_abbrev,
+						'game_time': game_time
+					})
+			
+			# Remove duplicates
+			unique_games = []
+			seen = set()
+			for game in games:
+				key = (game['away_team'], game['home_team'])
+				if key not in seen:
+					seen.add(key)
+					unique_games.append(game)
+			
+			# Filter to today's weekday only (e.g., only SUN games on Sunday)
+			def is_today_game(gt: str) -> bool:
+				if not gt or gt == 'TBD':
+					return False
+				return gt.upper().startswith(weekday)
+			unique_games = [g for g in unique_games if is_today_game(g.get('game_time',''))]
+			
+			print(f"Found {len(unique_games)} NFL games for today")
+			return unique_games
+			
+		except Exception as e:
+			print(f"❌ Error getting NFL games: {e}")
+			return []
+	
+	def _get_nfl_team_abbrev(self, team_name: str) -> str:
+		"""Get NFL team abbreviation from full name"""
+		team_mapping = {
+			'Kansas City Chiefs': 'KC',
+			'Los Angeles Chargers': 'LAC',
+			'Tampa Bay Buccaneers': 'TB',
+			'Atlanta Falcons': 'ATL',
+			'Buffalo Bills': 'BUF',
+			'Miami Dolphins': 'MIA',
+			'New England Patriots': 'NE',
+			'New York Jets': 'NYJ',
+			'Baltimore Ravens': 'BAL',
+			'Cincinnati Bengals': 'CIN',
+			'Cleveland Browns': 'CLE',
+			'Pittsburgh Steelers': 'PIT',
+			'Houston Texans': 'HOU',
+			'Indianapolis Colts': 'IND',
+			'Jacksonville Jaguars': 'JAX',
+			'Tennessee Titans': 'TEN',
+			'Denver Broncos': 'DEN',
+			'Las Vegas Raiders': 'LV',
+			'Los Angeles Rams': 'LAR',
+			'San Francisco 49ers': 'SF',
+			'Arizona Cardinals': 'ARI',
+			'Seattle Seahawks': 'SEA',
+			'Chicago Bears': 'CHI',
+			'Detroit Lions': 'DET',
+			'Green Bay Packers': 'GB',
+			'Minnesota Vikings': 'MIN',
+			'Dallas Cowboys': 'DAL',
+			'New York Giants': 'NYG',
+			'Philadelphia Eagles': 'PHI',
+			'Washington Commanders': 'WSH',
+			'Carolina Panthers': 'CAR',
+			'New Orleans Saints': 'NO'
+		}
+		return team_mapping.get(team_name, team_name[:3].upper())
+	
+	def _get_nfl_team_lineup(self, team_name: str, team_abbrev: str) -> List[Dict]:
+		"""Get NFL team lineup with 6 players (1 QB, 1 RB, 3 WR, 1 TE) from Rotowire"""
+		try:
+			url = self.ROTOWIRE_NFL_URL
+			response = self.session.get(url, timeout=15)
+			response.raise_for_status()
+			
+			soup = BeautifulSoup(response.text, 'html.parser')
+			players = []
+			# Build a locked team block: from "TeamName (record)" to the next team header
+			page_text = soup.get_text(' ', strip=True)
+			team_header_pattern = rf'\b{re.escape(team_name)}\s+\([0-9-]+\)'
+			header_match = re.search(team_header_pattern, page_text)
+			if not header_match:
+				print(f"⚠️ Team header not found for {team_name}")
+				return []
+			start_idx = header_match.start()
+			# Compile next-team pattern from valid short names seen on the page
+			valid_teams = [
+				'Chiefs','Chargers','Buccaneers','Falcons','Bills','Dolphins','Patriots','Jets',
+				'Ravens','Bengals','Browns','Steelers','Texans','Colts','Jaguars','Titans',
+				'Broncos','Raiders','Rams','49ers','Cardinals','Seahawks','Bears','Lions',
+				'Packers','Vikings','Cowboys','Giants','Eagles','Commanders','Panthers','Saints'
+			]
+			next_teams_regex = r'\b(' + '|'.join(map(re.escape, valid_teams)) + r')\s+\([0-9-]+\)'
+			next_match = re.search(next_teams_regex, page_text[start_idx + 1:])
+			end_idx = (start_idx + 1 + next_match.start()) if next_match else min(len(page_text), start_idx + 600)
+			block = page_text[start_idx:end_idx]
+			# Within the block, extract positions strictly in order and limited per spec
+			pos_pattern = re.compile(r'\b(QB|RB|WR|TE)\s+([^QDRK][^QBWRTEK]{0,60}?)(?=\s+(?:QB|RB|WR|TE|K|$))')
+			counts = {'QB': 0, 'RB': 0, 'WR': 0, 'TE': 0}
+			for m in pos_pattern.finditer(block):
+				pos = m.group(1)
+				name_raw = re.sub(r'\s+', ' ', m.group(2)).strip()
+				# Injury tag capture at end of token list (e.g., "Name Q" / "Name D" / "Name O")
+				injury = ''
+				if name_raw.endswith(' Q'):
+					name_raw = name_raw[:-2].strip()
+					injury = 'Q'
+				elif name_raw.endswith(' D'):
+					name_raw = name_raw[:-2].strip()
+					injury = 'D'
+				elif name_raw.endswith(' O'):
+					name_raw = name_raw[:-2].strip()
+					injury = 'O'
+				# Enforce limits: QB 1, RB 1, WR 3, TE 1
+				limit = 3 if pos == 'WR' else 1
+				if counts[pos] >= limit:
+					continue
+				# Skip kickers entirely per requirements
+				players.append({'name': name_raw, 'position': pos, 'injury': injury})
+				counts[pos] += 1
+				if len(players) >= 6 and counts['QB'] >= 1 and counts['RB'] >= 1 and counts['TE'] >= 1 and counts['WR'] >= 2:
+					break
+			print(f"Found {len(players)} players for {team_name} ({team_abbrev})")
+			return players[:6]
+			
+		except Exception as e:
+			print(f"❌ Error getting NFL lineup for {team_name}: {e}")
+			return []
+	
+	def get_nfl_combined_cards(self) -> List[Dict]:
+		"""Get NFL lineup cards similar to MLB format"""
+		try:
+			team_lineups, team_times = self.get_nfl_lineups()
+			cards = []
+			
+			# Group teams into games (assuming we have pairs)
+			teams = list(team_lineups.keys())
+			for i in range(0, len(teams), 2):
+				if i + 1 < len(teams):
+					away_team = teams[i]
+					home_team = teams[i + 1]
+					
+					away_players = team_lineups.get(away_team, [])
+					home_players = team_lineups.get(home_team, [])
+					game_time = team_times.get(away_team, 'TBD')
+					
+					# Separate players by position
+					away_qb = [p for p in away_players if p['position'] == 'QB']
+					away_rb = [p for p in away_players if p['position'] == 'RB']
+					away_wr = [p for p in away_players if p['position'] == 'WR']
+					away_te = [p for p in away_players if p['position'] == 'TE']
+					
+					home_qb = [p for p in home_players if p['position'] == 'QB']
+					home_rb = [p for p in home_players if p['position'] == 'RB']
+					home_wr = [p for p in home_players if p['position'] == 'WR']
+					home_te = [p for p in home_players if p['position'] == 'TE']
+					
+					cards.append({
+						'away_label': away_team,
+						'home_label': home_team,
+						'time_et': game_time,
+						'away_qb': away_qb[0]['name'] if away_qb else '',
+						'away_rb': away_rb[0]['name'] if away_rb else '',
+						'away_wr': [p['name'] for p in away_wr[:3]],  # Top 3 WRs
+						'away_te': away_te[0]['name'] if away_te else '',
+						'home_qb': home_qb[0]['name'] if home_qb else '',
+						'home_rb': home_rb[0]['name'] if home_rb else '',
+						'home_wr': [p['name'] for p in home_wr[:3]],  # Top 3 WRs
+						'home_te': home_te[0]['name'] if home_te else '',
+						'away_players': away_players,  # Full player list with positions
+						'home_players': home_players   # Full player list with positions
+					})
+			
+			print(f"🎯 NFL cards created: {len(cards)} games")
+			return cards
+			
+		except Exception as e:
+			print(f"❌ Error creating NFL cards: {e}")
+			return [] 
+
+	def get_nfl_players_today(self) -> List[Dict]:
+		"""Return a flat list of NFL players (QB/RB/WR/TE) scheduled for TODAY (ET).
+		Each item: {name, position, injury, team?, game_time_et}. Ignores K and away/home.
+		"""
+		try:
+			resp = self.session.get(self.ROTOWIRE_NFL_URL, timeout=20)
+			resp.raise_for_status()
+			soup = BeautifulSoup(resp.text, 'html.parser')
+			
+			# Weekday in ET
+			try:
+				et = pytz.timezone('US/Eastern')
+				today = datetime.now(et)
+				weekday = today.strftime('%a').upper()
+			except Exception:
+				weekday = datetime.utcnow().strftime('%a').upper()
+			
+			players: List[Dict] = []
+			
+			# Look for game cards/containers
+			game_containers = soup.select('.lineup, .game-card, .matchup')
+			if not game_containers:
+				# Fallback: look for any div containing team names and players
+				game_containers = soup.select('div')
+			
+			for container in game_containers:
+				container_text = container.get_text(' ', strip=True)
+				
+				# Check if this container has today's games
+				if weekday not in container_text or 'ET' not in container_text:
+					continue
+				
+				# Extract game time
+				time_match = re.search(rf'{weekday}\s+\d{{1,2}}:\d{{2}}\s+[AP]M\s+ET', container_text)
+				if not time_match:
+					continue
+				game_time = time_match.group(0)
+				
+				# Extract team names - look for patterns like "Team Name (record)"
+				team_patterns = [
+					r'([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s*\(\d+-\d+\)',  # Team Name (record)
+					r'([A-Z]{2,4})\s+[A-Z][a-z]+',  # Abbreviation + City
+					r'([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s+[A-Z][a-z]+',  # City + Team
+				]
+				
+				teams = []
+				for pattern in team_patterns:
+					matches = re.findall(pattern, container_text)
+					if matches:
+						teams.extend(matches[:2])  # Take first 2 teams
+						break
+				
+				# If no teams found, try to extract from common NFL team patterns
+				if not teams:
+					team_abbrevs = ['KC', 'LAC', 'TB', 'ATL', 'BUF', 'MIA', 'NE', 'NYJ', 'BAL', 'CIN', 'CLE', 'PIT', 
+									'HOU', 'IND', 'JAX', 'TEN', 'DEN', 'LV', 'DAL', 'NYG', 'PHI', 'WAS', 'CHI', 'DET', 
+									'GB', 'MIN', 'NO', 'CAR', 'ARI', 'LAR', 'SF', 'SEA']
+					for abbrev in team_abbrevs:
+						if abbrev in container_text:
+							teams.append(abbrev)
+							if len(teams) >= 2:
+								break
+				
+				# Extract players with positions
+				player_patterns = [
+					r'\b(QB|RB|WR|TE)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z\.]+)*)',
+					r'\b(QB|RB|WR|TE)\s+([A-Z]\.\s*[A-Z][a-z]+(?:\s+[A-Z][a-z\.]+)*)',
+				]
+				
+				for pattern in player_patterns:
+					for match in re.finditer(pattern, container_text):
+						pos = match.group(1)
+						name = match.group(2).strip()
+						
+						# Clean up name
+						name = re.sub(r'\s+', ' ', name)
+						
+						# Check for injury status
+						injury = ''
+						if name.endswith(' Q'):
+							name = name[:-2].strip()
+							injury = 'Q'
+						elif name.endswith(' D'):
+							name = name[:-2].strip()
+							injury = 'D'
+						elif name.endswith(' O'):
+							name = name[:-2].strip()
+							injury = 'O'
+						
+						# Assign team (alternate between teams if we have 2)
+						team = teams[0] if teams else 'Unknown'
+						if len(teams) == 2:
+							# Simple alternating logic - could be improved
+							team = teams[0] if len(players) % 2 == 0 else teams[1]
+						
+						players.append({
+							'name': name,
+							'position': pos,
+							'injury': injury,
+							'team': team,
+							'game_time_et': game_time
+						})
+			
+			# Deduplicate by (name, position, time)
+			seen = set()
+			uniq: List[Dict] = []
+			for p in players:
+				key = (p['name'], p['position'], p['game_time_et'])
+				if key in seen:
+					continue
+				seen.add(key)
+				uniq.append(p)
+			
+			return uniq
+		except Exception as e:
+			print(f"❌ Error getting NFL players for today: {e}")
+			return []
